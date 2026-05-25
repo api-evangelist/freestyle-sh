@@ -1,0 +1,603 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: "Freestyle Git API \u2014 Repo"
+  description: 'Freestyle Git API repo surface. 13 operations. Lead operation: List Repositories. Self-contained Naftiko capability
+    for one Freestyle business surface.'
+  tags:
+  - Freestyle
+  - Git
+  - Repo
+  created: '2026-05-25'
+  modified: '2026-05-25'
+binds:
+- namespace: env
+  keys:
+    FREESTYLE_API_KEY: FREESTYLE_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: git-repo
+    baseUri: https://api.freestyle.sh
+    description: Freestyle Git API repo business capability.
+    resources:
+    - name: git-v1-repo
+      path: /git/v1/repo
+      operations:
+      - name: handle-list-repositories
+        method: GET
+        description: List Repositories
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: limit
+          in: query
+          type: string
+          required: false
+        - name: offset
+          in: query
+          type: string
+          required: false
+        - name: search
+          in: query
+          type: string
+          required: false
+      - name: handle-create-repo
+        method: POST
+        description: Create a Repository
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: false
+    - name: git-v1-repo-default-branch
+      path: /git/v1/repo/{repo_id}/default-branch
+      operations:
+      - name: handle-get-default-branch
+        method: GET
+        description: Get Repository Default Branch
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: repo_id
+          in: path
+          type: string
+          required: true
+      - name: handle-set-default-branch
+        method: PUT
+        description: Set Repository Default Branch
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: repo_id
+          in: path
+          type: string
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: false
+    - name: git-v1-repo-visibility
+      path: /git/v1/repo/{repo_id}/visibility
+      operations:
+      - name: handle-get-visibility
+        method: GET
+        description: Get Repository Visibility
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: repo_id
+          in: path
+          type: string
+          required: true
+      - name: handle-set-visibility
+        method: PUT
+        description: Set Repository Visibility
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: repo_id
+          in: path
+          type: string
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: false
+    - name: git-v1-repo
+      path: /git/v1/repo/{repo}
+      operations:
+      - name: handle-get-repo-info
+        method: GET
+        description: Get Repository Information
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: repo
+          in: path
+          type: string
+          required: true
+      - name: handle-delete-repo
+        method: DELETE
+        description: Delete a Repository
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: repo
+          in: path
+          type: string
+          required: true
+    - name: git-v1-repo-commits
+      path: /git/v1/repo/{repo}/commits
+      operations:
+      - name: handle-create-commit
+        method: POST
+        description: Create a Commit with Files
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: repo
+          in: path
+          type: string
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: false
+    - name: git-v1-repo-compare
+      path: /git/v1/repo/{repo}/compare
+      operations:
+      - name: handle-compare-commits
+        method: GET
+        description: Compare Two Commits
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: repo
+          in: path
+          type: string
+          required: true
+        - name: base
+          in: query
+          type: string
+          required: true
+        - name: head
+          in: query
+          type: string
+          required: true
+    - name: git-v1-repo-contents
+      path: /git/v1/repo/{repo}/contents/{path}
+      operations:
+      - name: handle-get-contents
+        method: GET
+        description: Get the Contents of a File or Directory
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: repo
+          in: path
+          type: string
+          required: true
+        - name: path
+          in: path
+          type: string
+          required: true
+        - name: rev
+          in: query
+          type: string
+          required: false
+        - name: recursive
+          in: query
+          type: string
+          required: false
+    - name: git-v1-repo-tarball
+      path: /git/v1/repo/{repo}/tarball
+      operations:
+      - name: handle-download-tarball
+        method: GET
+        description: Download a Tarball of a Repo
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: repo
+          in: path
+          type: string
+          required: true
+        - name: rev
+          in: query
+          type: string
+          required: false
+    - name: git-v1-repo-zip
+      path: /git/v1/repo/{repo}/zip
+      operations:
+      - name: handle-download-zip
+        method: GET
+        description: Download a Zip of a Repo
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: repo
+          in: path
+          type: string
+          required: true
+        - name: rev
+          in: query
+          type: string
+          required: false
+    authentication:
+      type: apikey
+      key: Authorization
+      value: Bearer {{env.FREESTYLE_API_KEY}}
+      placement: header
+  exposes:
+  - type: rest
+    namespace: git-repo-rest
+    port: 8080
+    description: REST adapter for Freestyle Git API repo. One Spectral-compliant resource per consumed operation, prefixed
+      with /v1.
+    resources:
+    - path: /v1/git/v1/repo
+      name: git-v1-repo
+      description: REST surface for git-v1-repo.
+      operations:
+      - method: GET
+        name: handle-list-repositories
+        description: List Repositories
+        call: git-repo.handle-list-repositories
+        with: {}
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: handle-create-repo
+        description: Create a Repository
+        call: git-repo.handle-create-repo
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/git/v1/repo/{repo_id}/default-branch
+      name: git-v1-repo-default-branch
+      description: REST surface for git-v1-repo-default-branch.
+      operations:
+      - method: GET
+        name: handle-get-default-branch
+        description: Get Repository Default Branch
+        call: git-repo.handle-get-default-branch
+        with:
+          repo_id: rest.path.repo_id
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PUT
+        name: handle-set-default-branch
+        description: Set Repository Default Branch
+        call: git-repo.handle-set-default-branch
+        with:
+          repo_id: rest.path.repo_id
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/git/v1/repo/{repo_id}/visibility
+      name: git-v1-repo-visibility
+      description: REST surface for git-v1-repo-visibility.
+      operations:
+      - method: GET
+        name: handle-get-visibility
+        description: Get Repository Visibility
+        call: git-repo.handle-get-visibility
+        with:
+          repo_id: rest.path.repo_id
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PUT
+        name: handle-set-visibility
+        description: Set Repository Visibility
+        call: git-repo.handle-set-visibility
+        with:
+          repo_id: rest.path.repo_id
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/git/v1/repo/{repo}
+      name: git-v1-repo
+      description: REST surface for git-v1-repo.
+      operations:
+      - method: GET
+        name: handle-get-repo-info
+        description: Get Repository Information
+        call: git-repo.handle-get-repo-info
+        with:
+          repo: rest.path.repo
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: DELETE
+        name: handle-delete-repo
+        description: Delete a Repository
+        call: git-repo.handle-delete-repo
+        with:
+          repo: rest.path.repo
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/git/v1/repo/{repo}/commits
+      name: git-v1-repo-commits
+      description: REST surface for git-v1-repo-commits.
+      operations:
+      - method: POST
+        name: handle-create-commit
+        description: Create a Commit with Files
+        call: git-repo.handle-create-commit
+        with:
+          repo: rest.path.repo
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/git/v1/repo/{repo}/compare
+      name: git-v1-repo-compare
+      description: REST surface for git-v1-repo-compare.
+      operations:
+      - method: GET
+        name: handle-compare-commits
+        description: Compare Two Commits
+        call: git-repo.handle-compare-commits
+        with:
+          repo: rest.path.repo
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/git/v1/repo/{repo}/contents/{path}
+      name: git-v1-repo-contents
+      description: REST surface for git-v1-repo-contents.
+      operations:
+      - method: GET
+        name: handle-get-contents
+        description: Get the Contents of a File or Directory
+        call: git-repo.handle-get-contents
+        with:
+          repo: rest.path.repo
+          path: rest.path.path
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/git/v1/repo/{repo}/tarball
+      name: git-v1-repo-tarball
+      description: REST surface for git-v1-repo-tarball.
+      operations:
+      - method: GET
+        name: handle-download-tarball
+        description: Download a Tarball of a Repo
+        call: git-repo.handle-download-tarball
+        with:
+          repo: rest.path.repo
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/git/v1/repo/{repo}/zip
+      name: git-v1-repo-zip
+      description: REST surface for git-v1-repo-zip.
+      operations:
+      - method: GET
+        name: handle-download-zip
+        description: Download a Zip of a Repo
+        call: git-repo.handle-download-zip
+        with:
+          repo: rest.path.repo
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: git-repo-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Freestyle Git API repo. One tool per consumed operation.
+    tools:
+    - name: freestyle-handle-list-repositories
+      description: List Repositories
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: git-repo.handle-list-repositories
+      with: {}
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: freestyle-handle-create-repo
+      description: Create a Repository
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: git-repo.handle-create-repo
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: freestyle-handle-get-default-branch
+      description: Get Repository Default Branch
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: git-repo.handle-get-default-branch
+      with:
+        repo_id: tools.path.repo_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: freestyle-handle-set-default-branch
+      description: Set Repository Default Branch
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: git-repo.handle-set-default-branch
+      with:
+        repo_id: tools.path.repo_id
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: freestyle-handle-get-visibility
+      description: Get Repository Visibility
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: git-repo.handle-get-visibility
+      with:
+        repo_id: tools.path.repo_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: freestyle-handle-set-visibility
+      description: Set Repository Visibility
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: git-repo.handle-set-visibility
+      with:
+        repo_id: tools.path.repo_id
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: freestyle-handle-get-repo-info
+      description: Get Repository Information
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: git-repo.handle-get-repo-info
+      with:
+        repo: tools.path.repo
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: freestyle-handle-delete-repo
+      description: Delete a Repository
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: git-repo.handle-delete-repo
+      with:
+        repo: tools.path.repo
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: freestyle-handle-create-commit
+      description: Create a Commit with Files
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: git-repo.handle-create-commit
+      with:
+        repo: tools.path.repo
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: freestyle-handle-compare-commits
+      description: Compare Two Commits
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: git-repo.handle-compare-commits
+      with:
+        repo: tools.path.repo
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: freestyle-handle-get-contents
+      description: Get the Contents of a File or Directory
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: git-repo.handle-get-contents
+      with:
+        repo: tools.path.repo
+        path: tools.path.path
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: freestyle-handle-download-tarball
+      description: Download a Tarball of a Repo
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: git-repo.handle-download-tarball
+      with:
+        repo: tools.path.repo
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: freestyle-handle-download-zip
+      description: Download a Zip of a Repo
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: git-repo.handle-download-zip
+      with:
+        repo: tools.path.repo
+      outputParameters:
+      - type: object
+        mapping: $.

@@ -1,0 +1,151 @@
+specification: API Commons Plans
+specificationVersion: '0.1'
+schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/Plans
+provider: Freestyle
+providerId: freestyle-sh
+created: '2026-05-25'
+modified: '2026-05-25'
+reconciled: true
+tags:
+  - AI Agents
+  - Sandboxes
+  - VMs
+  - Code Execution
+  - Git
+description: 'Reconciled plans and per-resource usage pricing for Freestyle Sandboxes. Source:
+  freestyle.sh/pricing. Four tiers (Free / Hobby / Pro / Enterprise) plus per-service usage metering for
+  VMs, Git, Web, and Execute.'
+sources:
+  - https://www.freestyle.sh/pricing
+  - https://docs.freestyle.sh/v2/about
+plans:
+  - id: freestyle-free
+    name: Free
+    type: subscription
+    description: $0 forever. Hobby projects and getting started.
+    entries:
+      - label: Subscription
+        name: subscription
+        type: subscription
+        timeFrame: month
+        geo: global
+        unit: 1
+        price: '0'
+        userMultiplied: false
+        limit: -1
+    elements:
+      - name: Up to 10 Concurrent VMs
+      - name: Up to 5 Managed Domains
+      - name: Up to 500 Repositories
+      - name: Up to 500 Runs per month
+      - name: Up to 50 Saved VMs
+      - name: Up to 50 Snapshots
+      - name: 20 vCPU-hours / day included
+      - name: 40 GiB-memory-hours / day included
+      - name: 16,800 GiB-storage-hours / day included
+  - id: freestyle-hobby
+    name: Hobby
+    type: subscription
+    description: For growing projects that need more power.
+    entries:
+      - label: Subscription
+        name: subscription
+        type: subscription
+        timeFrame: month
+        geo: global
+        unit: 1
+        price: '50'
+        userMultiplied: false
+        limit: -1
+        description: $50/month flat + usage over $50/month.
+    elements:
+      - name: Up to 40 Concurrent VMs
+      - name: Up to 20 Managed Domains
+      - name: Up to 5,000 Repositories
+      - name: Up to 5,000 Runs per month
+      - name: Up to 200 Saved VMs
+      - name: Up to 1,000 Snapshots
+      - name: Persistent Snapshots
+      - name: Persistent VMs
+      - name: Custom Sizing up to 8 vCPUs / 16 GB memory / 32 GB disk per VM
+  - id: freestyle-pro
+    name: Pro
+    type: subscription
+    description: For teams and production applications.
+    entries:
+      - label: Subscription
+        name: subscription
+        type: subscription
+        timeFrame: month
+        geo: global
+        unit: 1
+        price: '500'
+        userMultiplied: false
+        limit: -1
+        description: $500/month flat + usage over $500/month.
+    elements:
+      - name: Up to 400 Concurrent VMs
+      - name: Up to 2,000 Managed Domains
+      - name: Up to 50,000 Repositories
+      - name: Up to 500,000 Runs per month
+      - name: Up to 4,000 Saved VMs
+      - name: Up to 12,000 Snapshots
+      - name: Persistent Snapshots and Persistent VMs
+      - name: Custom Sizing up to 32 vCPUs / 32 GB memory / 64 GB disk per VM
+  - id: freestyle-enterprise
+    name: Enterprise
+    type: contract
+    description: Custom pricing, dedicated support, advanced security, and platform SLAs.
+    entries:
+      - label: Subscription
+        name: subscription
+        type: contract
+        timeFrame: custom
+        geo: global
+        unit: 1
+        price: Call
+        userMultiplied: false
+        limit: -1
+    elements:
+      - name: All Pro features
+      - name: Custom usage limits
+      - name: SAML SSO and SCIM
+      - name: Audit logs
+      - name: 99.99% SLA
+      - name: Dedicated support
+  - id: freestyle-vm-usage
+    name: VM Usage
+    type: usage-based
+    description: Per-resource VM pricing. Free tier includes 20 vCPU-hours / 40 GiB-memory-hours /
+      16,800 GiB-storage-hours per day.
+    entries:
+      - label: vCPU hour
+        name: vcpu_hour
+        type: metered
+        metric: hour
+        timeFrame: usage
+        geo: global
+        unit: 1
+        price: '0.04032'
+        userMultiplied: false
+        limit: -1
+      - label: GiB memory hour
+        name: memory_gib_hour
+        type: metered
+        metric: hour
+        timeFrame: usage
+        geo: global
+        unit: 1
+        price: '0.0129'
+        userMultiplied: false
+        limit: -1
+      - label: GiB storage hour
+        name: storage_gib_hour
+        type: metered
+        metric: hour
+        timeFrame: usage
+        geo: global
+        unit: 1
+        price: '0.000086'
+        userMultiplied: false
+        limit: -1

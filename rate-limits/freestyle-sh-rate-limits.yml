@@ -1,0 +1,85 @@
+specification: API Commons Rate Limits
+specificationVersion: '0.1'
+schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/RateLimits
+provider: Freestyle
+providerId: freestyle-sh
+created: '2026-05-25'
+modified: '2026-05-25'
+reconciled: true
+tags:
+  - Rate Limiting
+  - Quotas
+  - Concurrency
+description: Reconciled quota and concurrency limits for Freestyle Sandboxes. Limits are enforced as
+  plan-tier ceilings (concurrent VMs, managed domains, repos, runs/month, saved VMs, snapshots) rather
+  than RPM token-bucket limits.
+sources:
+  - https://www.freestyle.sh/pricing
+  - https://docs.freestyle.sh/v2/about
+algorithm: plan-quota
+responseCodes:
+  throttled: 429
+  quotaExceeded: 402
+limits:
+  - tier: Free
+    concurrentVms: 10
+    managedDomains: 5
+    repositories: 500
+    runsPerMonth: 500
+    savedVms: 50
+    snapshots: 50
+    persistentSnapshots: false
+    persistentVms: false
+    customSizing: false
+    maxVcpusPerVm: null
+    maxMemoryGiBPerVm: null
+    maxDiskGiBPerVm: null
+  - tier: Hobby
+    concurrentVms: 40
+    managedDomains: 20
+    repositories: 5000
+    runsPerMonth: 5000
+    savedVms: 200
+    snapshots: 1000
+    persistentSnapshots: true
+    persistentVms: true
+    customSizing: true
+    maxVcpusPerVm: 8
+    maxMemoryGiBPerVm: 16
+    maxDiskGiBPerVm: 32
+  - tier: Pro
+    concurrentVms: 400
+    managedDomains: 2000
+    repositories: 50000
+    runsPerMonth: 500000
+    savedVms: 4000
+    snapshots: 12000
+    persistentSnapshots: true
+    persistentVms: true
+    customSizing: true
+    maxVcpusPerVm: 32
+    maxMemoryGiBPerVm: 32
+    maxDiskGiBPerVm: 64
+  - tier: Enterprise
+    concurrentVms: custom
+    managedDomains: custom
+    repositories: custom
+    runsPerMonth: custom
+    savedVms: custom
+    snapshots: custom
+    persistentSnapshots: true
+    persistentVms: true
+    customSizing: true
+    notes: 99.99% SLA, dedicated support, custom usage limits.
+dailyAllowances:
+  - tier: Free
+    vcpuHours: 20
+    memoryGiBHours: 40
+    storageGiBHours: 16800
+overageBilling:
+  - tier: Hobby
+    monthlyBaseline: 50
+    overagePricing: per-resource usage rates apply once base $50 is consumed
+  - tier: Pro
+    monthlyBaseline: 500
+    overagePricing: per-resource usage rates apply once base $500 is consumed

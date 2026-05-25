@@ -1,0 +1,207 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: "Freestyle Execute API \u2014 Execute"
+  description: 'Freestyle Execute API execute surface. 4 operations. Lead operation: List Execute Runs. Self-contained Naftiko
+    capability for one Freestyle business surface.'
+  tags:
+  - Freestyle
+  - Execute
+  - Execute
+  created: '2026-05-25'
+  modified: '2026-05-25'
+binds:
+- namespace: env
+  keys:
+    FREESTYLE_API_KEY: FREESTYLE_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: execute-execute
+    baseUri: https://api.freestyle.sh
+    description: Freestyle Execute API execute business capability.
+    resources:
+    - name: execute-v1-deployments
+      path: /execute/v1/deployments
+      operations:
+      - name: handle-list-execute-runs
+        method: GET
+        description: List Execute Runs
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: limit
+          in: query
+          type: string
+          required: false
+        - name: offset
+          in: query
+          type: string
+          required: false
+    - name: execute-v1-deployments
+      path: /execute/v1/deployments/{deployment}
+      operations:
+      - name: handle-get-execute-run
+        method: GET
+        description: Get Information on Execute Run
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: deployment
+          in: path
+          type: string
+          required: true
+    - name: execute-v1-deployments-output
+      path: /execute/v1/deployments/{deployment}/output
+      operations:
+      - name: handle-get-execute-run-output
+        method: GET
+        description: Get Saved Output for an Execute Run
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: deployment
+          in: path
+          type: string
+          required: true
+    - name: execute-v3-script
+      path: /execute/v3/script
+      operations:
+      - name: handle-execute-script-v3
+        method: POST
+        description: Execute Code
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: false
+    authentication:
+      type: apikey
+      key: Authorization
+      value: Bearer {{env.FREESTYLE_API_KEY}}
+      placement: header
+  exposes:
+  - type: rest
+    namespace: execute-execute-rest
+    port: 8080
+    description: REST adapter for Freestyle Execute API execute. One Spectral-compliant resource per consumed operation, prefixed
+      with /v1.
+    resources:
+    - path: /v1/execute/v1/deployments
+      name: execute-v1-deployments
+      description: REST surface for execute-v1-deployments.
+      operations:
+      - method: GET
+        name: handle-list-execute-runs
+        description: List Execute Runs
+        call: execute-execute.handle-list-execute-runs
+        with: {}
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/execute/v1/deployments/{deployment}
+      name: execute-v1-deployments
+      description: REST surface for execute-v1-deployments.
+      operations:
+      - method: GET
+        name: handle-get-execute-run
+        description: Get Information on Execute Run
+        call: execute-execute.handle-get-execute-run
+        with:
+          deployment: rest.path.deployment
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/execute/v1/deployments/{deployment}/output
+      name: execute-v1-deployments-output
+      description: REST surface for execute-v1-deployments-output.
+      operations:
+      - method: GET
+        name: handle-get-execute-run-output
+        description: Get Saved Output for an Execute Run
+        call: execute-execute.handle-get-execute-run-output
+        with:
+          deployment: rest.path.deployment
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/execute/v3/script
+      name: execute-v3-script
+      description: REST surface for execute-v3-script.
+      operations:
+      - method: POST
+        name: handle-execute-script-v3
+        description: Execute Code
+        call: execute-execute.handle-execute-script-v3
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: execute-execute-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Freestyle Execute API execute. One tool per consumed operation.
+    tools:
+    - name: freestyle-handle-list-execute-runs
+      description: List Execute Runs
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: execute-execute.handle-list-execute-runs
+      with: {}
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: freestyle-handle-get-execute-run
+      description: Get Information on Execute Run
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: execute-execute.handle-get-execute-run
+      with:
+        deployment: tools.path.deployment
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: freestyle-handle-get-execute-run-output
+      description: Get Saved Output for an Execute Run
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: execute-execute.handle-get-execute-run-output
+      with:
+        deployment: tools.path.deployment
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: freestyle-handle-execute-script-v3
+      description: Execute Code
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: execute-execute.handle-execute-script-v3
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.

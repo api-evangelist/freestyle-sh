@@ -1,0 +1,87 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: "Freestyle Git API \u2014 Blobs"
+  description: 'Freestyle Git API blobs surface. 1 operations. Lead operation: Get a Blob Object. Self-contained Naftiko capability
+    for one Freestyle business surface.'
+  tags:
+  - Freestyle
+  - Git
+  - Blobs
+  created: '2026-05-25'
+  modified: '2026-05-25'
+binds:
+- namespace: env
+  keys:
+    FREESTYLE_API_KEY: FREESTYLE_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: git-blobs
+    baseUri: https://api.freestyle.sh
+    description: Freestyle Git API blobs business capability.
+    resources:
+    - name: git-v1-repo-git-blobs
+      path: /git/v1/repo/{repo}/git/blobs/{hash}
+      operations:
+      - name: handle-get-blob
+        method: GET
+        description: Get a Blob Object
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: repo
+          in: path
+          type: string
+          required: true
+        - name: hash
+          in: path
+          type: string
+          required: true
+    authentication:
+      type: apikey
+      key: Authorization
+      value: Bearer {{env.FREESTYLE_API_KEY}}
+      placement: header
+  exposes:
+  - type: rest
+    namespace: git-blobs-rest
+    port: 8080
+    description: REST adapter for Freestyle Git API blobs. One Spectral-compliant resource per consumed operation, prefixed
+      with /v1.
+    resources:
+    - path: /v1/git/v1/repo/{repo}/git/blobs/{hash}
+      name: git-v1-repo-git-blobs
+      description: REST surface for git-v1-repo-git-blobs.
+      operations:
+      - method: GET
+        name: handle-get-blob
+        description: Get a Blob Object
+        call: git-blobs.handle-get-blob
+        with:
+          repo: rest.path.repo
+          hash: rest.path.hash
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: git-blobs-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Freestyle Git API blobs. One tool per consumed operation.
+    tools:
+    - name: freestyle-handle-get-blob
+      description: Get a Blob Object
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: git-blobs.handle-get-blob
+      with:
+        repo: tools.path.repo
+        hash: tools.path.hash
+      outputParameters:
+      - type: object
+        mapping: $.

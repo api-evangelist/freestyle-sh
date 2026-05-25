@@ -1,0 +1,173 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: "Freestyle Domains API \u2014 Mappings"
+  description: 'Freestyle Domains API mappings surface. 3 operations. Lead operation: List Domain Mappings. Self-contained
+    Naftiko capability for one Freestyle business surface.'
+  tags:
+  - Freestyle
+  - Domains
+  - Mappings
+  created: '2026-05-25'
+  modified: '2026-05-25'
+binds:
+- namespace: env
+  keys:
+    FREESTYLE_API_KEY: FREESTYLE_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: domains-mappings
+    baseUri: https://api.freestyle.sh
+    description: Freestyle Domains API mappings business capability.
+    resources:
+    - name: domains-v1-mappings
+      path: /domains/v1/mappings
+      operations:
+      - name: handle-list-domain-mappings
+        method: GET
+        description: List Domain Mappings
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: offset
+          in: query
+          type: string
+          required: false
+        - name: limit
+          in: query
+          type: string
+          required: false
+        - name: domainOwnership
+          in: query
+          type: string
+          required: false
+        - name: domain
+          in: query
+          type: string
+          required: false
+    - name: domains-v1-mappings
+      path: /domains/v1/mappings/{domain}
+      operations:
+      - name: handle-insert-domain-mapping
+        method: POST
+        description: Insert Domain Mapping
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: domain
+          in: path
+          type: string
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: false
+      - name: handle-delete-domain-mapping
+        method: DELETE
+        description: Remove Domain Mapping
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: domain
+          in: path
+          type: string
+          required: true
+    authentication:
+      type: apikey
+      key: Authorization
+      value: Bearer {{env.FREESTYLE_API_KEY}}
+      placement: header
+  exposes:
+  - type: rest
+    namespace: domains-mappings-rest
+    port: 8080
+    description: REST adapter for Freestyle Domains API mappings. One Spectral-compliant resource per consumed operation,
+      prefixed with /v1.
+    resources:
+    - path: /v1/domains/v1/mappings
+      name: domains-v1-mappings
+      description: REST surface for domains-v1-mappings.
+      operations:
+      - method: GET
+        name: handle-list-domain-mappings
+        description: List Domain Mappings
+        call: domains-mappings.handle-list-domain-mappings
+        with: {}
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/domains/v1/mappings/{domain}
+      name: domains-v1-mappings
+      description: REST surface for domains-v1-mappings.
+      operations:
+      - method: POST
+        name: handle-insert-domain-mapping
+        description: Insert Domain Mapping
+        call: domains-mappings.handle-insert-domain-mapping
+        with:
+          domain: rest.path.domain
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: DELETE
+        name: handle-delete-domain-mapping
+        description: Remove Domain Mapping
+        call: domains-mappings.handle-delete-domain-mapping
+        with:
+          domain: rest.path.domain
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: domains-mappings-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Freestyle Domains API mappings. One tool per consumed operation.
+    tools:
+    - name: freestyle-handle-list-domain-mappings
+      description: List Domain Mappings
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: domains-mappings.handle-list-domain-mappings
+      with: {}
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: freestyle-handle-insert-domain-mapping
+      description: Insert Domain Mapping
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: domains-mappings.handle-insert-domain-mapping
+      with:
+        domain: tools.path.domain
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: freestyle-handle-delete-domain-mapping
+      description: Remove Domain Mapping
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: domains-mappings.handle-delete-domain-mapping
+      with:
+        domain: tools.path.domain
+      outputParameters:
+      - type: object
+        mapping: $.

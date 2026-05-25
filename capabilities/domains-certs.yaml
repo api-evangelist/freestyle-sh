@@ -1,0 +1,88 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: "Freestyle Domains API \u2014 Certs"
+  description: 'Freestyle Domains API certs surface. 1 operations. Lead operation: Provision a Wildcard Certificate. Self-contained
+    Naftiko capability for one Freestyle business surface.'
+  tags:
+  - Freestyle
+  - Domains
+  - Certs
+  created: '2026-05-25'
+  modified: '2026-05-25'
+binds:
+- namespace: env
+  keys:
+    FREESTYLE_API_KEY: FREESTYLE_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: domains-certs
+    baseUri: https://api.freestyle.sh
+    description: Freestyle Domains API certs business capability.
+    resources:
+    - name: domains-v1-certs-wildcard
+      path: /domains/v1/certs/{domain}/wildcard
+      operations:
+      - name: handle-verify-wildcard
+        method: POST
+        description: Provision a Wildcard Certificate
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: domain
+          in: path
+          type: string
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: false
+    authentication:
+      type: apikey
+      key: Authorization
+      value: Bearer {{env.FREESTYLE_API_KEY}}
+      placement: header
+  exposes:
+  - type: rest
+    namespace: domains-certs-rest
+    port: 8080
+    description: REST adapter for Freestyle Domains API certs. One Spectral-compliant resource per consumed operation, prefixed
+      with /v1.
+    resources:
+    - path: /v1/domains/v1/certs/{domain}/wildcard
+      name: domains-v1-certs-wildcard
+      description: REST surface for domains-v1-certs-wildcard.
+      operations:
+      - method: POST
+        name: handle-verify-wildcard
+        description: Provision a Wildcard Certificate
+        call: domains-certs.handle-verify-wildcard
+        with:
+          domain: rest.path.domain
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: domains-certs-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Freestyle Domains API certs. One tool per consumed operation.
+    tools:
+    - name: freestyle-handle-verify-wildcard
+      description: Provision a Wildcard Certificate
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: domains-certs.handle-verify-wildcard
+      with:
+        domain: tools.path.domain
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.

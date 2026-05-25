@@ -1,0 +1,173 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: "Freestyle Domains API \u2014 Verifications"
+  description: 'Freestyle Domains API verifications surface. 4 operations. Lead operation: List Domain Verification Requests
+    for an Account. Self-contained Naftiko capability for one Freestyle business surface.'
+  tags:
+  - Freestyle
+  - Domains
+  - Verifications
+  created: '2026-05-25'
+  modified: '2026-05-25'
+binds:
+- namespace: env
+  keys:
+    FREESTYLE_API_KEY: FREESTYLE_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: domains-verifications
+    baseUri: https://api.freestyle.sh
+    description: Freestyle Domains API verifications business capability.
+    resources:
+    - name: domains-v1-verifications
+      path: /domains/v1/verifications
+      operations:
+      - name: handle-list-domain-verification-requests
+        method: GET
+        description: List Domain Verification Requests for an Account
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters: []
+      - name: handle-verify-domain
+        method: PUT
+        description: Verify a Domain Verification Request
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: false
+      - name: handle-create-domain-verification
+        method: POST
+        description: Create a Domain Verification Request
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: false
+      - name: handle-delete-domain-verification
+        method: DELETE
+        description: Delete a Domain Verification Request
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters: []
+    authentication:
+      type: apikey
+      key: Authorization
+      value: Bearer {{env.FREESTYLE_API_KEY}}
+      placement: header
+  exposes:
+  - type: rest
+    namespace: domains-verifications-rest
+    port: 8080
+    description: REST adapter for Freestyle Domains API verifications. One Spectral-compliant resource per consumed operation,
+      prefixed with /v1.
+    resources:
+    - path: /v1/domains/v1/verifications
+      name: domains-v1-verifications
+      description: REST surface for domains-v1-verifications.
+      operations:
+      - method: GET
+        name: handle-list-domain-verification-requests
+        description: List Domain Verification Requests for an Account
+        call: domains-verifications.handle-list-domain-verification-requests
+        with: {}
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PUT
+        name: handle-verify-domain
+        description: Verify a Domain Verification Request
+        call: domains-verifications.handle-verify-domain
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: handle-create-domain-verification
+        description: Create a Domain Verification Request
+        call: domains-verifications.handle-create-domain-verification
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: DELETE
+        name: handle-delete-domain-verification
+        description: Delete a Domain Verification Request
+        call: domains-verifications.handle-delete-domain-verification
+        with: {}
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: domains-verifications-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Freestyle Domains API verifications. One tool per consumed operation.
+    tools:
+    - name: freestyle-handle-list-domain-verification-requests
+      description: List Domain Verification Requests for an Account
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: domains-verifications.handle-list-domain-verification-requests
+      with: {}
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: freestyle-handle-verify-domain
+      description: Verify a Domain Verification Request
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: domains-verifications.handle-verify-domain
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: freestyle-handle-create-domain-verification
+      description: Create a Domain Verification Request
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: domains-verifications.handle-create-domain-verification
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: freestyle-handle-delete-domain-verification
+      description: Delete a Domain Verification Request
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: domains-verifications.handle-delete-domain-verification
+      with: {}
+      outputParameters:
+      - type: object
+        mapping: $.

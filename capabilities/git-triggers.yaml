@@ -1,0 +1,169 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: "Freestyle Git API \u2014 Triggers"
+  description: 'Freestyle Git API triggers surface. 3 operations. Lead operation: List Git Triggers for a Repository. Self-contained
+    Naftiko capability for one Freestyle business surface.'
+  tags:
+  - Freestyle
+  - Git
+  - Triggers
+  created: '2026-05-25'
+  modified: '2026-05-25'
+binds:
+- namespace: env
+  keys:
+    FREESTYLE_API_KEY: FREESTYLE_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: git-triggers
+    baseUri: https://api.freestyle.sh
+    description: Freestyle Git API triggers business capability.
+    resources:
+    - name: git-v1-repo-trigger
+      path: /git/v1/repo/{repo}/trigger
+      operations:
+      - name: handle-list-git-triggers
+        method: GET
+        description: List Git Triggers for a Repository
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: repo
+          in: path
+          type: string
+          required: true
+      - name: handle-create-git-trigger
+        method: POST
+        description: Create a Git Trigger
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: repo
+          in: path
+          type: string
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: false
+    - name: git-v1-repo-trigger
+      path: /git/v1/repo/{repo}/trigger/{trigger}
+      operations:
+      - name: handle-delete-git-trigger
+        method: DELETE
+        description: Delete a Git Trigger
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: repo
+          in: path
+          type: string
+          required: true
+        - name: trigger
+          in: path
+          type: string
+          required: true
+    authentication:
+      type: apikey
+      key: Authorization
+      value: Bearer {{env.FREESTYLE_API_KEY}}
+      placement: header
+  exposes:
+  - type: rest
+    namespace: git-triggers-rest
+    port: 8080
+    description: REST adapter for Freestyle Git API triggers. One Spectral-compliant resource per consumed operation, prefixed
+      with /v1.
+    resources:
+    - path: /v1/git/v1/repo/{repo}/trigger
+      name: git-v1-repo-trigger
+      description: REST surface for git-v1-repo-trigger.
+      operations:
+      - method: GET
+        name: handle-list-git-triggers
+        description: List Git Triggers for a Repository
+        call: git-triggers.handle-list-git-triggers
+        with:
+          repo: rest.path.repo
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: handle-create-git-trigger
+        description: Create a Git Trigger
+        call: git-triggers.handle-create-git-trigger
+        with:
+          repo: rest.path.repo
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/git/v1/repo/{repo}/trigger/{trigger}
+      name: git-v1-repo-trigger
+      description: REST surface for git-v1-repo-trigger.
+      operations:
+      - method: DELETE
+        name: handle-delete-git-trigger
+        description: Delete a Git Trigger
+        call: git-triggers.handle-delete-git-trigger
+        with:
+          repo: rest.path.repo
+          trigger: rest.path.trigger
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: git-triggers-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Freestyle Git API triggers. One tool per consumed operation.
+    tools:
+    - name: freestyle-handle-list-git-triggers
+      description: List Git Triggers for a Repository
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: git-triggers.handle-list-git-triggers
+      with:
+        repo: tools.path.repo
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: freestyle-handle-create-git-trigger
+      description: Create a Git Trigger
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: git-triggers.handle-create-git-trigger
+      with:
+        repo: tools.path.repo
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: freestyle-handle-delete-git-trigger
+      description: Delete a Git Trigger
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: git-triggers.handle-delete-git-trigger
+      with:
+        repo: tools.path.repo
+        trigger: tools.path.trigger
+      outputParameters:
+      - type: object
+        mapping: $.

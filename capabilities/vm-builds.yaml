@@ -1,0 +1,122 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: "Freestyle VMs API \u2014 Builds"
+  description: 'Freestyle VMs API builds surface. 2 operations. Lead operation: get_build. Self-contained Naftiko capability
+    for one Freestyle business surface.'
+  tags:
+  - Freestyle
+  - VM
+  - Builds
+  created: '2026-05-25'
+  modified: '2026-05-25'
+binds:
+- namespace: env
+  keys:
+    FREESTYLE_API_KEY: FREESTYLE_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: vm-builds
+    baseUri: https://api.freestyle.sh
+    description: Freestyle VMs API builds business capability.
+    resources:
+    - name: v1-vms-builds
+      path: /v1/vms/builds/{build_id}
+      operations:
+      - name: get-build
+        method: GET
+        description: get_build
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: build_id
+          in: path
+          type: string
+          required: true
+    - name: v1-vms-builds-phases
+      path: /v1/vms/builds/{build_id}/phases
+      operations:
+      - name: list-build-phases
+        method: GET
+        description: list_build_phases
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: build_id
+          in: path
+          type: string
+          required: true
+    authentication:
+      type: apikey
+      key: Authorization
+      value: Bearer {{env.FREESTYLE_API_KEY}}
+      placement: header
+  exposes:
+  - type: rest
+    namespace: vm-builds-rest
+    port: 8080
+    description: REST adapter for Freestyle VMs API builds. One Spectral-compliant resource per consumed operation, prefixed
+      with /v1.
+    resources:
+    - path: /v1/v1/vms/builds/{build_id}
+      name: v1-vms-builds
+      description: REST surface for v1-vms-builds.
+      operations:
+      - method: GET
+        name: get-build
+        description: get-build
+        call: vm-builds.get-build
+        with:
+          build_id: rest.path.build_id
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/v1/vms/builds/{build_id}/phases
+      name: v1-vms-builds-phases
+      description: REST surface for v1-vms-builds-phases.
+      operations:
+      - method: GET
+        name: list-build-phases
+        description: list-build-phases
+        call: vm-builds.list-build-phases
+        with:
+          build_id: rest.path.build_id
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: vm-builds-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Freestyle VMs API builds. One tool per consumed operation.
+    tools:
+    - name: freestyle-get-build
+      description: get-build
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: vm-builds.get-build
+      with:
+        build_id: tools.path.build_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: freestyle-list-build-phases
+      description: list-build-phases
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: vm-builds.list-build-phases
+      with:
+        build_id: tools.path.build_id
+      outputParameters:
+      - type: object
+        mapping: $.

@@ -1,0 +1,156 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: "Freestyle Git API \u2014 Github Sync"
+  description: 'Freestyle Git API github sync surface. 3 operations. Lead operation: Get GitHub Sync Configuration. Self-contained
+    Naftiko capability for one Freestyle business surface.'
+  tags:
+  - Freestyle
+  - Git
+  - Github Sync
+  created: '2026-05-25'
+  modified: '2026-05-25'
+binds:
+- namespace: env
+  keys:
+    FREESTYLE_API_KEY: FREESTYLE_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: git-github-sync
+    baseUri: https://api.freestyle.sh
+    description: Freestyle Git API github sync business capability.
+    resources:
+    - name: git-v1-repo-github-sync
+      path: /git/v1/repo/{repo_id}/github-sync
+      operations:
+      - name: get-github-sync
+        method: GET
+        description: Get GitHub Sync Configuration
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: repo_id
+          in: path
+          type: string
+          required: true
+      - name: configure-github-sync
+        method: POST
+        description: Configure GitHub Sync for Repository
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: repo_id
+          in: path
+          type: string
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: false
+      - name: remove-github-sync
+        method: DELETE
+        description: Remove GitHub Sync Configuration
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: repo_id
+          in: path
+          type: string
+          required: true
+    authentication:
+      type: apikey
+      key: Authorization
+      value: Bearer {{env.FREESTYLE_API_KEY}}
+      placement: header
+  exposes:
+  - type: rest
+    namespace: git-github-sync-rest
+    port: 8080
+    description: REST adapter for Freestyle Git API github-sync. One Spectral-compliant resource per consumed operation, prefixed
+      with /v1.
+    resources:
+    - path: /v1/git/v1/repo/{repo_id}/github-sync
+      name: git-v1-repo-github-sync
+      description: REST surface for git-v1-repo-github-sync.
+      operations:
+      - method: GET
+        name: get-github-sync
+        description: Get GitHub Sync Configuration
+        call: git-github-sync.get-github-sync
+        with:
+          repo_id: rest.path.repo_id
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: configure-github-sync
+        description: Configure GitHub Sync for Repository
+        call: git-github-sync.configure-github-sync
+        with:
+          repo_id: rest.path.repo_id
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: DELETE
+        name: remove-github-sync
+        description: Remove GitHub Sync Configuration
+        call: git-github-sync.remove-github-sync
+        with:
+          repo_id: rest.path.repo_id
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: git-github-sync-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Freestyle Git API github-sync. One tool per consumed operation.
+    tools:
+    - name: freestyle-get-github-sync
+      description: Get GitHub Sync Configuration
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: git-github-sync.get-github-sync
+      with:
+        repo_id: tools.path.repo_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: freestyle-configure-github-sync
+      description: Configure GitHub Sync for Repository
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: git-github-sync.configure-github-sync
+      with:
+        repo_id: tools.path.repo_id
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: freestyle-remove-github-sync
+      description: Remove GitHub Sync Configuration
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: git-github-sync.remove-github-sync
+      with:
+        repo_id: tools.path.repo_id
+      outputParameters:
+      - type: object
+        mapping: $.

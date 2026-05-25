@@ -1,0 +1,389 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: "Freestyle Cron API \u2014 Schedules"
+  description: 'Freestyle Cron API schedules surface. 8 operations. Lead operation: handle_list_schedules. Self-contained
+    Naftiko capability for one Freestyle business surface.'
+  tags:
+  - Freestyle
+  - Cron
+  - Schedules
+  created: '2026-05-25'
+  modified: '2026-05-25'
+binds:
+- namespace: env
+  keys:
+    FREESTYLE_API_KEY: FREESTYLE_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: cron-schedules
+    baseUri: https://api.freestyle.sh
+    description: Freestyle Cron API schedules business capability.
+    resources:
+    - name: v1-cron-schedules
+      path: /v1/cron/schedules
+      operations:
+      - name: handle-list-schedules
+        method: GET
+        description: handle_list_schedules
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: deploymentId
+          in: query
+          type: string
+          required: false
+        - name: metricsStart
+          in: query
+          type: string
+          required: false
+        - name: metricsEnd
+          in: query
+          type: string
+          required: false
+      - name: handle-create-schedule
+        method: POST
+        description: handle_create_schedule
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: false
+    - name: v1-cron-schedules
+      path: /v1/cron/schedules/{id}
+      operations:
+      - name: handle-get-schedule
+        method: GET
+        description: handle_get_schedule
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: id
+          in: path
+          type: string
+          required: true
+      - name: handle-delete-schedule
+        method: DELETE
+        description: handle_delete_schedule
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: id
+          in: path
+          type: string
+          required: true
+      - name: handle-update-schedule
+        method: PATCH
+        description: handle_update_schedule
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: id
+          in: path
+          type: string
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: false
+    - name: v1-cron-schedules-executions
+      path: /v1/cron/schedules/{id}/executions
+      operations:
+      - name: handle-list-schedule-executions
+        method: GET
+        description: handle_list_schedule_executions
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: id
+          in: path
+          type: string
+          required: true
+        - name: limit
+          in: query
+          type: string
+          required: false
+        - name: offset
+          in: query
+          type: string
+          required: false
+    - name: v1-cron-schedules-metrics-timeline
+      path: /v1/cron/schedules/{id}/metrics-timeline
+      operations:
+      - name: handle-get-metrics-timeline
+        method: GET
+        description: handle_get_metrics_timeline
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: id
+          in: path
+          type: string
+          required: true
+        - name: start
+          in: query
+          type: string
+          required: true
+        - name: end
+          in: query
+          type: string
+          required: true
+        - name: bucketMinutes
+          in: query
+          type: string
+          required: false
+    - name: v1-cron-schedules-success-rate
+      path: /v1/cron/schedules/{id}/success-rate
+      operations:
+      - name: handle-get-schedule-success-rate
+        method: GET
+        description: handle_get_schedule_success_rate
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: id
+          in: path
+          type: string
+          required: true
+        - name: start
+          in: query
+          type: string
+          required: true
+        - name: end
+          in: query
+          type: string
+          required: true
+    authentication:
+      type: apikey
+      key: Authorization
+      value: Bearer {{env.FREESTYLE_API_KEY}}
+      placement: header
+  exposes:
+  - type: rest
+    namespace: cron-schedules-rest
+    port: 8080
+    description: REST adapter for Freestyle Cron API schedules. One Spectral-compliant resource per consumed operation, prefixed
+      with /v1.
+    resources:
+    - path: /v1/v1/cron/schedules
+      name: v1-cron-schedules
+      description: REST surface for v1-cron-schedules.
+      operations:
+      - method: GET
+        name: handle-list-schedules
+        description: handle-list-schedules
+        call: cron-schedules.handle-list-schedules
+        with: {}
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: handle-create-schedule
+        description: handle-create-schedule
+        call: cron-schedules.handle-create-schedule
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/v1/cron/schedules/{id}
+      name: v1-cron-schedules
+      description: REST surface for v1-cron-schedules.
+      operations:
+      - method: GET
+        name: handle-get-schedule
+        description: handle-get-schedule
+        call: cron-schedules.handle-get-schedule
+        with:
+          id: rest.path.id
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: DELETE
+        name: handle-delete-schedule
+        description: handle-delete-schedule
+        call: cron-schedules.handle-delete-schedule
+        with:
+          id: rest.path.id
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PATCH
+        name: handle-update-schedule
+        description: handle-update-schedule
+        call: cron-schedules.handle-update-schedule
+        with:
+          id: rest.path.id
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/v1/cron/schedules/{id}/executions
+      name: v1-cron-schedules-executions
+      description: REST surface for v1-cron-schedules-executions.
+      operations:
+      - method: GET
+        name: handle-list-schedule-executions
+        description: handle-list-schedule-executions
+        call: cron-schedules.handle-list-schedule-executions
+        with:
+          id: rest.path.id
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/v1/cron/schedules/{id}/metrics-timeline
+      name: v1-cron-schedules-metrics-timeline
+      description: REST surface for v1-cron-schedules-metrics-timeline.
+      operations:
+      - method: GET
+        name: handle-get-metrics-timeline
+        description: handle-get-metrics-timeline
+        call: cron-schedules.handle-get-metrics-timeline
+        with:
+          id: rest.path.id
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/v1/cron/schedules/{id}/success-rate
+      name: v1-cron-schedules-success-rate
+      description: REST surface for v1-cron-schedules-success-rate.
+      operations:
+      - method: GET
+        name: handle-get-schedule-success-rate
+        description: handle-get-schedule-success-rate
+        call: cron-schedules.handle-get-schedule-success-rate
+        with:
+          id: rest.path.id
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: cron-schedules-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Freestyle Cron API schedules. One tool per consumed operation.
+    tools:
+    - name: freestyle-handle-list-schedules
+      description: handle-list-schedules
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: cron-schedules.handle-list-schedules
+      with: {}
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: freestyle-handle-create-schedule
+      description: handle-create-schedule
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: cron-schedules.handle-create-schedule
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: freestyle-handle-get-schedule
+      description: handle-get-schedule
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: cron-schedules.handle-get-schedule
+      with:
+        id: tools.path.id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: freestyle-handle-delete-schedule
+      description: handle-delete-schedule
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: cron-schedules.handle-delete-schedule
+      with:
+        id: tools.path.id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: freestyle-handle-update-schedule
+      description: handle-update-schedule
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: cron-schedules.handle-update-schedule
+      with:
+        id: tools.path.id
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: freestyle-handle-list-schedule-executions
+      description: handle-list-schedule-executions
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: cron-schedules.handle-list-schedule-executions
+      with:
+        id: tools.path.id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: freestyle-handle-get-metrics-timeline
+      description: handle-get-metrics-timeline
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: cron-schedules.handle-get-metrics-timeline
+      with:
+        id: tools.path.id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: freestyle-handle-get-schedule-success-rate
+      description: handle-get-schedule-success-rate
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: cron-schedules.handle-get-schedule-success-rate
+      with:
+        id: tools.path.id
+      outputParameters:
+      - type: object
+        mapping: $.

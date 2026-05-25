@@ -1,0 +1,270 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: "Freestyle Identity API \u2014 Git Permissions"
+  description: 'Freestyle Identity API git permissions surface. 5 operations. Lead operation: List Repository Permissions
+    for an Identity. Self-contained Naftiko capability for one Freestyle business surface.'
+  tags:
+  - Freestyle
+  - Identity
+  - Git Permissions
+  created: '2026-05-25'
+  modified: '2026-05-25'
+binds:
+- namespace: env
+  keys:
+    FREESTYLE_API_KEY: FREESTYLE_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: identity-git-permissions
+    baseUri: https://api.freestyle.sh
+    description: Freestyle Identity API git permissions business capability.
+    resources:
+    - name: identity-v1-identities-permissions-git
+      path: /identity/v1/identities/{identity}/permissions/git
+      operations:
+      - name: handle-list-git-permissions
+        method: GET
+        description: List Repository Permissions for an Identity
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: identity
+          in: path
+          type: string
+          required: true
+        - name: limit
+          in: query
+          type: string
+          required: false
+        - name: offset
+          in: query
+          type: string
+          required: false
+    - name: identity-v1-identities-permissions-git
+      path: /identity/v1/identities/{identity}/permissions/git/{repo}
+      operations:
+      - name: handle-describe-git-permission
+        method: GET
+        description: Get the Git Permission of an Identity on a Repository
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: identity
+          in: path
+          type: string
+          required: true
+        - name: repo
+          in: path
+          type: string
+          required: true
+      - name: handle-update-git-permission
+        method: PUT
+        description: Update a Git Repository Permission for an Identity
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: identity
+          in: path
+          type: string
+          required: true
+        - name: repo
+          in: path
+          type: string
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: false
+      - name: handle-grant-git-permission
+        method: POST
+        description: Grant a Git Repository Permission to an Identity
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: identity
+          in: path
+          type: string
+          required: true
+        - name: repo
+          in: path
+          type: string
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: false
+      - name: handle-revoke-git-permission
+        method: DELETE
+        description: Revoke Git Repository Permission From an Identity
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: identity
+          in: path
+          type: string
+          required: true
+        - name: repo
+          in: path
+          type: string
+          required: true
+    authentication:
+      type: apikey
+      key: Authorization
+      value: Bearer {{env.FREESTYLE_API_KEY}}
+      placement: header
+  exposes:
+  - type: rest
+    namespace: identity-git-permissions-rest
+    port: 8080
+    description: REST adapter for Freestyle Identity API git-permissions. One Spectral-compliant resource per consumed operation,
+      prefixed with /v1.
+    resources:
+    - path: /v1/identity/v1/identities/{identity}/permissions/git
+      name: identity-v1-identities-permissions-git
+      description: REST surface for identity-v1-identities-permissions-git.
+      operations:
+      - method: GET
+        name: handle-list-git-permissions
+        description: List Repository Permissions for an Identity
+        call: identity-git-permissions.handle-list-git-permissions
+        with:
+          identity: rest.path.identity
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/identity/v1/identities/{identity}/permissions/git/{repo}
+      name: identity-v1-identities-permissions-git
+      description: REST surface for identity-v1-identities-permissions-git.
+      operations:
+      - method: GET
+        name: handle-describe-git-permission
+        description: Get the Git Permission of an Identity on a Repository
+        call: identity-git-permissions.handle-describe-git-permission
+        with:
+          identity: rest.path.identity
+          repo: rest.path.repo
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PUT
+        name: handle-update-git-permission
+        description: Update a Git Repository Permission for an Identity
+        call: identity-git-permissions.handle-update-git-permission
+        with:
+          identity: rest.path.identity
+          repo: rest.path.repo
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: handle-grant-git-permission
+        description: Grant a Git Repository Permission to an Identity
+        call: identity-git-permissions.handle-grant-git-permission
+        with:
+          identity: rest.path.identity
+          repo: rest.path.repo
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: DELETE
+        name: handle-revoke-git-permission
+        description: Revoke Git Repository Permission From an Identity
+        call: identity-git-permissions.handle-revoke-git-permission
+        with:
+          identity: rest.path.identity
+          repo: rest.path.repo
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: identity-git-permissions-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Freestyle Identity API git-permissions. One tool per consumed operation.
+    tools:
+    - name: freestyle-handle-list-git-permissions
+      description: List Repository Permissions for an Identity
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: identity-git-permissions.handle-list-git-permissions
+      with:
+        identity: tools.path.identity
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: freestyle-handle-describe-git-permission
+      description: Get the Git Permission of an Identity on a Repository
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: identity-git-permissions.handle-describe-git-permission
+      with:
+        identity: tools.path.identity
+        repo: tools.path.repo
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: freestyle-handle-update-git-permission
+      description: Update a Git Repository Permission for an Identity
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: identity-git-permissions.handle-update-git-permission
+      with:
+        identity: tools.path.identity
+        repo: tools.path.repo
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: freestyle-handle-grant-git-permission
+      description: Grant a Git Repository Permission to an Identity
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: identity-git-permissions.handle-grant-git-permission
+      with:
+        identity: tools.path.identity
+        repo: tools.path.repo
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: freestyle-handle-revoke-git-permission
+      description: Revoke Git Repository Permission From an Identity
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: identity-git-permissions.handle-revoke-git-permission
+      with:
+        identity: tools.path.identity
+        repo: tools.path.repo
+      outputParameters:
+      - type: object
+        mapping: $.

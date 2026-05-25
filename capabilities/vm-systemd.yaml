@@ -1,0 +1,415 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: "Freestyle VMs API \u2014 Systemd"
+  description: 'Freestyle VMs API systemd surface. 8 operations. Lead operation: batch_restart_services. Self-contained Naftiko
+    capability for one Freestyle business surface.'
+  tags:
+  - Freestyle
+  - VM
+  - Systemd
+  created: '2026-05-25'
+  modified: '2026-05-25'
+binds:
+- namespace: env
+  keys:
+    FREESTYLE_API_KEY: FREESTYLE_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: vm-systemd
+    baseUri: https://api.freestyle.sh
+    description: Freestyle VMs API systemd business capability.
+    resources:
+    - name: v1-vms-systemd-restart
+      path: /v1/vms/{vm_id}/systemd/restart
+      operations:
+      - name: batch-restart-services
+        method: POST
+        description: batch_restart_services
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: vm_id
+          in: path
+          type: string
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: false
+    - name: v1-vms-systemd-services
+      path: /v1/vms/{vm_id}/systemd/services
+      operations:
+      - name: list-services
+        method: GET
+        description: list_services
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: vm_id
+          in: path
+          type: string
+          required: true
+      - name: create-service
+        method: POST
+        description: create_service
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: vm_id
+          in: path
+          type: string
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: false
+    - name: v1-vms-systemd-services
+      path: /v1/vms/{vm_id}/systemd/services/{service_id}
+      operations:
+      - name: delete-service
+        method: DELETE
+        description: delete_service
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: vm_id
+          in: path
+          type: string
+          required: true
+        - name: service_id
+          in: path
+          type: string
+          required: true
+    - name: v1-vms-systemd-services-logs
+      path: /v1/vms/{vm_id}/systemd/services/{service_id}/logs
+      operations:
+      - name: get-service-logs
+        method: GET
+        description: get_service_logs
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: vm_id
+          in: path
+          type: string
+          required: true
+        - name: service_id
+          in: path
+          type: string
+          required: true
+        - name: lines
+          in: query
+          type: string
+          required: false
+        - name: since
+          in: query
+          type: string
+          required: false
+    - name: v1-vms-systemd-services-status
+      path: /v1/vms/{vm_id}/systemd/services/{service_id}/status
+      operations:
+      - name: get-service-status
+        method: GET
+        description: get_service_status
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: vm_id
+          in: path
+          type: string
+          required: true
+        - name: service_id
+          in: path
+          type: string
+          required: true
+    - name: v1-vms-systemd-start
+      path: /v1/vms/{vm_id}/systemd/start
+      operations:
+      - name: batch-start-services
+        method: POST
+        description: batch_start_services
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: vm_id
+          in: path
+          type: string
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: false
+    - name: v1-vms-systemd-stop
+      path: /v1/vms/{vm_id}/systemd/stop
+      operations:
+      - name: batch-stop-services
+        method: POST
+        description: batch_stop_services
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: vm_id
+          in: path
+          type: string
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: false
+    authentication:
+      type: apikey
+      key: Authorization
+      value: Bearer {{env.FREESTYLE_API_KEY}}
+      placement: header
+  exposes:
+  - type: rest
+    namespace: vm-systemd-rest
+    port: 8080
+    description: REST adapter for Freestyle VMs API systemd. One Spectral-compliant resource per consumed operation, prefixed
+      with /v1.
+    resources:
+    - path: /v1/v1/vms/{vm_id}/systemd/restart
+      name: v1-vms-systemd-restart
+      description: REST surface for v1-vms-systemd-restart.
+      operations:
+      - method: POST
+        name: batch-restart-services
+        description: batch-restart-services
+        call: vm-systemd.batch-restart-services
+        with:
+          vm_id: rest.path.vm_id
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/v1/vms/{vm_id}/systemd/services
+      name: v1-vms-systemd-services
+      description: REST surface for v1-vms-systemd-services.
+      operations:
+      - method: GET
+        name: list-services
+        description: list-services
+        call: vm-systemd.list-services
+        with:
+          vm_id: rest.path.vm_id
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: create-service
+        description: create-service
+        call: vm-systemd.create-service
+        with:
+          vm_id: rest.path.vm_id
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/v1/vms/{vm_id}/systemd/services/{service_id}
+      name: v1-vms-systemd-services
+      description: REST surface for v1-vms-systemd-services.
+      operations:
+      - method: DELETE
+        name: delete-service
+        description: delete-service
+        call: vm-systemd.delete-service
+        with:
+          vm_id: rest.path.vm_id
+          service_id: rest.path.service_id
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/v1/vms/{vm_id}/systemd/services/{service_id}/logs
+      name: v1-vms-systemd-services-logs
+      description: REST surface for v1-vms-systemd-services-logs.
+      operations:
+      - method: GET
+        name: get-service-logs
+        description: get-service-logs
+        call: vm-systemd.get-service-logs
+        with:
+          vm_id: rest.path.vm_id
+          service_id: rest.path.service_id
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/v1/vms/{vm_id}/systemd/services/{service_id}/status
+      name: v1-vms-systemd-services-status
+      description: REST surface for v1-vms-systemd-services-status.
+      operations:
+      - method: GET
+        name: get-service-status
+        description: get-service-status
+        call: vm-systemd.get-service-status
+        with:
+          vm_id: rest.path.vm_id
+          service_id: rest.path.service_id
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/v1/vms/{vm_id}/systemd/start
+      name: v1-vms-systemd-start
+      description: REST surface for v1-vms-systemd-start.
+      operations:
+      - method: POST
+        name: batch-start-services
+        description: batch-start-services
+        call: vm-systemd.batch-start-services
+        with:
+          vm_id: rest.path.vm_id
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/v1/vms/{vm_id}/systemd/stop
+      name: v1-vms-systemd-stop
+      description: REST surface for v1-vms-systemd-stop.
+      operations:
+      - method: POST
+        name: batch-stop-services
+        description: batch-stop-services
+        call: vm-systemd.batch-stop-services
+        with:
+          vm_id: rest.path.vm_id
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: vm-systemd-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Freestyle VMs API systemd. One tool per consumed operation.
+    tools:
+    - name: freestyle-batch-restart-services
+      description: batch-restart-services
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: vm-systemd.batch-restart-services
+      with:
+        vm_id: tools.path.vm_id
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: freestyle-list-services
+      description: list-services
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: vm-systemd.list-services
+      with:
+        vm_id: tools.path.vm_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: freestyle-create-service
+      description: create-service
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: vm-systemd.create-service
+      with:
+        vm_id: tools.path.vm_id
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: freestyle-delete-service
+      description: delete-service
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: vm-systemd.delete-service
+      with:
+        vm_id: tools.path.vm_id
+        service_id: tools.path.service_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: freestyle-get-service-logs
+      description: get-service-logs
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: vm-systemd.get-service-logs
+      with:
+        vm_id: tools.path.vm_id
+        service_id: tools.path.service_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: freestyle-get-service-status
+      description: get-service-status
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: vm-systemd.get-service-status
+      with:
+        vm_id: tools.path.vm_id
+        service_id: tools.path.service_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: freestyle-batch-start-services
+      description: batch-start-services
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: vm-systemd.batch-start-services
+      with:
+        vm_id: tools.path.vm_id
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: freestyle-batch-stop-services
+      description: batch-stop-services
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: vm-systemd.batch-stop-services
+      with:
+        vm_id: tools.path.vm_id
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.

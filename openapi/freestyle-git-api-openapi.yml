@@ -1,0 +1,3521 @@
+openapi: 3.1.0
+info:
+  title: Freestyle Git API
+  version: 0.1.0
+  description: "Multi-tenant Git hosting for AI agents \u2014 repos, commits, branches, tags, trees, blobs, search across\
+    \ files/commits/diffs, GitHub Sync, repair jobs, triggers, and tarball/zip downloads."
+  contact:
+    name: Ben
+    email: ben@freestyle.sh
+  license:
+    name: Closed Source
+servers:
+- url: https://api.freestyle.sh
+  description: Production
+tags:
+- name: Git
+  description: APIs for managing git repositories and accessing git objects like commits, trees, blobs, tags, and refs.
+paths:
+  /git/v1/repo:
+    get:
+      tags:
+      - Git
+      summary: List Repositories
+      description: List repositories with metadata.
+      operationId: handle_list_repositories
+      parameters:
+      - name: limit
+        in: query
+        description: Maximum number of repositories to return
+        required: false
+        schema:
+          type: integer
+          format: int64
+          minimum: 0
+      - name: offset
+        in: query
+        description: Offset for the list of repositories
+        required: false
+        schema:
+          type: integer
+          format: int64
+          minimum: 0
+      - name: search
+        in: query
+        description: Search filter by repository name or ID
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: List of repositories
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListRepositoriesSuccess'
+        '500':
+          description: 'Possible errors: Internal, GitClient'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                - message
+                properties:
+                  error:
+                    type: string
+                    description: Error code in SCREAMING_SNAKE_CASE
+                  message:
+                    type: string
+                    description: Human-readable error message
+    post:
+      tags:
+      - Git
+      summary: Create a Repository
+      description: 'Create a repository. Once the repository is created, it will also be created on the Git server.
+
+        The repository name must be unique within your account.
+
+
+        Once created, you can then push your code to this repository.
+
+
+        The repo will be available at `git.freestyle.sh/{repo-id}`
+
+        '
+      operationId: handle_create_repo
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type:
+                  - string
+                  - 'null'
+                  description: 'This name is not visible to users, and is only accessible to you via API and in the
+
+                    dashboard. Mostly useful for observability.'
+                public:
+                  type: boolean
+                  default: false
+                defaultBranch:
+                  type:
+                  - string
+                  - 'null'
+                  description: The default branch name for the repository. Defaults to "main" if not specified.
+                source:
+                  $ref: '#/components/schemas/CreateRepoSource'
+                  description: Fork from another Git repository. Cannot be used with `import`.
+                import:
+                  $ref: '#/components/schemas/CreateRepoImport'
+                  description: Import static content with an initial commit. Cannot be used with `source`.
+        required: true
+      responses:
+        '200':
+          description: Repository created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateRepositoryResponseSuccess'
+        '403':
+          description: 'Error: GitRepoLimitExceeded'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                - message
+                properties:
+                  error:
+                    type: string
+                    description: Error code in SCREAMING_SNAKE_CASE
+                  message:
+                    type: string
+                    description: Human-readable error message
+        '500':
+          description: 'Possible errors: InternalServerError, GitClient'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                - message
+                properties:
+                  error:
+                    type: string
+                    description: Error code in SCREAMING_SNAKE_CASE
+                  message:
+                    type: string
+                    description: Human-readable error message
+  /git/v1/repo/{repo_id}/default-branch:
+    get:
+      tags:
+      - Git
+      summary: Get Repository Default Branch
+      description: Get the default branch name for a repository.
+      operationId: handle_get_default_branch
+      parameters:
+      - name: repo_id
+        in: path
+        description: The repository ID
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetDefaultBranchResponse'
+        '403':
+          description: 'Error: Forbidden'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                - message
+                properties:
+                  error:
+                    type: string
+                    description: Error code in SCREAMING_SNAKE_CASE
+                  message:
+                    type: string
+                    description: Human-readable error message
+        '500':
+          description: 'Possible errors: Internal, GitClient'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                - message
+                properties:
+                  error:
+                    type: string
+                    description: Error code in SCREAMING_SNAKE_CASE
+                  message:
+                    type: string
+                    description: Human-readable error message
+    put:
+      tags:
+      - Git
+      summary: Set Repository Default Branch
+      description: Set the default branch name for a repository. This will update the HEAD reference to point to the new default
+        branch.
+      operationId: handle_set_default_branch
+      parameters:
+      - name: repo_id
+        in: path
+        description: The repository ID
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SetDefaultBranchRequest'
+        required: true
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SetDefaultBranchResponse'
+        '403':
+          description: 'Error: Forbidden'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                - message
+                properties:
+                  error:
+                    type: string
+                    description: Error code in SCREAMING_SNAKE_CASE
+                  message:
+                    type: string
+                    description: Human-readable error message
+        '500':
+          description: 'Possible errors: Internal, GitClient'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                - message
+                properties:
+                  error:
+                    type: string
+                    description: Error code in SCREAMING_SNAKE_CASE
+                  message:
+                    type: string
+                    description: Human-readable error message
+  /git/v1/repo/{repo_id}/github-sync:
+    get:
+      tags:
+      - Git
+      summary: Get GitHub Sync Configuration
+      description: Get the GitHub sync configuration for a repository, if configured.
+      operationId: get_github_sync
+      parameters:
+      - name: repo_id
+        in: path
+        description: Repository ID
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: GitHub sync configuration
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GithubSyncConfigResponse'
+        '404':
+          description: Repository or sync configuration not found
+        '500':
+          description: Internal server error
+    post:
+      tags:
+      - Git
+      summary: Configure GitHub Sync for Repository
+      description: Configure GitHub synchronization for an existing Freestyle repository. This links your Freestyle repository
+        to a GitHub repository for automatic syncing. Requires the GitHub repository name in 'owner/repo' format.
+      operationId: configure_github_sync
+      parameters:
+      - name: repo_id
+        in: path
+        description: Repository ID
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConfigureGithubSyncRequest'
+        required: true
+      responses:
+        '200':
+          description: GitHub sync configured successfully
+        '400':
+          description: Bad request
+        '404':
+          description: Repository not found
+        '500':
+          description: Internal server error
+    delete:
+      tags:
+      - Git
+      summary: Remove GitHub Sync Configuration
+      description: Remove GitHub sync configuration from a repository. This stops automatic syncing but doesn't affect the
+        repository content.
+      operationId: remove_github_sync
+      parameters:
+      - name: repo_id
+        in: path
+        description: Repository ID
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: GitHub sync configuration removed successfully
+        '404':
+          description: Repository or sync configuration not found
+        '500':
+          description: Internal server error
+  /git/v1/repo/{repo_id}/visibility:
+    get:
+      tags:
+      - Git
+      summary: Get Repository Visibility
+      description: Get the visibility (public or private) for a repository.
+      operationId: handle_get_visibility
+      parameters:
+      - name: repo_id
+        in: path
+        description: The repository ID
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetVisibilityResponse'
+        '403':
+          description: 'Error: Forbidden'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                - message
+                properties:
+                  error:
+                    type: string
+                    description: Error code in SCREAMING_SNAKE_CASE
+                  message:
+                    type: string
+                    description: Human-readable error message
+        '500':
+          description: 'Possible errors: Internal, GitClient'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                - message
+                properties:
+                  error:
+                    type: string
+                    description: Error code in SCREAMING_SNAKE_CASE
+                  message:
+                    type: string
+                    description: Human-readable error message
+    put:
+      tags:
+      - Git
+      summary: Set Repository Visibility
+      description: Set the visibility (public or private) for a repository.
+      operationId: handle_set_visibility
+      parameters:
+      - name: repo_id
+        in: path
+        description: The repository ID
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SetVisibilityRequest'
+        required: true
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SetVisibilityResponse'
+        '403':
+          description: 'Error: Forbidden'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                - message
+                properties:
+                  error:
+                    type: string
+                    description: Error code in SCREAMING_SNAKE_CASE
+                  message:
+                    type: string
+                    description: Human-readable error message
+        '500':
+          description: 'Possible errors: Internal, GitClient'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                - message
+                properties:
+                  error:
+                    type: string
+                    description: Error code in SCREAMING_SNAKE_CASE
+                  message:
+                    type: string
+                    description: Human-readable error message
+  /git/v1/repo/{repo}:
+    get:
+      tags:
+      - Git
+      summary: Get Repository Information
+      description: Retrieve information about a specific repository, including its ID, name, and default branch.
+      operationId: handle_get_repo_info
+      parameters:
+      - name: repo
+        in: path
+        description: The repository id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Repository information retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RepositoryInfoRaw'
+        '400':
+          description: Invalid request
+        '403':
+          description: Forbidden access to repository
+        '404':
+          description: Repository not found
+        '500':
+          description: Internal server error
+    delete:
+      tags:
+      - Git
+      summary: Delete a Repository
+      description: Delete a repository. This is irreversible, and will also delete the repository on the Git server.
+      operationId: handle_delete_repo
+      parameters:
+      - name: repo
+        in: path
+        description: The repository id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Repository deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteRepositorySuccess'
+        '403':
+          description: 'Error: Forbidden'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                - message
+                properties:
+                  error:
+                    type: string
+                    description: Error code in SCREAMING_SNAKE_CASE
+                  message:
+                    type: string
+                    description: Human-readable error message
+        '500':
+          description: 'Possible errors: Internal, GitClient'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                - message
+                properties:
+                  error:
+                    type: string
+                    description: Error code in SCREAMING_SNAKE_CASE
+                  message:
+                    type: string
+                    description: Human-readable error message
+  /git/v1/repo/{repo}/commits:
+    post:
+      tags:
+      - Git
+      summary: Create a Commit with Files
+      description: Create a commit from files with automatic tree building and branch updates. Supports text files (UTF-8),
+        binary files (base64), file deletions, and optimistic concurrency control via expectedSha. If the target branch does
+        not exist, it is created as an orphan branch with this commit as its root.
+      operationId: handle_create_commit
+      parameters:
+      - name: repo
+        in: path
+        description: The repository id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCommitRequest'
+        required: true
+      responses:
+        '200':
+          description: Commit created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateCommitResponse'
+        '403':
+          description: 'Error: Forbidden'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                - message
+                properties:
+                  error:
+                    type: string
+                    description: Error code in SCREAMING_SNAKE_CASE
+                  message:
+                    type: string
+                    description: Human-readable error message
+        '500':
+          description: 'Error: GitClient'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                - message
+                properties:
+                  error:
+                    type: string
+                    description: Error code in SCREAMING_SNAKE_CASE
+                  message:
+                    type: string
+                    description: Human-readable error message
+  /git/v1/repo/{repo}/compare:
+    get:
+      tags:
+      - Git
+      summary: Compare Two Commits
+      description: Get the comparison between two commits in a repository
+      operationId: handle_compare_commits
+      parameters:
+      - name: repo
+        in: path
+        description: The repository id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: base
+        in: query
+        description: Base revision (commit SHA, branch name, tag, or any valid Git revision)
+        required: true
+        schema:
+          type: string
+        example: main
+      - name: head
+        in: query
+        description: Head revision (commit SHA, branch name, tag, or any valid Git revision)
+        required: true
+        schema:
+          type: string
+        example: dev
+      responses:
+        '200':
+          description: Comparison retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommitComparison'
+  /git/v1/repo/{repo}/contents/{path}:
+    get:
+      tags:
+      - Git
+      summary: Get the Contents of a File or Directory
+      description: Get the contents of a file or directory in a repository
+      operationId: handle_get_contents
+      parameters:
+      - name: rev
+        in: query
+        description: The git revision (branch name, commit SHA, etc.). Defaults to HEAD.
+        required: false
+        schema:
+          type: string
+      - name: recursive
+        in: query
+        description: 'If true, directory entries include their descendants recursively.
+
+          Defaults to false (immediate children only).'
+        required: false
+        schema:
+          type: boolean
+      - name: repo
+        in: path
+        description: The repository ID.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: path
+        in: path
+        description: The path to the file or directory. Empty for root.
+        required: true
+        schema:
+          type:
+          - string
+          - 'null'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GitContents'
+  /git/v1/repo/{repo}/git/blobs/{hash}:
+    get:
+      tags:
+      - Git
+      summary: Get a Blob Object
+      description: Get a blob from the Git database. The contents will always be base64 encoded.
+      operationId: handle_get_blob
+      parameters:
+      - name: repo
+        in: path
+        description: The repository id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: hash
+        in: path
+        description: The object's hash
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Blob retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BlobObject'
+  /git/v1/repo/{repo}/git/commits:
+    get:
+      tags:
+      - Git
+      summary: List Commits for a Repository
+      description: 'List commits with flexible filtering and pagination. Supports:
+
+        - Cursor-based pagination (recommended): Use `next_commit` from response with `until` (desc order) or `since` (asc
+        order)
+
+        - Commit ranges: Specify both `since` and `until` to get commits between them (like git''s `since..until`)
+
+        - Order control: `order=desc` (newest first, default) or `order=asc` (oldest first)
+
+        - Legacy offset pagination: Use `offset` param (deprecated, incompatible with since/until)
+
+
+        Requires repository visibility to be public or user to be the owner.'
+      operationId: handle_list_commits
+      parameters:
+      - name: repo
+        in: path
+        description: The repository id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: branch
+        in: query
+        description: Branch name (defaults to HEAD)
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+        example: main
+      - name: limit
+        in: query
+        description: 'Maximum number of commits to return (default: 50, max: 500)'
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          minimum: 0
+        example: '50'
+      - name: offset
+        in: query
+        description: 'Number of commits to skip (default: 0)'
+        required: false
+        deprecated: true
+        schema:
+          type:
+          - integer
+          - 'null'
+          minimum: 0
+        example: '0'
+      - name: order
+        in: query
+        description: 'Sort order: "desc" (newest first, default) or "asc" (oldest first)'
+        required: false
+        schema:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/CommitOrder'
+      - name: since
+        in: query
+        description: 'Start point (older commit) for filtering/pagination (commit SHA)
+
+          - When used alone with order=desc: Returns commits newer than this (exclusive). Use for "what''s new since X?"
+
+          - When used alone with order=asc: Starts from this commit (inclusive). Use with next_commit for pagination.
+
+          - When used with `until`: Defines the base of a range (like git''s A..B where this is A)'
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+        example: abc123
+      - name: until
+        in: query
+        description: 'End point (newer commit) for filtering/pagination (commit SHA)
+
+          - When used alone with order=desc: Starts from this commit (inclusive). Use with next_commit for pagination.
+
+          - When used alone with order=asc: Returns commits up to and including this commit.
+
+          - When used with `since`: Defines the head of a range (like git''s A..B where this is B)
+
+
+          When both `since` and `until` are provided, `until` must be a descendant of `since`.'
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+        example: def456
+      - name: disableTotalCount
+        in: query
+        description: 'If true, skip the exhaustive history walk used to compute `total`.
+
+          Defaults to false. When true, the `total` field is omitted from the
+
+          response. Use this for cursor-based pagination where `total` is unused.'
+        required: false
+        schema:
+          type:
+          - boolean
+          - 'null'
+      responses:
+        '200':
+          description: Commits retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommitList'
+        '403':
+          description: 'Error: Forbidden'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                - message
+                properties:
+                  error:
+                    type: string
+                    description: Error code in SCREAMING_SNAKE_CASE
+                  message:
+                    type: string
+                    description: Human-readable error message
+        '500':
+          description: 'Possible errors: Internal, GitClient'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                - message
+                properties:
+                  error:
+                    type: string
+                    description: Error code in SCREAMING_SNAKE_CASE
+                  message:
+                    type: string
+                    description: Human-readable error message
+    post:
+      tags:
+      - Git
+      summary: Create a Commit From Git Objects
+      description: Create a commit from tree and parent SHAs. This is a git object database operation for advanced use cases.
+        For file-based commits, use the high-level endpoint at /git/v1/repo/{repo}/commits.
+      operationId: handle_create_odb_commit
+      parameters:
+      - name: repo
+        in: path
+        description: The repository id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOdbCommitRequest'
+        required: true
+      responses:
+        '200':
+          description: Commit created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateOdbCommitResponse'
+        '403':
+          description: 'Error: Forbidden'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                - message
+                properties:
+                  error:
+                    type: string
+                    description: Error code in SCREAMING_SNAKE_CASE
+                  message:
+                    type: string
+                    description: Human-readable error message
+        '500':
+          description: 'Error: GitClient'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                - message
+                properties:
+                  error:
+                    type: string
+                    description: Error code in SCREAMING_SNAKE_CASE
+                  message:
+                    type: string
+                    description: Human-readable error message
+  /git/v1/repo/{repo}/git/commits/{hash}:
+    get:
+      tags:
+      - Git
+      summary: Get a Commit Object
+      description: Get a commit from the Git database with detailed information.
+      operationId: handle_get_commit
+      parameters:
+      - name: repo
+        in: path
+        description: The repository id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: hash
+        in: path
+        description: The object's hash
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Commit retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommitObject'
+  /git/v1/repo/{repo}/git/refs/heads/:
+    get:
+      tags:
+      - Git
+      summary: List Branches in a Repo
+      description: Get a list of all branches in the Git repository. Returns branch names and their commit SHAs.
+      operationId: handle_list_branches
+      parameters:
+      - name: repo
+        in: path
+        description: The repository id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Branches retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListBranchesResponse'
+  /git/v1/repo/{repo}/git/refs/heads/{*branch}:
+    post:
+      tags:
+      - Git
+      summary: Create a New Branch
+      description: Create a new branch in the Git repository. If sha is not provided, the branch is created from the default
+        branch HEAD.
+      operationId: handle_create_branch
+      parameters:
+      - name: repo
+        in: path
+        description: The repository id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: branch
+        in: path
+        description: The branch's name
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateBranchRequest'
+        required: true
+      responses:
+        '200':
+          description: Branch created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateBranchResponse'
+        '400':
+          description: 'Error: BranchNameEmpty'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                - message
+                properties:
+                  error:
+                    type: string
+                    description: Error code in SCREAMING_SNAKE_CASE
+                  message:
+                    type: string
+                    description: Human-readable error message
+        '403':
+          description: 'Error: Forbidden'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                - message
+                properties:
+                  error:
+                    type: string
+                    description: Error code in SCREAMING_SNAKE_CASE
+                  message:
+                    type: string
+                    description: Human-readable error message
+        '500':
+          description: 'Error: GitClient'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                - message
+                properties:
+                  error:
+                    type: string
+                    description: Error code in SCREAMING_SNAKE_CASE
+                  message:
+                    type: string
+                    description: Human-readable error message
+  /git/v1/repo/{repo}/git/refs/heads/{branch}:
+    get:
+      tags:
+      - Git
+      summary: Get a Branch Reference
+      description: Get a reference to a branch in the Git repository. Returns the ref name and SHA of the branch.
+      operationId: handle_get_ref_branch
+      parameters:
+      - name: repo
+        in: path
+        description: The repository id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: branch
+        in: path
+        description: The branch's name
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Branch reference retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GitReference'
+        '400':
+          description: 'Error: BranchNameEmpty'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                - message
+                properties:
+                  error:
+                    type: string
+                    description: Error code in SCREAMING_SNAKE_CASE
+                  message:
+                    type: string
+                    description: Human-readable error message
+        '403':
+          description: 'Error: Forbidden'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                - message
+                properties:
+                  error:
+                    type: string
+                    description: Error code in SCREAMING_SNAKE_CASE
+                  message:
+                    type: string
+                    description: Human-readable error message
+        '500':
+          description: 'Error: GitClient'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                - message
+                properties:
+                  error:
+                    type: string
+                    description: Error code in SCREAMING_SNAKE_CASE
+                  message:
+                    type: string
+                    description: Human-readable error message
+  /git/v1/repo/{repo}/git/refs/tags/:
+    get:
+      tags:
+      - Git
+      summary: List All Tags in a Repository
+      description: "List all tags in the Git repository with full details. Returns both annotated tags (with tagger and message)\n\
+        \        and lightweight tags. For each tag, the `sha` field contains the tag object SHA (for annotated tags) or\n\
+        \        commit SHA (for lightweight tags), while `target.sha` always contains the commit SHA the tag points to."
+      operationId: handle_list_tags
+      parameters:
+      - name: repo
+        in: path
+        description: The repository id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Tags retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListTagsResponse'
+  /git/v1/repo/{repo}/git/refs/tags/{tag}:
+    get:
+      tags:
+      - Git
+      summary: Get a Tag by Name
+      description: "Get a tag by its name. This is the recommended endpoint for retrieving tag information.\n        Works\
+        \ with both annotated tags (returns tagger, message, and target commit) and lightweight tags\n        (returns only\
+        \ name and target commit). For annotated tags, the `sha` field contains the tag object's SHA,\n        while `target.sha`\
+        \ contains the commit SHA. For lightweight tags, both fields contain the same commit SHA.\n\n        **Note**: If\
+        \ you need to retrieve an annotated tag object by its SHA (for low-level git database operations),\n        use `/git/v1/repo/{repo}/git/tags/{hash}`\
+        \ instead."
+      operationId: handle_get_ref_tag
+      parameters:
+      - name: repo
+        in: path
+        description: The repository id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: tag
+        in: path
+        description: The tag's name
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Tag object
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Tag object
+                required:
+                - name
+                - target
+                - sha
+                properties:
+                  name:
+                    type: string
+                    description: The tag name
+                  tagger:
+                    oneOf:
+                    - type: 'null'
+                    - $ref: '#/components/schemas/Signature'
+                      description: The tagger who created the tag
+                  message:
+                    type:
+                    - string
+                    - 'null'
+                    description: The tag message
+                  target:
+                    $ref: '#/components/schemas/TagTarget'
+                    description: The object this tag points to
+                  sha:
+                    type: string
+                    description: The tag's hash ID
+        '400':
+          description: 'Error: EmptyTag'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                - message
+                properties:
+                  error:
+                    type: string
+                    description: Error code in SCREAMING_SNAKE_CASE
+                  message:
+                    type: string
+                    description: Human-readable error message
+        '403':
+          description: 'Error: Forbidden'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                - message
+                properties:
+                  error:
+                    type: string
+                    description: Error code in SCREAMING_SNAKE_CASE
+                  message:
+                    type: string
+                    description: Human-readable error message
+        '500':
+          description: 'Possible errors: Internal, GitClient'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                - message
+                properties:
+                  error:
+                    type: string
+                    description: Error code in SCREAMING_SNAKE_CASE
+                  message:
+                    type: string
+                    description: Human-readable error message
+  /git/v1/repo/{repo}/git/tags/{hash}:
+    get:
+      tags:
+      - Git
+      summary: Get an Annotated Tag Object by SHA (advanced)
+      description: "Low-level endpoint for retrieving annotated tag objects directly from the Git database by their SHA hash.\n\
+        \        This endpoint only works with annotated tags and requires the tag object's SHA, not the tag name.\n\n\n \
+        \       **Most users should use `/git/v1/repo/{repo}/git/refs/tags/{tag}` instead**, which works with both\n     \
+        \   annotated and lightweight tags and accepts tag names rather than SHAs. This endpoint is primarily\n        for\
+        \ advanced use cases that need direct access to git database objects."
+      operationId: handle_get_tag
+      parameters:
+      - name: repo
+        in: path
+        description: The repository id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: hash
+        in: path
+        description: The object's hash
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Tag retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TagObject'
+  /git/v1/repo/{repo}/git/trees/{hash}:
+    get:
+      tags:
+      - Git
+      summary: Get a Tree Object
+      description: Get a tree from the Git database with its entries.
+      operationId: handle_get_tree
+      parameters:
+      - name: repo
+        in: path
+        description: The repository id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: hash
+        in: path
+        description: The object's hash
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Tree retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TreeObject'
+  /git/v1/repo/{repo}/repair:
+    get:
+      tags:
+      - Git
+      summary: List Repair Jobs for a Repository
+      description: Returns every repair job (pending, running, completed, failed, cancelled) currently in the git server's
+        in-memory registry. Pod restarts on the git server clear the list.
+      operationId: handle_list_repair_jobs
+      parameters:
+      - name: repo
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Repair jobs for the repository
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RepairJobList'
+        '403':
+          description: Repository is owned by a different account
+        '404':
+          description: Repository not found
+    post:
+      tags:
+      - Git
+      summary: Schedule a Repo-repair Job
+      description: Spawns a background task on the git server that walks every ref's reachable history, substitutes missing
+        blobs/trees with empty stand-ins, and persistently updates each ref to point at the rewritten tip. Returns immediately
+        with a job ID; poll GET /git/v1/repo/{repo}/repair/{jobId} for status. Subject to a per-account concurrency cap.
+      operationId: handle_schedule_repair
+      parameters:
+      - name: repo
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: depth
+        in: query
+        description: 'How far back from each ref tip to walk. Tip is depth=1.
+
+          Omit to walk the entire history (slow on huge repos).'
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          format: int32
+          minimum: 0
+        example: 1
+      responses:
+        '202':
+          description: Repair scheduled; poll GET /repos/{repo}/repair/{jobId} for status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RepairAccepted'
+        '403':
+          description: Repository is owned by a different account
+        '404':
+          description: Repository not found
+        '409':
+          description: A repair is already in progress for this repository
+        '429':
+          description: Account already at the per-account concurrent-repair cap
+  /git/v1/repo/{repo}/repair/{job_id}:
+    get:
+      tags:
+      - Git
+      summary: Get the Status of a Repair Job
+      operationId: handle_get_repair_job
+      parameters:
+      - name: repo
+        in: path
+        description: Repository ID
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: job_id
+        in: path
+        description: Repair job ID returned by POST
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Repair job status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RepairJobView'
+        '403':
+          description: Repository is owned by a different account
+        '404':
+          description: Repository or job not found
+    delete:
+      tags:
+      - Git
+      summary: Cancel a Running Repair Job
+      description: Sets the cancel flag on the repair job. The worker observes it at the next commit/tree boundary and exits
+        with status=cancelled. Already-terminal jobs are returned unchanged.
+      operationId: handle_cancel_repair_job
+      parameters:
+      - name: repo
+        in: path
+        description: Repository ID
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: job_id
+        in: path
+        description: Repair job ID returned by POST
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Cancel requested; current job state returned
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RepairJobView'
+        '403':
+          description: Repository is owned by a different account
+        '404':
+          description: Repository or job not found
+  /git/v1/repo/{repo}/search:
+    get:
+      tags:
+      - Git
+      summary: Full-text Search Across Repository Files
+      description: Search for text or regex patterns across all files in a repository at a given revision
+      operationId: handle_search
+      parameters:
+      - name: repo
+        in: path
+        description: The repository id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: query
+        in: query
+        description: The text (or regex pattern) to search for in file contents.
+        required: true
+        schema:
+          type: string
+      - name: rev
+        in: query
+        description: The git revision (branch name, commit SHA, etc.). Defaults to HEAD.
+        required: false
+        schema:
+          type: string
+      - name: pathPattern
+        in: query
+        description: Optional glob pattern to filter included file paths (e.g. "*.rs", "src/**/*.ts").
+        required: false
+        schema:
+          type: string
+      - name: excludePattern
+        in: query
+        description: Optional glob pattern to exclude file paths (e.g. "node_modules/**", "*.min.js").
+        required: false
+        schema:
+          type: string
+      - name: maxResults
+        in: query
+        description: Maximum number of matching files to return. Defaults to 100, max 1000.
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+      - name: caseSensitive
+        in: query
+        description: Whether the query is a case-sensitive search. Defaults to false.
+        required: false
+        schema:
+          type: boolean
+      - name: isRegex
+        in: query
+        description: Whether the query is a regex pattern. Defaults to false.
+        required: false
+        schema:
+          type: boolean
+      - name: wholeWord
+        in: query
+        description: Whether to match whole words only. Defaults to false.
+        required: false
+        schema:
+          type: boolean
+      - name: offset
+        in: query
+        description: Number of results to skip for pagination. Defaults to 0.
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+      responses:
+        '200':
+          description: Search results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResult'
+  /git/v1/repo/{repo}/search/commits:
+    get:
+      tags:
+      - Git
+      summary: Search Commit Messages
+      description: Search for commits by their message text in a repository
+      operationId: handle_search_commits
+      parameters:
+      - name: repo
+        in: path
+        description: The repository id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: query
+        in: query
+        description: The text (or regex pattern) to search for in commit messages.
+        required: true
+        schema:
+          type: string
+      - name: rev
+        in: query
+        description: The git revision to start walking from. Defaults to HEAD.
+        required: false
+        schema:
+          type: string
+      - name: maxResults
+        in: query
+        description: Maximum number of matching commits to return. Defaults to 100, max 1000.
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+      - name: isRegex
+        in: query
+        description: Whether the query is a regex. Defaults to false.
+        required: false
+        schema:
+          type: boolean
+      - name: caseSensitive
+        in: query
+        description: Whether the query is case-sensitive. Defaults to false.
+        required: false
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: Commit search results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommitSearchResult'
+  /git/v1/repo/{repo}/search/diffs:
+    get:
+      tags:
+      - Git
+      summary: Search File Content Changes Across Commits
+      description: Search through commit diffs for content that was added or changed, returning which commits introduced the
+        matching content
+      operationId: handle_search_diffs
+      parameters:
+      - name: repo
+        in: path
+        description: The repository id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: query
+        in: query
+        description: The text (or regex pattern) to search for in changed file content.
+        required: true
+        schema:
+          type: string
+      - name: rev
+        in: query
+        description: The git revision to start walking from. Defaults to HEAD.
+        required: false
+        schema:
+          type: string
+      - name: pathPattern
+        in: query
+        description: Optional glob pattern to filter included file paths.
+        required: false
+        schema:
+          type: string
+      - name: excludePattern
+        in: query
+        description: Optional glob pattern to exclude file paths.
+        required: false
+        schema:
+          type: string
+      - name: maxResults
+        in: query
+        description: Maximum number of matching commits to return. Defaults to 100, max 1000.
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+      - name: caseSensitive
+        in: query
+        description: Whether the query is case-sensitive. Defaults to false.
+        required: false
+        schema:
+          type: boolean
+      - name: isRegex
+        in: query
+        description: Whether the query is a regex pattern. Defaults to false.
+        required: false
+        schema:
+          type: boolean
+      - name: wholeWord
+        in: query
+        description: Whether to match whole words only. Defaults to false.
+        required: false
+        schema:
+          type: boolean
+      - name: offset
+        in: query
+        description: Number of results to skip for pagination. Defaults to 0.
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+      responses:
+        '200':
+          description: Diff search results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DiffSearchResult'
+  /git/v1/repo/{repo}/search/files:
+    get:
+      tags:
+      - Git
+      summary: Search for Files by Name
+      description: Search for files by their path/name in a repository
+      operationId: handle_search_files
+      parameters:
+      - name: repo
+        in: path
+        description: The repository id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: query
+        in: query
+        description: The filename pattern to search for (matched against full paths).
+        required: true
+        schema:
+          type: string
+      - name: rev
+        in: query
+        description: The git revision (branch name, commit SHA, etc.). Defaults to HEAD.
+        required: false
+        schema:
+          type: string
+      - name: maxResults
+        in: query
+        description: Maximum number of results. Defaults to 100, max 1000.
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+      - name: isRegex
+        in: query
+        description: Whether the query is a regex. Defaults to false (glob-style matching).
+        required: false
+        schema:
+          type: boolean
+      - name: caseSensitive
+        in: query
+        description: Whether the query is case-sensitive. Defaults to false.
+        required: false
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: File search results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FilenameSearchResult'
+  /git/v1/repo/{repo}/tarball:
+    get:
+      tags:
+      - Git
+      summary: Download a Tarball of a Repo
+      description: Download the contents of a repo as a tarball.
+      operationId: handle_download_tarball
+      parameters:
+      - name: rev
+        in: query
+        description: The git revision (branch name, commit SHA, etc.). Defaults to HEAD.
+        required: false
+        schema:
+          type: string
+      - name: repo
+        in: path
+        description: The repository id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Success (byte stream)
+          content:
+            application/x-tar: {}
+  /git/v1/repo/{repo}/trigger:
+    get:
+      tags:
+      - Git
+      summary: List Git Triggers for a Repository
+      description: List git triggers for the given repository.
+      operationId: handle_list_git_triggers
+      parameters:
+      - name: repo
+        in: path
+        description: The repository id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListGitTriggersSuccess'
+        '403':
+          description: 'Error: Forbidden'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                - message
+                properties:
+                  error:
+                    type: string
+                    description: Error code in SCREAMING_SNAKE_CASE
+                  message:
+                    type: string
+                    description: Human-readable error message
+        '404':
+          description: 'Error: RepoNotFound'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                - message
+                properties:
+                  error:
+                    type: string
+                    description: Error code in SCREAMING_SNAKE_CASE
+                  message:
+                    type: string
+                    description: Human-readable error message
+        '500':
+          description: 'Error: Internal'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                - message
+                properties:
+                  error:
+                    type: string
+                    description: Error code in SCREAMING_SNAKE_CASE
+                  message:
+                    type: string
+                    description: Human-readable error message
+    post:
+      tags:
+      - Git
+      summary: Create a Git Trigger
+      description: Create a git trigger for the given repository.
+      operationId: handle_create_git_trigger
+      parameters:
+      - name: repo
+        in: path
+        description: The repository id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - trigger
+              - action
+              properties:
+                trigger:
+                  oneOf:
+                  - type: object
+                    required:
+                    - event
+                    properties:
+                      branches:
+                        type:
+                        - array
+                        - 'null'
+                        items:
+                          type: string
+                      globs:
+                        type:
+                        - array
+                        - 'null'
+                        items:
+                          type: string
+                      event:
+                        type: string
+                        enum:
+                        - push
+                action:
+                  oneOf:
+                  - type: object
+                    required:
+                    - endpoint
+                    - action
+                    properties:
+                      endpoint:
+                        type: string
+                      action:
+                        type: string
+                        enum:
+                        - webhook
+        required: true
+      responses:
+        '200':
+          description: Trigger created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - triggerId
+                properties:
+                  triggerId:
+                    type: string
+                    format: uuid
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - message
+                properties:
+                  message:
+                    type: string
+        '403':
+          description: User does not have permission to create a trigger on this repository
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - message
+                properties:
+                  message:
+                    type: string
+        '404':
+          description: Repository does not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - message
+                properties:
+                  message:
+                    type: string
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - message
+                properties:
+                  message:
+                    type: string
+  /git/v1/repo/{repo}/trigger/{trigger}:
+    delete:
+      tags:
+      - Git
+      summary: Delete a Git Trigger
+      description: Delete a git trigger. This is irreversible.
+      operationId: handle_delete_git_trigger
+      parameters:
+      - name: repo
+        in: path
+        description: The repository id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: trigger
+        in: path
+        description: The trigger id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Trigger deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - message
+                properties:
+                  message:
+                    type: string
+        '403':
+          description: User does not have permission to delete a trigger on this repository
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - message
+                properties:
+                  message:
+                    type: string
+        '404':
+          description: Trigger does not exist
+          content:
+            application/json:
+              schema:
+                type: object
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - message
+                properties:
+                  message:
+                    type: string
+  /git/v1/repo/{repo}/zip:
+    get:
+      tags:
+      - Git
+      summary: Download a Zip of a Repo
+      description: Download the contents of a repo as a zip.
+      operationId: handle_download_zip
+      parameters:
+      - name: rev
+        in: query
+        description: The git revision (branch name, commit SHA, etc.). Defaults to HEAD.
+        required: false
+        schema:
+          type: string
+      - name: repo
+        in: path
+        description: The repository id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Success (byte stream)
+          content:
+            application/zip: {}
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    CommitComparison:
+      type: object
+      description: Response containing the comparison between two commits
+      required:
+      - status
+      - ahead_by
+      - behind_by
+      - total_commits
+      - files
+      properties:
+        status:
+          $ref: '#/components/schemas/ComparisonStatus'
+          description: Status of the comparison
+        ahead_by:
+          type: integer
+          description: Number of commits the head is ahead of base
+          minimum: 0
+        behind_by:
+          type: integer
+          description: Number of commits the head is behind base
+          minimum: 0
+        total_commits:
+          type: integer
+          description: Total number of commits in the comparison
+          minimum: 0
+        files:
+          type: array
+          items:
+            $ref: '#/components/schemas/DiffFile'
+          description: List of changed files
+    RepositoryInfoRaw:
+      type: object
+      required:
+      - id
+      - accountId
+      - visibility
+      - defaultBranch
+      - createdAt
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type:
+          - string
+          - 'null'
+          examples:
+          - my-repo
+        accountId:
+          type: string
+          format: uuid
+        visibility:
+          $ref: '#/components/schemas/Visibility'
+        defaultBranch:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+    GetDefaultBranchResponse:
+      type: object
+      required:
+      - defaultBranch
+      properties:
+        defaultBranch:
+          type: string
+    CommitSearchResult:
+      type: object
+      required:
+      - totalCommits
+      - hasMore
+      - commits
+      properties:
+        totalCommits:
+          type: integer
+          description: Total number of matching commits found.
+          minimum: 0
+        hasMore:
+          type: boolean
+          description: Whether there are more results beyond those returned.
+        commits:
+          type: array
+          items:
+            $ref: '#/components/schemas/CommitSearchEntry'
+          description: The matching commits.
+    ComparisonStatus:
+      type: string
+      description: The status of a commit comparison
+      enum:
+      - identical
+      - ahead
+      - behind
+      - diverged
+    ListTagsResponse:
+      type: object
+      required:
+      - tags
+      properties:
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/TagObject'
+    CommitSearchEntry:
+      type: object
+      required:
+      - sha
+      - message
+      - fullMessage
+      - authorName
+      - authorEmail
+      - timestamp
+      properties:
+        sha:
+          type: string
+          description: The commit SHA.
+        message:
+          type: string
+          description: The commit message (first line / summary).
+        fullMessage:
+          type: string
+          description: The full commit message.
+        authorName:
+          type: string
+          description: The author name.
+        authorEmail:
+          type: string
+          description: The author email.
+        timestamp:
+          type: string
+          description: The commit timestamp (ISO 8601).
+    CreateBranchRequest:
+      type: object
+      properties:
+        sha:
+          type:
+          - string
+          - 'null'
+          description: 'The SHA of the commit this branch should point to.
+
+            If not provided, the branch will be created from the default branch.'
+    CreateRepoSource:
+      type: object
+      required:
+      - url
+      properties:
+        url:
+          type: string
+          format: uri
+        branch:
+          type:
+          - string
+          - 'null'
+          deprecated: true
+        rev:
+          type:
+          - string
+          - 'null'
+          description: 'The revision (branch, tag, or commit hash) to checkout from the source repo.
+
+            The given revision will be used as the new repository''s default branch.
+
+
+            This field supersedes ''branch''.'
+        depth:
+          type:
+          - integer
+          - 'null'
+          format: int32
+        allBranches:
+          type:
+          - boolean
+          - 'null'
+          description: 'If true, all branches and tags will be fetched from the source repository.
+
+            Defaults to false, which only fetches the default branch (unless `rev` is set).'
+    SetDefaultBranchResponse:
+      type: object
+    DiffFile:
+      type: object
+      description: A file that was changed in the comparison
+      required:
+      - filename
+      - status
+      - additions
+      - deletions
+      - changes
+      properties:
+        sha:
+          type:
+          - string
+          - 'null'
+          description: The blob SHA of the file
+        filename:
+          type: string
+          description: The file path
+        status:
+          $ref: '#/components/schemas/DiffFileStatus'
+          description: The status of the file (added, removed, modified, renamed, copied, changed, unchanged)
+        additions:
+          type: integer
+          format: int32
+          description: Number of lines added
+          minimum: 0
+        deletions:
+          type: integer
+          format: int32
+          description: Number of lines deleted
+          minimum: 0
+        changes:
+          type: integer
+          format: int32
+          description: Total number of changes (additions + deletions)
+          minimum: 0
+        previous_filename:
+          type:
+          - string
+          - 'null'
+          description: Previous filename (for renamed/copied files)
+    TreeObject:
+      type: object
+      description: Tree object
+      required:
+      - tree
+      - sha
+      properties:
+        tree:
+          type: array
+          items:
+            $ref: '#/components/schemas/TreeEntry'
+          description: The tree's entries
+        sha:
+          type: string
+          description: The tree's hash ID
+    CreateBranchResponse:
+      type: object
+      required:
+      - name
+      - sha
+      properties:
+        name:
+          type: string
+          description: The name of the created branch
+        sha:
+          type: string
+          description: The SHA of the commit the branch points to
+    CommitTree:
+      type: object
+      required:
+      - sha
+      properties:
+        sha:
+          type: string
+          description: The tree's hash ID
+    RewrittenRef:
+      type: object
+      required:
+      - name
+      - originalOid
+      - rewrittenOid
+      properties:
+        name:
+          type: string
+          description: Full ref name (e.g. `refs/heads/main`).
+        originalOid:
+          type: string
+          description: OID the ref pointed at before repair.
+        rewrittenOid:
+          type: string
+          description: OID the ref now points at after substituting missing objects.
+    TreeEntry:
+      oneOf:
+      - type: object
+        title: Blob
+        required:
+        - path
+        - sha
+        - size
+        - type
+        properties:
+          path:
+            type: string
+          sha:
+            type: string
+          size:
+            type: integer
+            format: int64
+            minimum: 0
+          type:
+            type: string
+            enum:
+            - blob
+      - type: object
+        title: Tree
+        required:
+        - path
+        - sha
+        - type
+        properties:
+          path:
+            type: string
+          sha:
+            type: string
+          type:
+            type: string
+            enum:
+            - tree
+    BlobEncoding:
+      type: string
+      description: The encoding of a blob from the API. Always `base64`.
+      enum:
+      - base64
+    ListRepositoriesSuccess:
+      type: object
+      required:
+      - repositories
+      - total
+      - offset
+      properties:
+        repositories:
+          type: array
+          items:
+            $ref: '#/components/schemas/RepositoryMetadata'
+        total:
+          type: integer
+          format: int64
+          minimum: 0
+        offset:
+          type: integer
+          format: int64
+          minimum: 0
+    TagObject:
+      type: object
+      description: Tag object
+      required:
+      - name
+      - target
+      - sha
+      properties:
+        name:
+          type: string
+          description: The tag name
+        tagger:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/Signature'
+            description: The tagger who created the tag
+        message:
+          type:
+          - string
+          - 'null'
+          description: The tag message
+        target:
+          $ref: '#/components/schemas/TagTarget'
+          description: The object this tag points to
+        sha:
+          type: string
+          description: The tag's hash ID
+    CommitList:
+      type: object
+      required:
+      - commits
+      - count
+      - limit
+      - order
+      properties:
+        commits:
+          type: array
+          items:
+            $ref: '#/components/schemas/CommitObject'
+          description: List of commits
+        count:
+          type: integer
+          description: Number of commits returned in this page
+          minimum: 0
+        offset:
+          type:
+          - integer
+          - 'null'
+          description: Number of commits skipped (offset) - deprecated, use `since`/`until` selectors instead
+          minimum: 0
+        limit:
+          type: integer
+          description: Maximum number of commits requested (limit)
+          minimum: 0
+        total:
+          type:
+          - integer
+          - 'null'
+          description: 'Total number of commits in the branch/range.
+
+            Omitted when the caller passed `disableTotalCount=true`.'
+          minimum: 0
+        order:
+          $ref: '#/components/schemas/CommitOrder'
+          description: Sort order used for this query
+        selector:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/CommitsSelector'
+            description: The selector used for this query (echoed back)
+        next_commit:
+          type:
+          - string
+          - 'null'
+          description: 'SHA of the next commit for pagination. None if there are no more commits.
+
+            - For `order=desc`: use `until=next_commit` to get the next page
+
+            - For `order=asc`: use `since=next_commit` to get the next page'
+    RepositoryMetadata:
+      type: object
+      required:
+      - branches
+      - tags
+      - defaultBranch
+      properties:
+        branches:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/BranchDetails'
+          propertyNames:
+            type: string
+        tags:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/TagDetails'
+          propertyNames:
+            type: string
+        defaultBranch:
+          type: string
+    DiffFileMatch:
+      type: object
+      description: A file within a commit that contained matching changed content.
+      required:
+      - path
+      - matches
+      properties:
+        path:
+          type: string
+          description: The file path relative to the repository root.
+        matches:
+          type: array
+          items:
+            $ref: '#/components/schemas/DiffLineMatch'
+          description: The matching lines in the diff for this file.
+    GitReference:
+      type: object
+      description: A reference to a Git object
+      required:
+      - name
+      - sha
+      properties:
+        name:
+          type: string
+          description: The name of the ref (e.g., "refs/heads/main" or "refs/tags/v1.0.0")
+        sha:
+          type: string
+          description: The SHA-1 hash of the Git object this reference points to
+    LineMatch:
+      type: object
+      required:
+      - lineNumber
+      - line
+      - startColumn
+      - endColumn
+      - contextBefore
+      - contextAfter
+      properties:
+        lineNumber:
+          type: integer
+          description: 1-based line number of the match.
+          minimum: 0
+        line:
+          type: string
+          description: The full text of the matching line.
+        startColumn:
+          type: integer
+          description: 0-based column offset of the first match in the line.
+          minimum: 0
+        endColumn:
+          type: integer
+          description: 0-based column offset of the end of the first match in the line.
+          minimum: 0
+        contextBefore:
+          type: array
+          items:
+            type: string
+          description: Context lines before the match.
+        contextAfter:
+          type: array
+          items:
+            type: string
+          description: Context lines after the match.
+    DiffFileStatus:
+      type: string
+      description: The status of a file in a diff
+      enum:
+      - added
+      - removed
+      - modified
+      - renamed
+      - copied
+      - changed
+      - unchanged
+    RepairAccepted:
+      type: object
+      required:
+      - jobId
+      - repoId
+      - status
+      properties:
+        jobId:
+          type: string
+        repoId:
+          type: string
+        depth:
+          type:
+          - integer
+          - 'null'
+          format: int32
+          minimum: 0
+        status:
+          type: string
+    CreateCommitResponse:
+      type: object
+      required:
+      - commit
+      properties:
+        commit:
+          $ref: '#/components/schemas/CommitObject'
+          description: The created commit object
+    CreateRepositoryResponseSuccess:
+      type: object
+      required:
+      - repoId
+      properties:
+        repoId:
+          type: string
+          format: uuid
+    CreateRepoImport:
+      oneOf:
+      - type: object
+        title: Files
+        required:
+        - files
+        - commitMessage
+        - type
+        properties:
+          files:
+            type: object
+            title: Files
+            description: A map of file names to their contents.
+            additionalProperties:
+              type: string
+          commitMessage:
+            type: string
+          authorName:
+            type:
+            - string
+            - 'null'
+          authorEmail:
+            type:
+            - string
+            - 'null'
+          type:
+            type: string
+            enum:
+            - files
+      - type: object
+        title: Tar
+        required:
+        - url
+        - commitMessage
+        - type
+        properties:
+          url:
+            type: string
+            format: uri
+          dir:
+            type:
+            - string
+            - 'null'
+          commitMessage:
+            type: string
+          authorName:
+            type:
+            - string
+            - 'null'
+          authorEmail:
+            type:
+            - string
+            - 'null'
+          type:
+            type: string
+            enum:
+            - tar
+      - type: object
+        title: Zip
+        required:
+        - url
+        - commitMessage
+        - type
+        properties:
+          url:
+            type: string
+            format: uri
+          dir:
+            type:
+            - string
+            - 'null'
+          commitMessage:
+            type: string
+          authorName:
+            type:
+            - string
+            - 'null'
+          authorEmail:
+            type:
+            - string
+            - 'null'
+          type:
+            type: string
+            enum:
+            - zip
+      - type: object
+        title: Git
+        required:
+        - url
+        - commitMessage
+        - type
+        properties:
+          url:
+            type: string
+            format: uri
+          branch:
+            type:
+            - string
+            - 'null'
+            deprecated: true
+          rev:
+            type:
+            - string
+            - 'null'
+            description: 'The revision (branch, tag, or commit hash) to checkout from the source repo.
+
+
+              This field supersedes ''branch''.'
+          dir:
+            type:
+            - string
+            - 'null'
+          commitMessage:
+            type: string
+          authorName:
+            type:
+            - string
+            - 'null'
+          authorEmail:
+            type:
+            - string
+            - 'null'
+          type:
+            type: string
+            enum:
+            - git
+    RepairJobList:
+      type: object
+      required:
+      - jobs
+      properties:
+        jobs:
+          type: array
+          items:
+            $ref: '#/components/schemas/RepairJobView'
+    VerificationFailureView:
+      type: object
+      description: 'Failure shape for the post-rewrite verification phase. Surfaced via
+
+        `RepairJobStatus::Failed` when the dry-run pack build fails, so the
+
+        operator can see which OID is still missing without grepping logs.'
+      required:
+      - message
+      - rewrites
+      - refsExamined
+      properties:
+        message:
+          type: string
+        oid:
+          type:
+          - string
+          - 'null'
+          description: 40-char hex OID extracted from the libgit2 error, if any.
+        refName:
+          type:
+          - string
+          - 'null'
+          description: Ref the verification was processing when it failed, if any.
+        rewrites:
+          type: array
+          items:
+            $ref: '#/components/schemas/RewrittenRef'
+          description: "Snapshot of refs that *were* successfully rewritten before\nverification failed. Operators want this\
+            \ \u2014 the rewrites are\nalready persisted to the repo, so seeing what changed even on a\nfailed run is load-bearing\
+            \ for follow-up debugging."
+        refsExamined:
+          type: integer
+          description: Number of refs the rewrite phase walked before verification ran.
+          minimum: 0
+    BranchDetails:
+      type: object
+      required:
+      - default
+      - name
+      properties:
+        default:
+          type: boolean
+        name:
+          type: string
+        target:
+          type:
+          - string
+          - 'null'
+    TagDetails:
+      type: object
+      required:
+      - name
+      - target
+      properties:
+        name:
+          type: string
+        target:
+          type: string
+        message:
+          type:
+          - string
+          - 'null'
+    CommitParent:
+      type: object
+      required:
+      - sha
+      properties:
+        sha:
+          type: string
+          description: The commit's hash ID
+    RepairResult:
+      type: object
+      required:
+      - refsExamined
+      - rewrites
+      properties:
+        refsExamined:
+          type: integer
+          description: Number of refs walked.
+          minimum: 0
+        rewrites:
+          type: array
+          items:
+            $ref: '#/components/schemas/RewrittenRef'
+          description: 'Refs whose tip was rewritten because their reachable history had
+
+            missing objects. Empty for healthy repos.'
+    FileSearchResult:
+      type: object
+      required:
+      - path
+      - size
+      - matches
+      properties:
+        path:
+          type: string
+          description: The file path relative to the repository root.
+        extension:
+          type:
+          - string
+          - 'null'
+          description: The file extension (e.g. "rs", "ts"), if any.
+        size:
+          type: integer
+          format: int64
+          description: The size of the file in bytes.
+          minimum: 0
+        matches:
+          type: array
+          items:
+            $ref: '#/components/schemas/LineMatch'
+          description: The matches found in this file.
+    CreateOdbCommitResponse:
+      type: object
+      required:
+      - commit
+      properties:
+        commit:
+          $ref: '#/components/schemas/CommitObject'
+          description: The created commit object
+    DiffSearchResult:
+      type: object
+      description: Diff content search results.
+      required:
+      - totalCommits
+      - hasMore
+      - commits
+      properties:
+        totalCommits:
+          type: integer
+          description: Total number of commits with matching changes (before pagination).
+          minimum: 0
+        hasMore:
+          type: boolean
+          description: Whether there are more results beyond the current page.
+        commits:
+          type: array
+          items:
+            $ref: '#/components/schemas/DiffSearchCommit'
+          description: The matching commits with their file-level diff matches.
+    FileEncoding:
+      type: string
+      description: File content encoding
+      enum:
+      - utf8
+      - base64
+    Signature:
+      type: object
+      required:
+      - date
+      - name
+      - email
+      properties:
+        date:
+          type: string
+          format: date-time
+          description: The date marker for this signature
+        name:
+          type: string
+        email:
+          type: string
+    ConfigureGithubSyncRequest:
+      type: object
+      required:
+      - githubRepoName
+      properties:
+        githubRepoName:
+          type: string
+          description: The GitHub repository name in "owner/repo" format
+    CommitAuthor:
+      type: object
+      required:
+      - name
+      - email
+      properties:
+        name:
+          type: string
+          description: The name of the author/committer
+        email:
+          type: string
+          description: The email of the author/committer
+        date:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Optional date (if not provided, uses current time)
+    SetDefaultBranchRequest:
+      type: object
+      required:
+      - defaultBranch
+      properties:
+        defaultBranch:
+          type: string
+    ListBranchesResponse:
+      type: object
+      required:
+      - branches
+      properties:
+        branches:
+          type: array
+          items:
+            $ref: '#/components/schemas/BranchInfo'
+    DeleteRepositorySuccess:
+      type: object
+    CommitsSelector:
+      oneOf:
+      - type: object
+        title: Range
+        description: Select commits in a range (like git's A..B)
+        required:
+        - Range
+        properties:
+          Range:
+            type: object
+            description: Select commits in a range (like git's A..B)
+            required:
+            - since
+            - until
+            properties:
+              since:
+                type: string
+                description: Exclude this commit and its ancestors
+              until:
+                type: string
+                description: Start from this commit (inclusive)
+      - type: object
+        title: Since
+        description: Select commits since this commit SHA (exclusive)
+        required:
+        - Since
+        properties:
+          Since:
+            type: string
+            format: Commit SHA
+            description: Select commits since this commit SHA (exclusive)
+      - type: object
+        title: Until
+        description: Select commits until this commit SHA (inclusive)
+        required:
+        - Until
+        properties:
+          Until:
+            type: string
+            format: Commit SHA
+            description: Select commits until this commit SHA (inclusive)
+      title: CommitsSelector
+      description: Selector for commits based on since/until
+    SetVisibilityRequest:
+      type: object
+      required:
+      - visibility
+      properties:
+        visibility:
+          $ref: '#/components/schemas/Visibility'
+    FileChange:
+      type: object
+      required:
+      - path
+      properties:
+        path:
+          type: string
+          description: The path of the file in the repository (e.g., "src/main.rs")
+        content:
+          type:
+          - string
+          - 'null'
+          description: 'The content of the file. Mutually exclusive with `deleted`.
+
+            If encoding is base64, this should be a base64-encoded string.'
+        encoding:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/FileEncoding'
+            description: The encoding of the content. Defaults to utf8.
+        deleted:
+          type:
+          - boolean
+          - 'null'
+          description: Whether to delete this file. Mutually exclusive with `content`.
+    BlobObject:
+      type: object
+      description: Blob object
+      required:
+      - content
+      - encoding
+      - sha
+      - size
+      properties:
+        content:
+          type: string
+          description: The content of the blob, base64 encoded.
+        encoding:
+          $ref: '#/components/schemas/BlobEncoding'
+          description: The encoding of the blob. Always `base64`.
+        sha:
+          type: string
+          description: The object's hash.
+        size:
+          type: integer
+          format: int64
+          description: The blob's size in bytes
+          minimum: 0
+    Visibility:
+      type: string
+      enum:
+      - public
+      - private
+    TagTarget:
+      type: object
+      required:
+      - sha
+      properties:
+        sha:
+          type: string
+          description: The target object's hash ID
+    GithubSyncConfigResponse:
+      type: object
+      required:
+      - githubRepoName
+      properties:
+        githubRepoName:
+          type: string
+    SearchResult:
+      type: object
+      required:
+      - totalFiles
+      - totalMatches
+      - hasMore
+      - files
+      properties:
+        totalFiles:
+          type: integer
+          description: Total number of files with matches (before pagination).
+          minimum: 0
+        totalMatches:
+          type: integer
+          description: Total number of individual line matches across all files (before pagination).
+          minimum: 0
+        hasMore:
+          type: boolean
+          description: Whether there are more results beyond the current page.
+        files:
+          type: array
+          items:
+            $ref: '#/components/schemas/FileSearchResult'
+          description: The matching files with their line matches (paginated).
+    ListGitTriggersSuccess:
+      type: object
+      required:
+      - triggers
+      properties:
+        triggers:
+          type: array
+          items:
+            $ref: '#/components/schemas/GitRepositoryTrigger'
+    CreateOdbCommitRequest:
+      type: object
+      required:
+      - message
+      - tree
+      - parents
+      properties:
+        message:
+          type: string
+          description: The commit message
+        tree:
+          type: string
+          description: The SHA of the tree for this commit
+        parents:
+          type: array
+          items:
+            type: string
+          description: The SHAs of the parent commits (empty array for initial commit)
+        author:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/CommitAuthor'
+            description: Optional author information (if not provided, uses committer info)
+        committer:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/CommitAuthor'
+            description: Optional committer information (if not provided, uses default)
+    DiffSearchCommit:
+      type: object
+      description: A commit that contained matching diff content.
+      required:
+      - sha
+      - message
+      - authorName
+      - authorEmail
+      - timestamp
+      - files
+      properties:
+        sha:
+          type: string
+          description: The commit SHA.
+        message:
+          type: string
+          description: The commit message summary (first line).
+        authorName:
+          type: string
+          description: The author name.
+        authorEmail:
+          type: string
+          description: The author email.
+        timestamp:
+          type: string
+          description: The commit timestamp (ISO 8601).
+        files:
+          type: array
+          items:
+            $ref: '#/components/schemas/DiffFileMatch'
+          description: Files in this commit with matching changed content.
+    GitContentsDirEntryItem:
+      oneOf:
+      - type: object
+        title: File Entry
+        required:
+        - name
+        - path
+        - sha
+        - size
+        - type
+        properties:
+          name:
+            type: string
+          path:
+            type: string
+          sha:
+            type: string
+            description: The hash / object ID of the file.
+          size:
+            type: integer
+            format: int64
+            minimum: 0
+          type:
+            type: string
+            enum:
+            - file
+      - type: object
+        title: Directory Entry
+        description: Directory
+        required:
+        - name
+        - path
+        - sha
+        - entries
+        - type
+        properties:
+          name:
+            type: string
+          path:
+            type: string
+          sha:
+            type: string
+            description: The hash / object ID of the directory.
+          entries:
+            type: array
+            items:
+              oneOf:
+              - type: object
+                title: File Entry
+              - type: object
+                title: Dir Entry (recursive)
+          type:
+            type: string
+            enum:
+            - dir
+    CommitAuthorInfo:
+      type: object
+      required:
+      - name
+      - email
+      properties:
+        name:
+          type: string
+          description: The name of the author/committer
+        email:
+          type: string
+          description: The email of the author/committer
+    GitContents:
+      oneOf:
+      - type: object
+        title: File
+        required:
+        - name
+        - path
+        - sha
+        - size
+        - content
+        - type
+        properties:
+          name:
+            type: string
+          path:
+            type: string
+          sha:
+            type: string
+            description: The hash / object ID of the file.
+          size:
+            type: integer
+            format: int64
+            minimum: 0
+          content:
+            type: string
+            description: Base64-encoded content.
+          type:
+            type: string
+            enum:
+            - file
+      - type: object
+        title: Directory
+        required:
+        - name
+        - path
+        - sha
+        - entries
+        - type
+        properties:
+          name:
+            type: string
+          path:
+            type: string
+          sha:
+            type: string
+            description: The hash / object ID of the directory.
+          entries:
+            type: array
+            items:
+              $ref: '#/components/schemas/GitContentsDirEntryItem'
+          type:
+            type: string
+            enum:
+            - dir
+    CommitObject:
+      type: object
+      description: Commit object
+      required:
+      - author
+      - committer
+      - message
+      - tree
+      - parents
+      - sha
+      properties:
+        author:
+          $ref: '#/components/schemas/Signature'
+          description: The author of the commit
+        committer:
+          $ref: '#/components/schemas/Signature'
+          description: The committer
+        message:
+          type: string
+          description: The commit message
+        tree:
+          $ref: '#/components/schemas/CommitTree'
+          description: The ID of the tree pointed to by this commit
+        parents:
+          type: array
+          items:
+            $ref: '#/components/schemas/CommitParent'
+          description: Parent commit(s) of this commit
+        sha:
+          type: string
+          description: The commit's hash ID
+    GetVisibilityResponse:
+      type: object
+      required:
+      - visibility
+      properties:
+        visibility:
+          $ref: '#/components/schemas/Visibility'
+    DiffLineMatch:
+      type: object
+      description: A line that was added or changed in a diff that matched the search query.
+      required:
+      - line
+      - lineNumber
+      - startColumn
+      - endColumn
+      - isAddition
+      properties:
+        line:
+          type: string
+          description: The matched line content (without the leading +/- prefix).
+        lineNumber:
+          type: integer
+          description: 1-based line number in the new file (for additions) or old file (for deletions).
+          minimum: 0
+        startColumn:
+          type: integer
+          description: 0-based byte offset of the match start within the line.
+          minimum: 0
+        endColumn:
+          type: integer
+          description: 0-based byte offset of the match end within the line.
+          minimum: 0
+        isAddition:
+          type: boolean
+          description: Whether this was an added line (true) or a deleted line (false).
+    RepairJobView:
+      type: object
+      description: 'JSON view of a job for the GET endpoint. Status is tagged so the
+
+        `result` and `error` fields are unambiguous to consumers.'
+      required:
+      - jobId
+      - repoId
+      - status
+      - createdAt
+      - progress
+      properties:
+        jobId:
+          type: string
+        repoId:
+          type: string
+        accountId:
+          type:
+          - string
+          - 'null'
+          description: 'Account this job is charged against for the per-account
+
+            concurrency cap. None for admin/internal POSTs that didn''t
+
+            supply X-Freestyle-User-Id.'
+        depth:
+          type:
+          - integer
+          - 'null'
+          format: int32
+          minimum: 0
+        status:
+          type: string
+          description: 'One of: pending, running, completed, failed, cancelled.'
+        createdAt:
+          type: string
+        completedAt:
+          type:
+          - string
+          - 'null'
+        progress:
+          type: object
+          description: 'Live counters from the walk. Updated by the worker every 500
+
+            commits and every 10k blob lookups, plus before/after each ref.
+
+            Always present; zeros until the walk publishes its first sample.'
+        result:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/RepairResult'
+            description: Populated when status == "completed".
+        error:
+          type:
+          - string
+          - 'null'
+          description: Populated when status == "failed".
+        verification:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/VerificationFailureView'
+            description: 'Populated when verification failed after a successful rewrite
+
+              phase. Carries the offending OID and the rewrites that were
+
+              already persisted to the repo.'
+    CreateCommitRequest:
+      type: object
+      required:
+      - message
+      - files
+      properties:
+        message:
+          type: string
+          description: The commit message
+        files:
+          type: array
+          items:
+            $ref: '#/components/schemas/FileChange'
+          description: Files to add, modify, or delete in this commit
+        branch:
+          type:
+          - string
+          - 'null'
+          description: 'The branch to commit to (e.g., "main"). If not provided, commits to the default branch.
+
+            If the branch does not exist, it is created as an orphan branch with this commit as its root.'
+        author:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/CommitAuthorInfo'
+            description: Optional author information (if not provided, uses default)
+        expectedSha:
+          type:
+          - string
+          - 'null'
+          description: 'Optional expected parent SHA for optimistic concurrency control.
+
+            If provided, the commit will only be created if the current branch tip (or parent) matches this SHA.
+
+            This prevents race conditions when multiple commits are being created concurrently.
+
+            Returns a conflict error if the check fails.'
+    BranchInfo:
+      type: object
+      required:
+      - name
+      properties:
+        name:
+          type: string
+        commit:
+          type:
+          - string
+          - 'null'
+          description: The latest commit ID on this branch. Null if the branch is empty.
+    GitRepositoryTrigger:
+      type: object
+      required:
+      - repositoryId
+      - trigger
+      - action
+      - managed
+      - id
+      - createdAt
+      properties:
+        repositoryId:
+          type: string
+          format: uuid
+        trigger:
+          oneOf:
+          - type: object
+            required:
+            - event
+            properties:
+              branches:
+                type:
+                - array
+                - 'null'
+                items:
+                  type: string
+              globs:
+                type:
+                - array
+                - 'null'
+                items:
+                  type: string
+              event:
+                type: string
+                enum:
+                - push
+        action:
+          oneOf:
+          - type: object
+            required:
+            - endpoint
+            - action
+            properties:
+              endpoint:
+                type: string
+              action:
+                type: string
+                enum:
+                - webhook
+        managed:
+          type: boolean
+        id:
+          type: string
+          format: uuid
+        createdAt:
+          type: string
+          format: date-time
+    FilenameSearchResult:
+      type: object
+      required:
+      - totalFiles
+      - hasMore
+      - files
+      properties:
+        totalFiles:
+          type: integer
+          description: Total number of matching files.
+          minimum: 0
+        hasMore:
+          type: boolean
+          description: Whether the results were truncated.
+        files:
+          type: array
+          items:
+            $ref: '#/components/schemas/FilenameEntry'
+          description: The matching file paths.
+    FilenameEntry:
+      type: object
+      required:
+      - path
+      - size
+      properties:
+        path:
+          type: string
+          description: The full file path relative to the repository root.
+        extension:
+          type:
+          - string
+          - 'null'
+          description: The file extension (e.g. "rs", "ts"), if any.
+        size:
+          type: integer
+          format: int64
+          description: The file size in bytes.
+          minimum: 0
+    CommitOrder:
+      type: string
+      description: Sort order for commit listing
+      enum:
+      - desc
+      - asc
+    SetVisibilityResponse:
+      type: object
+security:
+- bearerAuth: []

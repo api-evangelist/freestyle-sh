@@ -1,0 +1,122 @@
+specification: FinOps Framework
+specificationVersion: '1.0'
+schema: https://www.finops.org/framework/
+provider: Freestyle
+providerId: freestyle-sh
+created: '2026-05-25'
+modified: '2026-05-25'
+reconciled: true
+tags:
+  - FinOps
+  - Cost Management
+  - FOCUS
+  - Compute
+  - Sandboxes
+description: FOCUS-aligned FinOps definition for Freestyle Sandboxes. Resource-metered billing on
+  vCPU-hours, memory-GiB-hours, storage-GiB-hours, plus plan-quota counts for Domains, Repos, and Runs.
+sources:
+  - https://www.freestyle.sh/pricing
+  - https://docs.freestyle.sh/v2/about
+alignedWith:
+  framework: FinOps Foundation Framework
+  frameworkUrl: https://www.finops.org/framework/
+  dataSpec: FOCUS
+  dataSpecVersion: '1.3'
+  dataSpecUrl: https://focus.finops.org/focus-specification/v1-3/
+publisherName: Freestyle
+serviceCategory: Compute
+billingModel:
+  pricingCategory: Hybrid
+  pricingSubcategory: Subscription + Usage
+  billingFrequency: Monthly
+  billingCurrency: USD
+  chargeCategories:
+    - Usage
+    - Purchase
+    - Tax
+    - Adjustment
+  primaryUnit: vcpu_hour
+  secondaryUnits:
+    - memory_gib_hour
+    - storage_gib_hour
+    - run
+    - repository
+    - domain
+focusColumns:
+  ServiceName: Freestyle Sandboxes
+  ServiceCategory: Compute
+  ProviderName: Freestyle
+  PublisherName: Freestyle
+  InvoiceIssuerName: Freestyle
+  PricingCategory: Hybrid
+  PricingUnit: vCPU-hour
+  BillingCurrency: USD
+meters:
+  - name: vcpu_hours
+    unit: hour
+    aggregation: sum
+    dimensions:
+      - vm_id
+      - vm_size
+      - persistence_mode
+      - account
+    rate: 0.04032
+  - name: memory_gib_hours
+    unit: hour
+    aggregation: sum
+    dimensions:
+      - vm_id
+      - vm_size
+      - persistence_mode
+      - account
+    rate: 0.0129
+  - name: storage_gib_hours
+    unit: hour
+    aggregation: sum
+    dimensions:
+      - vm_id
+      - persistence_mode
+      - account
+    rate: 0.000086
+  - name: serverless_runs
+    unit: run
+    aggregation: count
+    dimensions:
+      - account
+      - plan_tier
+  - name: web_deployments
+    unit: deployment
+    aggregation: count
+    dimensions:
+      - account
+      - plan_tier
+  - name: repositories
+    unit: repo
+    aggregation: snapshot
+    dimensions:
+      - account
+      - plan_tier
+  - name: managed_domains
+    unit: domain
+    aggregation: snapshot
+    dimensions:
+      - account
+      - plan_tier
+freeAllowances:
+  Free:
+    vcpu_hours_per_day: 20
+    memory_gib_hours_per_day: 40
+    storage_gib_hours_per_day: 16800
+    runs_per_month: 500
+costOptimization:
+  - name: Idle pause
+    description: Set idleTimeoutSeconds on VMs to auto-pause idle VMs. Paused VMs are $0 and resume on
+      next exec. Best practice for long-running agent loops.
+  - name: Persistent vs ephemeral
+    description: Use ephemeral VMs for one-shot tasks. Use persistent VMs only when warm-state resume
+      matters (Hobby+ only).
+  - name: Snapshots
+    description: Snapshot once, fork many. Memory snapshots restore in ~600ms.
+  - name: VM forking
+    description: Live-fork a running VM to parallelize work without rebuilding (e.g. three forks for
+      API, UI, tests in parallel).

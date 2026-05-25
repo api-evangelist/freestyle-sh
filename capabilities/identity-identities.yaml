@@ -1,0 +1,163 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: "Freestyle Identity API \u2014 Identities"
+  description: 'Freestyle Identity API identities surface. 3 operations. Lead operation: List Identities. Self-contained Naftiko
+    capability for one Freestyle business surface.'
+  tags:
+  - Freestyle
+  - Identity
+  - Identities
+  created: '2026-05-25'
+  modified: '2026-05-25'
+binds:
+- namespace: env
+  keys:
+    FREESTYLE_API_KEY: FREESTYLE_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: identity-identities
+    baseUri: https://api.freestyle.sh
+    description: Freestyle Identity API identities business capability.
+    resources:
+    - name: identity-v1-identities
+      path: /identity/v1/identities
+      operations:
+      - name: handle-list-identities
+        method: GET
+        description: List Identities
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: limit
+          in: query
+          type: string
+          required: false
+        - name: offset
+          in: query
+          type: string
+          required: false
+        - name: includeManaged
+          in: query
+          type: string
+          required: false
+      - name: handle-create-identity
+        method: POST
+        description: Create an Identity
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: false
+    - name: identity-v1-identities
+      path: /identity/v1/identities/{identity}
+      operations:
+      - name: handle-delete-identity
+        method: DELETE
+        description: Delete an Identity
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: identity
+          in: path
+          type: string
+          required: true
+    authentication:
+      type: apikey
+      key: Authorization
+      value: Bearer {{env.FREESTYLE_API_KEY}}
+      placement: header
+  exposes:
+  - type: rest
+    namespace: identity-identities-rest
+    port: 8080
+    description: REST adapter for Freestyle Identity API identities. One Spectral-compliant resource per consumed operation,
+      prefixed with /v1.
+    resources:
+    - path: /v1/identity/v1/identities
+      name: identity-v1-identities
+      description: REST surface for identity-v1-identities.
+      operations:
+      - method: GET
+        name: handle-list-identities
+        description: List Identities
+        call: identity-identities.handle-list-identities
+        with: {}
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: handle-create-identity
+        description: Create an Identity
+        call: identity-identities.handle-create-identity
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/identity/v1/identities/{identity}
+      name: identity-v1-identities
+      description: REST surface for identity-v1-identities.
+      operations:
+      - method: DELETE
+        name: handle-delete-identity
+        description: Delete an Identity
+        call: identity-identities.handle-delete-identity
+        with:
+          identity: rest.path.identity
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: identity-identities-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Freestyle Identity API identities. One tool per consumed operation.
+    tools:
+    - name: freestyle-handle-list-identities
+      description: List Identities
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: identity-identities.handle-list-identities
+      with: {}
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: freestyle-handle-create-identity
+      description: Create an Identity
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: identity-identities.handle-create-identity
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: freestyle-handle-delete-identity
+      description: Delete an Identity
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: identity-identities.handle-delete-identity
+      with:
+        identity: tools.path.identity
+      outputParameters:
+      - type: object
+        mapping: $.

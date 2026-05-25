@@ -1,0 +1,123 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://api-evangelist.com/schemas/freestyle/freestyle-vm-schema.json",
+  "title": "Freestyle VM",
+  "description": "Schema for a Freestyle Virtual Machine resource. Covers the VM record returned by GET /v1/vms/{vm_id} and the CreateVmRequest accepted by POST /v1/vms.",
+  "type": "object",
+  "definitions": {
+    "CreateVmRequest": {
+      "type": "object",
+      "description": "Request body for creating a Freestyle VM. VMs are Linux microVMs that start in under 600ms and can be forked, snapshotted, suspended, resumed, and exec'd.",
+      "properties": {
+        "spec": {
+          "$ref": "#/definitions/VmSpec",
+          "description": "Declarative specification for the VM: image, repos to clone, integrations (bun, deno, node, python, postgres, ruby, java, etc.), workspaces, tasks, and wait conditions."
+        },
+        "persistence": {
+          "$ref": "#/definitions/Persistence",
+          "description": "Persistence mode for the VM: ephemeral, saved, or persistent."
+        },
+        "idleTimeoutSeconds": {
+          "type": "integer",
+          "description": "Seconds of idle before the VM is automatically paused (memory-snapshotted). Pay nothing while paused; resume on next exec."
+        },
+        "domains": {
+          "type": "array",
+          "description": "Custom domain mappings to attach to ports on this VM.",
+          "items": { "$ref": "#/definitions/DomainMapping" }
+        },
+        "snapshot": {
+          "type": "string",
+          "description": "ID of a snapshot to restore the VM from."
+        },
+        "git": {
+          "$ref": "#/definitions/GitConfig",
+          "description": "Git repositories to clone into the VM at startup."
+        },
+        "size": { "$ref": "#/definitions/VmSize" }
+      }
+    },
+    "VmSpec": {
+      "type": "object",
+      "description": "Declarative VM specification — image, repos to clone, workspace integrations, tasks, and wait conditions.",
+      "properties": {
+        "image": { "type": "string", "description": "Base image identifier." },
+        "integrations": { "type": "object", "description": "Map of integration name to integration config (bun, deno, node, python, ruby, java, postgres, etc.)." },
+        "workspaces": { "type": "array", "items": { "type": "object" } },
+        "tasks": { "type": "array", "items": { "type": "object" } },
+        "waitFor": { "type": "string", "description": "Shell command that must succeed before the VM is reported as ready (e.g. 'curl http://localhost:3000')." }
+      }
+    },
+    "Persistence": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["ephemeral", "saved", "persistent"],
+          "description": "ephemeral: destroyed on stop. saved: snapshot retained but billed when stopped. persistent: kept warm/resumable."
+        }
+      }
+    },
+    "DomainMapping": {
+      "type": "object",
+      "required": ["domain", "vmPort"],
+      "properties": {
+        "domain": { "type": "string", "description": "Hostname to bind. Use a *.style.dev subdomain or a verified custom domain." },
+        "vmPort": { "type": "integer", "description": "Port inside the VM to map the domain to." }
+      }
+    },
+    "GitConfig": {
+      "type": "object",
+      "properties": {
+        "repos": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "repo": { "type": "string", "description": "Git URL (Freestyle Git URL or external)." },
+              "rev": { "type": "string", "description": "Branch, tag, or commit SHA." },
+              "path": { "type": "string", "description": "Mount path inside the VM." }
+            }
+          }
+        }
+      }
+    },
+    "VmSize": {
+      "type": "object",
+      "properties": {
+        "vcpus": { "type": "integer", "description": "Number of vCPUs (Hobby: max 8; Pro: max 32)." },
+        "memoryGiB": { "type": "integer", "description": "Memory in GiB (Hobby: max 16; Pro: max 32)." },
+        "diskGiB": { "type": "integer", "description": "Disk in GiB (Hobby: max 32; Pro: max 64)." }
+      }
+    },
+    "Vm": {
+      "type": "object",
+      "description": "A running, saved, or persistent VM.",
+      "required": ["id", "state"],
+      "properties": {
+        "id": { "type": "string", "description": "VM identifier." },
+        "state": {
+          "type": "string",
+          "enum": ["building", "running", "paused", "stopped", "suspended", "deleted", "error"]
+        },
+        "build": { "$ref": "#/definitions/BuildRecord" },
+        "snapshotId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "size": { "$ref": "#/definitions/VmSize" },
+        "domains": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/DomainMapping" }
+        }
+      }
+    },
+    "BuildRecord": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "phase": { "type": "string" },
+        "state": { "type": "string", "enum": ["pending", "running", "success", "failed", "cancelled"] }
+      }
+    }
+  },
+  "$ref": "#/definitions/Vm"
+}

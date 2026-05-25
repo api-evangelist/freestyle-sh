@@ -1,0 +1,135 @@
+{
+  "@context": {
+    "@version": 1.1,
+    "@vocab": "https://schema.org/",
+    "freestyle": "https://api.freestyle.sh/v1/",
+    "schema": "https://schema.org/",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "dcterms": "http://purl.org/dc/terms/",
+
+    "Vm": {
+      "@id": "freestyle:Vm",
+      "@context": {
+        "id": { "@id": "freestyle:Vm/id", "@type": "xsd:string" },
+        "state": { "@id": "freestyle:Vm/state", "@type": "xsd:string" },
+        "createdAt": { "@id": "dcterms:created", "@type": "xsd:dateTime" },
+        "size": { "@id": "freestyle:Vm/size", "@type": "freestyle:VmSize" },
+        "domains": { "@id": "freestyle:Vm/domains", "@container": "@list" },
+        "snapshotId": { "@id": "freestyle:Vm/snapshotId", "@type": "xsd:string" }
+      }
+    },
+
+    "VmSize": {
+      "@id": "freestyle:VmSize",
+      "@context": {
+        "vcpus": { "@id": "freestyle:VmSize/vcpus", "@type": "xsd:integer" },
+        "memoryGiB": { "@id": "freestyle:VmSize/memoryGiB", "@type": "xsd:integer" },
+        "diskGiB": { "@id": "freestyle:VmSize/diskGiB", "@type": "xsd:integer" }
+      }
+    },
+
+    "Snapshot": {
+      "@id": "freestyle:Snapshot",
+      "@context": {
+        "id": { "@id": "freestyle:Snapshot/id", "@type": "xsd:string" },
+        "vmId": { "@id": "freestyle:Snapshot/vmId", "@type": "xsd:string" },
+        "createdAt": { "@id": "dcterms:created", "@type": "xsd:dateTime" },
+        "persistent": { "@id": "freestyle:Snapshot/persistent", "@type": "xsd:boolean" }
+      }
+    },
+
+    "Repository": {
+      "@id": "freestyle:Repository",
+      "@context": {
+        "id": { "@id": "freestyle:Repository/id", "@type": "xsd:string" },
+        "name": { "@id": "schema:name", "@type": "xsd:string" },
+        "visibility": { "@id": "freestyle:Repository/visibility", "@type": "xsd:string" },
+        "defaultBranch": { "@id": "freestyle:Repository/defaultBranch", "@type": "xsd:string" },
+        "createdAt": { "@id": "dcterms:created", "@type": "xsd:dateTime" },
+        "size": { "@id": "freestyle:Repository/size", "@type": "xsd:integer" }
+      }
+    },
+
+    "Commit": {
+      "@id": "freestyle:Commit",
+      "@context": {
+        "sha": { "@id": "freestyle:Commit/sha", "@type": "xsd:string" },
+        "message": { "@id": "schema:description", "@type": "xsd:string" },
+        "author": { "@id": "freestyle:Commit/author" },
+        "parents": { "@id": "freestyle:Commit/parents", "@container": "@list" }
+      }
+    },
+
+    "Branch": {
+      "@id": "freestyle:Branch",
+      "@context": {
+        "name": { "@id": "schema:name", "@type": "xsd:string" },
+        "sha": { "@id": "freestyle:Branch/sha", "@type": "xsd:string" }
+      }
+    },
+
+    "Identity": {
+      "@id": "freestyle:Identity",
+      "@context": {
+        "id": { "@id": "freestyle:Identity/id", "@type": "xsd:string" },
+        "label": { "@id": "schema:name", "@type": "xsd:string" },
+        "createdAt": { "@id": "dcterms:created", "@type": "xsd:dateTime" }
+      }
+    },
+
+    "AccessToken": {
+      "@id": "freestyle:AccessToken",
+      "@context": {
+        "id": { "@id": "freestyle:AccessToken/id", "@type": "xsd:string" },
+        "identity": { "@id": "freestyle:AccessToken/identity", "@type": "xsd:string" },
+        "createdAt": { "@id": "dcterms:created", "@type": "xsd:dateTime" }
+      }
+    },
+
+    "WebDeployment": {
+      "@id": "freestyle:WebDeployment",
+      "@context": {
+        "id": { "@id": "freestyle:WebDeployment/id", "@type": "xsd:string" },
+        "url": { "@id": "schema:url", "@type": "xsd:anyURI" },
+        "state": { "@id": "freestyle:WebDeployment/state", "@type": "xsd:string" },
+        "createdAt": { "@id": "dcterms:created", "@type": "xsd:dateTime" }
+      }
+    },
+
+    "ServerlessRun": {
+      "@id": "freestyle:ServerlessRun",
+      "@context": {
+        "id": { "@id": "freestyle:ServerlessRun/id", "@type": "xsd:string" },
+        "output": { "@id": "freestyle:ServerlessRun/output" },
+        "status": { "@id": "freestyle:ServerlessRun/status", "@type": "xsd:string" }
+      }
+    },
+
+    "Domain": {
+      "@id": "freestyle:Domain",
+      "@context": {
+        "domain": { "@id": "freestyle:Domain/name", "@type": "xsd:string" },
+        "verified": { "@id": "freestyle:Domain/verified", "@type": "xsd:boolean" }
+      }
+    },
+
+    "DnsRecord": {
+      "@id": "freestyle:DnsRecord",
+      "@context": {
+        "name": { "@id": "schema:name", "@type": "xsd:string" },
+        "type": { "@id": "freestyle:DnsRecord/type", "@type": "xsd:string" },
+        "value": { "@id": "freestyle:DnsRecord/value", "@type": "xsd:string" },
+        "ttl": { "@id": "freestyle:DnsRecord/ttl", "@type": "xsd:integer" }
+      }
+    },
+
+    "CronSchedule": {
+      "@id": "freestyle:CronSchedule",
+      "@context": {
+        "id": { "@id": "freestyle:CronSchedule/id", "@type": "xsd:string" },
+        "expression": { "@id": "freestyle:CronSchedule/expression", "@type": "xsd:string" },
+        "active": { "@id": "freestyle:CronSchedule/active", "@type": "xsd:boolean" }
+      }
+    }
+  }
+}

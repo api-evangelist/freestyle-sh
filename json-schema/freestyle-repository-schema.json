@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://api-evangelist.com/schemas/freestyle/freestyle-repository-schema.json",
+  "title": "Freestyle Repository",
+  "description": "Schema for a Freestyle Git repository resource. Covers the CreateRepositoryRequest accepted by POST /git/v1/repo and the repository record returned by GET /git/v1/repo/{repo}.",
+  "type": "object",
+  "definitions": {
+    "CreateRepositoryRequest": {
+      "type": "object",
+      "description": "Request body for creating a Freestyle Git repository. Freestyle Git is multi-tenant hosted Git designed for AI agents — every repo gets a branchable filesystem with commits, diffs, rollback, and review.",
+      "properties": {
+        "name": { "type": "string", "description": "Human-readable name for the repository." },
+        "visibility": {
+          "type": "string",
+          "enum": ["public", "private"],
+          "default": "private"
+        },
+        "source": {
+          "$ref": "#/definitions/CreateRepoSource",
+          "description": "Optional source to import from (existing Git URL, GitHub repo, or template)."
+        },
+        "defaultBranch": { "type": "string", "default": "main" }
+      }
+    },
+    "CreateRepoSource": {
+      "type": "object",
+      "description": "Source for a new repo — import from external Git URL or seed empty.",
+      "properties": {
+        "type": { "type": "string", "enum": ["empty", "git-url", "github", "template"] },
+        "url": { "type": "string" },
+        "branch": { "type": "string" }
+      }
+    },
+    "Repository": {
+      "type": "object",
+      "required": ["id", "name"],
+      "properties": {
+        "id": { "type": "string", "description": "Freestyle repo ID (UUID)." },
+        "name": { "type": "string" },
+        "visibility": { "type": "string", "enum": ["public", "private"] },
+        "defaultBranch": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "modifiedAt": { "type": "string", "format": "date-time" },
+        "size": { "type": "integer", "description": "Size of the repository in bytes." },
+        "githubSync": { "$ref": "#/definitions/GithubSync" }
+      }
+    },
+    "GithubSync": {
+      "type": "object",
+      "description": "GitHub bidirectional sync configuration for a Freestyle repo.",
+      "properties": {
+        "githubRepo": { "type": "string", "description": "owner/repo on GitHub" },
+        "direction": { "type": "string", "enum": ["pull", "push", "both"] },
+        "branch": { "type": "string" }
+      }
+    },
+    "Commit": {
+      "type": "object",
+      "required": ["sha", "message"],
+      "properties": {
+        "sha": { "type": "string" },
+        "message": { "type": "string" },
+        "author": {
+          "type": "object",
+          "properties": {
+            "name": { "type": "string" },
+            "email": { "type": "string" },
+            "date": { "type": "string", "format": "date-time" }
+          }
+        },
+        "parents": {
+          "type": "array",
+          "items": { "type": "object", "properties": { "sha": { "type": "string" } } }
+        }
+      }
+    },
+    "Branch": {
+      "type": "object",
+      "required": ["name", "sha"],
+      "properties": {
+        "name": { "type": "string" },
+        "sha": { "type": "string" },
+        "isDefault": { "type": "boolean" }
+      }
+    }
+  },
+  "$ref": "#/definitions/Repository"
+}

@@ -1,0 +1,175 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: "Freestyle Git API \u2014 Tags"
+  description: 'Freestyle Git API tags surface. 3 operations. Lead operation: List All Tags in a Repository. Self-contained
+    Naftiko capability for one Freestyle business surface.'
+  tags:
+  - Freestyle
+  - Git
+  - Tags
+  created: '2026-05-25'
+  modified: '2026-05-25'
+binds:
+- namespace: env
+  keys:
+    FREESTYLE_API_KEY: FREESTYLE_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: git-tags
+    baseUri: https://api.freestyle.sh
+    description: Freestyle Git API tags business capability.
+    resources:
+    - name: git-v1-repo-git-refs-tags
+      path: /git/v1/repo/{repo}/git/refs/tags/
+      operations:
+      - name: handle-list-tags
+        method: GET
+        description: List All Tags in a Repository
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: repo
+          in: path
+          type: string
+          required: true
+    - name: git-v1-repo-git-refs-tags
+      path: /git/v1/repo/{repo}/git/refs/tags/{tag}
+      operations:
+      - name: handle-get-ref-tag
+        method: GET
+        description: Get a Tag by Name
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: repo
+          in: path
+          type: string
+          required: true
+        - name: tag
+          in: path
+          type: string
+          required: true
+    - name: git-v1-repo-git-tags
+      path: /git/v1/repo/{repo}/git/tags/{hash}
+      operations:
+      - name: handle-get-tag
+        method: GET
+        description: Get an Annotated Tag Object by SHA (advanced)
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: repo
+          in: path
+          type: string
+          required: true
+        - name: hash
+          in: path
+          type: string
+          required: true
+    authentication:
+      type: apikey
+      key: Authorization
+      value: Bearer {{env.FREESTYLE_API_KEY}}
+      placement: header
+  exposes:
+  - type: rest
+    namespace: git-tags-rest
+    port: 8080
+    description: REST adapter for Freestyle Git API tags. One Spectral-compliant resource per consumed operation, prefixed
+      with /v1.
+    resources:
+    - path: /v1/git/v1/repo/{repo}/git/refs/tags/
+      name: git-v1-repo-git-refs-tags
+      description: REST surface for git-v1-repo-git-refs-tags.
+      operations:
+      - method: GET
+        name: handle-list-tags
+        description: List All Tags in a Repository
+        call: git-tags.handle-list-tags
+        with:
+          repo: rest.path.repo
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/git/v1/repo/{repo}/git/refs/tags/{tag}
+      name: git-v1-repo-git-refs-tags
+      description: REST surface for git-v1-repo-git-refs-tags.
+      operations:
+      - method: GET
+        name: handle-get-ref-tag
+        description: Get a Tag by Name
+        call: git-tags.handle-get-ref-tag
+        with:
+          repo: rest.path.repo
+          tag: rest.path.tag
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/git/v1/repo/{repo}/git/tags/{hash}
+      name: git-v1-repo-git-tags
+      description: REST surface for git-v1-repo-git-tags.
+      operations:
+      - method: GET
+        name: handle-get-tag
+        description: Get an Annotated Tag Object by SHA (advanced)
+        call: git-tags.handle-get-tag
+        with:
+          repo: rest.path.repo
+          hash: rest.path.hash
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: git-tags-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Freestyle Git API tags. One tool per consumed operation.
+    tools:
+    - name: freestyle-handle-list-tags
+      description: List All Tags in a Repository
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: git-tags.handle-list-tags
+      with:
+        repo: tools.path.repo
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: freestyle-handle-get-ref-tag
+      description: Get a Tag by Name
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: git-tags.handle-get-ref-tag
+      with:
+        repo: tools.path.repo
+        tag: tools.path.tag
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: freestyle-handle-get-tag
+      description: Get an Annotated Tag Object by SHA (advanced)
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: git-tags.handle-get-tag
+      with:
+        repo: tools.path.repo
+        hash: tools.path.hash
+      outputParameters:
+      - type: object
+        mapping: $.

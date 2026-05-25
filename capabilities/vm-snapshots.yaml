@@ -1,0 +1,238 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: "Freestyle VMs API \u2014 Snapshots"
+  description: 'Freestyle VMs API snapshots surface. 5 operations. Lead operation: list_snapshots. Self-contained Naftiko
+    capability for one Freestyle business surface.'
+  tags:
+  - Freestyle
+  - VM
+  - Snapshots
+  created: '2026-05-25'
+  modified: '2026-05-25'
+binds:
+- namespace: env
+  keys:
+    FREESTYLE_API_KEY: FREESTYLE_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: vm-snapshots
+    baseUri: https://api.freestyle.sh
+    description: Freestyle VMs API snapshots business capability.
+    resources:
+    - name: v1-vms-snapshots
+      path: /v1/vms/snapshots
+      operations:
+      - name: list-snapshots
+        method: GET
+        description: list_snapshots
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: includeDeleted
+          in: query
+          type: string
+          required: false
+        - name: includeFailed
+          in: query
+          type: string
+          required: false
+        - name: includeBuilding
+          in: query
+          type: string
+          required: false
+      - name: create-snapshot
+        method: POST
+        description: create_snapshot
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: false
+    - name: v1-vms-snapshots
+      path: /v1/vms/snapshots/{snapshot_id}
+      operations:
+      - name: get-snapshot
+        method: GET
+        description: get_snapshot
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: snapshot_id
+          in: path
+          type: string
+          required: true
+      - name: delete-snapshot
+        method: DELETE
+        description: delete_snapshot
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: snapshot_id
+          in: path
+          type: string
+          required: true
+      - name: update-snapshot
+        method: PATCH
+        description: update_snapshot
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: snapshot_id
+          in: path
+          type: string
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: false
+    authentication:
+      type: apikey
+      key: Authorization
+      value: Bearer {{env.FREESTYLE_API_KEY}}
+      placement: header
+  exposes:
+  - type: rest
+    namespace: vm-snapshots-rest
+    port: 8080
+    description: REST adapter for Freestyle VMs API snapshots. One Spectral-compliant resource per consumed operation, prefixed
+      with /v1.
+    resources:
+    - path: /v1/v1/vms/snapshots
+      name: v1-vms-snapshots
+      description: REST surface for v1-vms-snapshots.
+      operations:
+      - method: GET
+        name: list-snapshots
+        description: list-snapshots
+        call: vm-snapshots.list-snapshots
+        with: {}
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: create-snapshot
+        description: create-snapshot
+        call: vm-snapshots.create-snapshot
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/v1/vms/snapshots/{snapshot_id}
+      name: v1-vms-snapshots
+      description: REST surface for v1-vms-snapshots.
+      operations:
+      - method: GET
+        name: get-snapshot
+        description: get-snapshot
+        call: vm-snapshots.get-snapshot
+        with:
+          snapshot_id: rest.path.snapshot_id
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: DELETE
+        name: delete-snapshot
+        description: delete-snapshot
+        call: vm-snapshots.delete-snapshot
+        with:
+          snapshot_id: rest.path.snapshot_id
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PATCH
+        name: update-snapshot
+        description: update-snapshot
+        call: vm-snapshots.update-snapshot
+        with:
+          snapshot_id: rest.path.snapshot_id
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: vm-snapshots-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Freestyle VMs API snapshots. One tool per consumed operation.
+    tools:
+    - name: freestyle-list-snapshots
+      description: list-snapshots
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: vm-snapshots.list-snapshots
+      with: {}
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: freestyle-create-snapshot
+      description: create-snapshot
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: vm-snapshots.create-snapshot
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: freestyle-get-snapshot
+      description: get-snapshot
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: vm-snapshots.get-snapshot
+      with:
+        snapshot_id: tools.path.snapshot_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: freestyle-delete-snapshot
+      description: delete-snapshot
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: vm-snapshots.delete-snapshot
+      with:
+        snapshot_id: tools.path.snapshot_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: freestyle-update-snapshot
+      description: update-snapshot
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: vm-snapshots.update-snapshot
+      with:
+        snapshot_id: tools.path.snapshot_id
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
