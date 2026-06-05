@@ -1,485 +1,434 @@
 aid: freestyle-sh
 url: https://raw.githubusercontent.com/api-evangelist/freestyle-sh/refs/heads/main/apis.yml
 apis:
-- aid: freestyle-sh:freestyle-vms-api
-  name: Freestyle VMs API
-  tags:
-  - Agents
+  - aid: freestyle-sh:freestyle-vms-api
+    name: Freestyle VMs API
+    tags:
+      - Agents
+      - AI
+      - Sandboxes
+      - VMs
+      - MicroVMs
+      - Code Execution
+    humanURL: https://docs.freestyle.sh/v2/vms/about
+    properties:
+      - url: https://docs.freestyle.sh/v2/vms/about
+        type: Documentation
+      - url: https://docs.freestyle.sh/v2/vms/lifecycle
+        type: Documentation
+      - url: https://docs.freestyle.sh/v2/vms/configuration
+        type: Documentation
+      - url: https://docs.freestyle.sh/v2/vms/templates-snapshots
+        type: Documentation
+      - url: https://docs.freestyle.sh/v2/vms/ssh-access
+        type: Documentation
+      - url: openapi/freestyle-vm-api-openapi.yml
+        type: OpenAPI
+      - url: json-schema/freestyle-vm-schema.json
+        type: JSONSchema
+      - url: json-ld/freestyle-sh-context.jsonld
+        type: JSONLD
+    description: >-
+      Create, snapshot, fork, suspend, resume, exec, and manage Linux microVMs designed for AI agents. VMs boot in under
+      600ms with restored memory snapshots, support live-forking a running VM into multiple copies in milliseconds, and
+      can be paused after idle to $0 cost and resumed on next exec. Includes systemd service management, terminal
+      logs/xterm-256color streams, file get/put/watch, and stats streaming.
+  - aid: freestyle-sh:freestyle-git-api
+    name: Freestyle Git API
+    tags:
+      - Git
+      - Agents
+      - AI
+      - Version Control
+      - Multi-tenant
+    humanURL: https://docs.freestyle.sh/v2/git/about
+    properties:
+      - url: https://docs.freestyle.sh/v2/git/about
+        type: Documentation
+      - url: https://docs.freestyle.sh/v2/git/repos
+        type: Documentation
+      - url: https://docs.freestyle.sh/v2/git/search
+        type: Documentation
+      - url: https://docs.freestyle.sh/v2/git/hooks
+        type: Documentation
+      - url: https://docs.freestyle.sh/v2/git/github-sync
+        type: Documentation
+      - url: https://docs.freestyle.sh/v2/git/advanced/database-api
+        type: Documentation
+      - url: openapi/freestyle-git-api-openapi.yml
+        type: OpenAPI
+      - url: json-schema/freestyle-repository-schema.json
+        type: JSONSchema
+    description: >-
+      Multi-tenant hosted Git for AI agents — every agent gets a branchable filesystem with commits, diffs, rollback,
+      and review. Includes create/list/delete repositories, commits from files or from raw Git objects, branches and
+      tags, tree/blob inspection, full-text file/commit/diff search, repository compare, tarball/zip downloads, GitHub
+      bidirectional sync, repair jobs, and webhook triggers.
+  - aid: freestyle-sh:freestyle-identity-api
+    name: Freestyle Identity API
+    tags:
+      - Identity
+      - Access Management
+      - Permissions
+      - Tokens
+      - Agents
+    humanURL: https://docs.freestyle.sh/v2/about
+    properties:
+      - url: https://docs.freestyle.sh/v2/about
+        type: Documentation
+      - url: openapi/freestyle-identity-api-openapi.yml
+        type: OpenAPI
+      - url: json-ld/freestyle-sh-context.jsonld
+        type: JSONLD
+    description: >-
+      Identity and access management for end users and AI agents. Create identities, mint and revoke access tokens,
+      grant per-repo Git permissions (read/write/admin), grant per-VM permissions with an allowed-users list, and
+      inspect the current bearer-token whoami plus long-running background-request status.
+  - aid: freestyle-sh:freestyle-domains-api
+    name: Freestyle Domains API
+    tags:
+      - Domains
+      - DNS
+      - Certificates
+      - SSL
+    humanURL: https://docs.freestyle.sh/v2/domains
+    properties:
+      - url: https://docs.freestyle.sh/v2/domains
+        type: Documentation
+      - url: https://docs.freestyle.sh/v2/domains/deploy-to-custom-domain
+        type: Documentation
+      - url: openapi/freestyle-domains-api-openapi.yml
+        type: OpenAPI
+    description: >-
+      Manage custom domains for Freestyle Web Deployments and VMs — list domains, create/verify ownership, insert and
+      remove domain → deployment mappings, provision wildcard SSL certificates, and manage DNS records for
+      Freestyle-hosted domains.
+  - aid: freestyle-sh:freestyle-execute-api
+    name: Freestyle Execute API
+    tags:
+      - Code Execution
+      - JavaScript
+      - TypeScript
+      - Sandboxes
+      - Agents
+      - AI
+    humanURL: https://docs.freestyle.sh/v2/serverless/runs/about
+    properties:
+      - url: https://docs.freestyle.sh/v2/serverless/runs/about
+        type: Documentation
+      - url: https://docs.freestyle.sh/v2/serverless/runs/code-playground
+        type: Documentation
+      - url: https://docs.freestyle.sh/v2/serverless/runs/egress
+        type: Documentation
+      - url: https://docs.freestyle.sh/v2/serverless/runs/errors
+        type: Documentation
+      - url: openapi/freestyle-execute-api-openapi.yml
+        type: OpenAPI
+    description: >-
+      Serverless Runs — execute JavaScript or TypeScript code on demand and get the result. No deployment, no HTTP
+      server — POST code and receive the output. Supports node modules, environment variables, egress control, and
+      stored run output retrieval. The v3 endpoint is the current execute surface; v1 is deprecated.
+  - aid: freestyle-sh:freestyle-web-deployments-api
+    name: Freestyle Web Deployments API
+    tags:
+      - Hosting
+      - Deployments
+      - Node.js
+      - JavaScript
+      - TypeScript
+    humanURL: https://docs.freestyle.sh/v2/serverless/deployments/about
+    properties:
+      - url: https://docs.freestyle.sh/v2/serverless/deployments/about
+        type: Documentation
+      - url: https://docs.freestyle.sh/v2/serverless/deployments/configuration
+        type: Documentation
+      - url: https://docs.freestyle.sh/v2/serverless/deployments/cron-jobs
+        type: Documentation
+      - url: https://docs.freestyle.sh/v2/serverless/deployments/guides/nextjs
+        type: Documentation
+      - url: https://docs.freestyle.sh/v2/serverless/deployments/guides/vite
+        type: Documentation
+      - url: https://docs.freestyle.sh/v2/serverless/deployments/guides/static
+        type: Documentation
+      - url: openapi/freestyle-web-api-openapi.yml
+        type: OpenAPI
+    description: >-
+      Deploy and manage Node.js web applications and static sites. Push code via /web/v1/deployment, list deployments,
+      inspect deployment metadata, and fetch/update files on a deployment using HTTP-style verb-based operations.
+      Handles node-module caching, scaling, wildcard subdomains, and SSL certificates end-to-end.
+  - aid: freestyle-sh:freestyle-cron-api
+    name: Freestyle Cron API
+    tags:
+      - Cron
+      - Scheduling
+      - Serverless
+    humanURL: https://docs.freestyle.sh/v2/serverless/deployments/cron-jobs
+    properties:
+      - url: https://docs.freestyle.sh/v2/serverless/deployments/cron-jobs
+        type: Documentation
+      - url: openapi/freestyle-cron-api-openapi.yml
+        type: OpenAPI
+    description: >-
+      Schedule recurring serverless runs. Create, update, and delete cron schedules; list past executions; inspect
+      per-schedule success rate and a metrics timeline for observability.
+  - aid: freestyle-sh:freestyle-observability-api
+    name: Freestyle Observability API
+    tags:
+      - Observability
+      - Logs
+      - Monitoring
+    humanURL: https://docs.freestyle.sh/v2/about
+    properties:
+      - url: https://docs.freestyle.sh/v2/about
+        type: Documentation
+      - url: openapi/freestyle-observability-api-openapi.yml
+        type: OpenAPI
+    description: >-
+      Query structured logs across Freestyle services. Filter by VM, deployment, run, identity, or time range to debug
+      agent runs end-to-end.
+name: Freestyle
+tags:
   - AI
+  - Agents
   - Sandboxes
   - VMs
   - MicroVMs
-  - Code Execution
-  humanURL: https://docs.freestyle.sh/v2/vms/about
-  properties:
-  - url: https://docs.freestyle.sh/v2/vms/about
-    type: Documentation
-  - url: https://docs.freestyle.sh/v2/vms/lifecycle
-    type: Documentation
-  - url: https://docs.freestyle.sh/v2/vms/configuration
-    type: Documentation
-  - url: https://docs.freestyle.sh/v2/vms/templates-snapshots
-    type: Documentation
-  - url: https://docs.freestyle.sh/v2/vms/ssh-access
-    type: Documentation
-  - url: openapi/freestyle-vm-api-openapi.yml
-    type: OpenAPI
-  - url: json-schema/freestyle-vm-schema.json
-    type: JSONSchema
-  - url: json-ld/freestyle-sh-context.jsonld
-    type: JSONLD
-  - type: NaftikoCapability
-    url: capabilities/vm-vms.yaml
-  - type: NaftikoCapability
-    url: capabilities/vm-snapshots.yaml
-  - type: NaftikoCapability
-    url: capabilities/vm-builds.yaml
-  - type: NaftikoCapability
-    url: capabilities/vm-files.yaml
-  - type: NaftikoCapability
-    url: capabilities/vm-systemd.yaml
-  - type: NaftikoCapability
-    url: capabilities/vm-terminals.yaml
-  description: Create, snapshot, fork, suspend, resume, exec, and manage Linux microVMs designed for AI agents. VMs
-    boot in under 600ms with restored memory snapshots, support live-forking a running VM into multiple copies in
-    milliseconds, and can be paused after idle to $0 cost and resumed on next exec. Includes systemd service
-    management, terminal logs/xterm-256color streams, file get/put/watch, and stats streaming.
-- aid: freestyle-sh:freestyle-git-api
-  name: Freestyle Git API
-  tags:
   - Git
-  - Agents
-  - AI
-  - Version Control
-  - Multi-tenant
-  humanURL: https://docs.freestyle.sh/v2/git/about
-  properties:
-  - url: https://docs.freestyle.sh/v2/git/about
-    type: Documentation
-  - url: https://docs.freestyle.sh/v2/git/repos
-    type: Documentation
-  - url: https://docs.freestyle.sh/v2/git/search
-    type: Documentation
-  - url: https://docs.freestyle.sh/v2/git/hooks
-    type: Documentation
-  - url: https://docs.freestyle.sh/v2/git/github-sync
-    type: Documentation
-  - url: https://docs.freestyle.sh/v2/git/advanced/database-api
-    type: Documentation
-  - url: openapi/freestyle-git-api-openapi.yml
-    type: OpenAPI
-  - url: json-schema/freestyle-repository-schema.json
-    type: JSONSchema
-  - type: NaftikoCapability
-    url: capabilities/git-repo.yaml
-  - type: NaftikoCapability
-    url: capabilities/git-commits.yaml
-  - type: NaftikoCapability
-    url: capabilities/git-branches.yaml
-  - type: NaftikoCapability
-    url: capabilities/git-tags.yaml
-  - type: NaftikoCapability
-    url: capabilities/git-trees.yaml
-  - type: NaftikoCapability
-    url: capabilities/git-blobs.yaml
-  - type: NaftikoCapability
-    url: capabilities/git-search.yaml
-  - type: NaftikoCapability
-    url: capabilities/git-triggers.yaml
-  - type: NaftikoCapability
-    url: capabilities/git-github-sync.yaml
-  - type: NaftikoCapability
-    url: capabilities/git-repair.yaml
-  description: Multi-tenant hosted Git for AI agents — every agent gets a branchable filesystem with commits, diffs,
-    rollback, and review. Includes create/list/delete repositories, commits from files or from raw Git objects,
-    branches and tags, tree/blob inspection, full-text file/commit/diff search, repository compare, tarball/zip
-    downloads, GitHub bidirectional sync, repair jobs, and webhook triggers.
-- aid: freestyle-sh:freestyle-identity-api
-  name: Freestyle Identity API
-  tags:
-  - Identity
-  - Access Management
-  - Permissions
-  - Tokens
-  - Agents
-  humanURL: https://docs.freestyle.sh/v2/about
-  properties:
-  - url: https://docs.freestyle.sh/v2/about
-    type: Documentation
-  - url: openapi/freestyle-identity-api-openapi.yml
-    type: OpenAPI
-  - url: json-ld/freestyle-sh-context.jsonld
-    type: JSONLD
-  - type: NaftikoCapability
-    url: capabilities/identity-identities.yaml
-  - type: NaftikoCapability
-    url: capabilities/identity-tokens.yaml
-  - type: NaftikoCapability
-    url: capabilities/identity-git-permissions.yaml
-  - type: NaftikoCapability
-    url: capabilities/identity-vm-permissions.yaml
-  - type: NaftikoCapability
-    url: capabilities/identity-auth.yaml
-  description: Identity and access management for end users and AI agents. Create identities, mint and revoke access
-    tokens, grant per-repo Git permissions (read/write/admin), grant per-VM permissions with an allowed-users list,
-    and inspect the current bearer-token whoami plus long-running background-request status.
-- aid: freestyle-sh:freestyle-domains-api
-  name: Freestyle Domains API
-  tags:
-  - Domains
-  - DNS
-  - Certificates
-  - SSL
-  humanURL: https://docs.freestyle.sh/v2/domains
-  properties:
-  - url: https://docs.freestyle.sh/v2/domains
-    type: Documentation
-  - url: https://docs.freestyle.sh/v2/domains/deploy-to-custom-domain
-    type: Documentation
-  - url: openapi/freestyle-domains-api-openapi.yml
-    type: OpenAPI
-  - type: NaftikoCapability
-    url: capabilities/domains-domains.yaml
-  - type: NaftikoCapability
-    url: capabilities/domains-verifications.yaml
-  - type: NaftikoCapability
-    url: capabilities/domains-mappings.yaml
-  - type: NaftikoCapability
-    url: capabilities/domains-certs.yaml
-  - type: NaftikoCapability
-    url: capabilities/domains-dns-records.yaml
-  description: Manage custom domains for Freestyle Web Deployments and VMs — list domains, create/verify ownership,
-    insert and remove domain → deployment mappings, provision wildcard SSL certificates, and manage DNS records for
-    Freestyle-hosted domains.
-- aid: freestyle-sh:freestyle-execute-api
-  name: Freestyle Execute API
-  tags:
   - Code Execution
   - JavaScript
   - TypeScript
-  - Sandboxes
-  - Agents
-  - AI
-  humanURL: https://docs.freestyle.sh/v2/serverless/runs/about
-  properties:
-  - url: https://docs.freestyle.sh/v2/serverless/runs/about
-    type: Documentation
-  - url: https://docs.freestyle.sh/v2/serverless/runs/code-playground
-    type: Documentation
-  - url: https://docs.freestyle.sh/v2/serverless/runs/egress
-    type: Documentation
-  - url: https://docs.freestyle.sh/v2/serverless/runs/errors
-    type: Documentation
-  - url: openapi/freestyle-execute-api-openapi.yml
-    type: OpenAPI
-  - type: NaftikoCapability
-    url: capabilities/execute-execute.yaml
-  description: Serverless Runs — execute JavaScript or TypeScript code on demand and get the result. No deployment,
-    no HTTP server — POST code and receive the output. Supports node modules, environment variables, egress control,
-    and stored run output retrieval. The v3 endpoint is the current execute surface; v1 is deprecated.
-- aid: freestyle-sh:freestyle-web-deployments-api
-  name: Freestyle Web Deployments API
-  tags:
-  - Hosting
-  - Deployments
-  - Node.js
-  - JavaScript
-  - TypeScript
-  humanURL: https://docs.freestyle.sh/v2/serverless/deployments/about
-  properties:
-  - url: https://docs.freestyle.sh/v2/serverless/deployments/about
-    type: Documentation
-  - url: https://docs.freestyle.sh/v2/serverless/deployments/configuration
-    type: Documentation
-  - url: https://docs.freestyle.sh/v2/serverless/deployments/cron-jobs
-    type: Documentation
-  - url: https://docs.freestyle.sh/v2/serverless/deployments/guides/nextjs
-    type: Documentation
-  - url: https://docs.freestyle.sh/v2/serverless/deployments/guides/vite
-    type: Documentation
-  - url: https://docs.freestyle.sh/v2/serverless/deployments/guides/static
-    type: Documentation
-  - url: openapi/freestyle-web-api-openapi.yml
-    type: OpenAPI
-  - type: NaftikoCapability
-    url: capabilities/web-deployments.yaml
-  description: Deploy and manage Node.js web applications and static sites. Push code via /web/v1/deployment, list
-    deployments, inspect deployment metadata, and fetch/update files on a deployment using HTTP-style verb-based
-    operations. Handles node-module caching, scaling, wildcard subdomains, and SSL certificates end-to-end.
-- aid: freestyle-sh:freestyle-cron-api
-  name: Freestyle Cron API
-  tags:
-  - Cron
-  - Scheduling
   - Serverless
-  humanURL: https://docs.freestyle.sh/v2/serverless/deployments/cron-jobs
-  properties:
-  - url: https://docs.freestyle.sh/v2/serverless/deployments/cron-jobs
-    type: Documentation
-  - url: openapi/freestyle-cron-api-openapi.yml
-    type: OpenAPI
-  - type: NaftikoCapability
-    url: capabilities/cron-schedules.yaml
-  description: Schedule recurring serverless runs. Create, update, and delete cron schedules; list past executions;
-    inspect per-schedule success rate and a metrics timeline for observability.
-- aid: freestyle-sh:freestyle-observability-api
-  name: Freestyle Observability API
-  tags:
-  - Observability
-  - Logs
-  - Monitoring
-  humanURL: https://docs.freestyle.sh/v2/about
-  properties:
-  - url: https://docs.freestyle.sh/v2/about
-    type: Documentation
-  - url: openapi/freestyle-observability-api-openapi.yml
-    type: OpenAPI
-  - type: NaftikoCapability
-    url: capabilities/observability-logs.yaml
-  description: Query structured logs across Freestyle services. Filter by VM, deployment, run, identity, or time
-    range to debug agent runs end-to-end.
-name: Freestyle
-tags:
-- AI
-- Agents
-- Sandboxes
-- VMs
-- MicroVMs
-- Git
-- Code Execution
-- JavaScript
-- TypeScript
-- Serverless
-- Hosting
-- Developer Tools
-- Infrastructure
+  - Hosting
+  - Developer Tools
+  - Infrastructure
 kind: contract
 image: https://kinlane-productions2.s3.amazonaws.com/apis-json/apis-json-logo.jpg
 access: 3rd-Party
 common:
-- type: Portal
-  url: https://www.freestyle.sh
-- type: Documentation
-  url: https://docs.freestyle.sh
-- type: Documentation
-  url: https://docs.freestyle.sh/v2
-- type: GettingStarted
-  url: https://docs.freestyle.sh/v2/about
-- url: https://api.freestyle.sh/openapi.json
-  name: Freestyle Sandboxes OpenAPI
-  type: OpenAPI
-- url: https://admin.freestyle.sh
-  type: SignUp
-  name: Freestyle Admin Console
-- url: https://admin.freestyle.sh
-  type: Dashboard
-  name: Freestyle Dashboard
-- url: https://www.freestyle.sh/pricing
-  type: Pricing
-  name: Freestyle Pricing
-- url: https://www.freestyle.sh/blog
-  type: Blog
-  name: Freestyle Blog
-- url: https://status.freestyle.sh
-  type: StatusPage
-- url: https://discord.com/invite/YTRprVkdnz
-  type: Forum
-  name: Freestyle Discord
-- url: https://www.freestyle.sh/privacy
-  type: PrivacyPolicy
-- url: https://github.com/freestyle-sh
-  type: GitHubOrganization
-- url: https://github.com/freestyle-sh/sandbox_sdks
-  name: Freestyle Sandboxes SDKs (TypeScript)
-  type: SDK
-- url: https://github.com/freestyle-sh/sandbox-sdks-py
-  name: Freestyle Sandboxes Python SDK
-  type: SDK
-- url: https://github.com/freestyle-sh/rigkit
-  name: Freestyle Dev Machine CLI and SDK (rigkit)
-  type: SDK
-- url: https://github.com/freestyle-sh/freestyle-auth
-  name: Freestyle Auth (open source)
-  type: Tool
-- url: https://github.com/freestyle-sh/Adorable
-  name: Adorable — Open Source Lovable
-  type: Tool
-- url: https://github.com/freestyle-sh/cloudstate
-  name: Cloudstate — JavaScript Database Runtime
-  type: Tool
-- url: https://github.com/freestyle-sh/freestyle-execute-chat
-  name: Freestyle Execute Chat example
-  type: CodeExamples
-- url: https://github.com/freestyle-sh/freestyle-astro-template
-  name: Astro starter template
-  type: CodeExamples
-- url: https://github.com/freestyle-sh/freestyle-sveltekit-template
-  name: SvelteKit starter template
-  type: CodeExamples
-- url: https://github.com/freestyle-sh/freestyle-solid-template
-  name: Solid Start starter template
-  type: CodeExamples
-- url: https://github.com/freestyle-sh/freestyle-next-template
-  name: Next.js starter template
-  type: CodeExamples
-- url: https://github.com/freestyle-sh/freestyle-vite-react
-  name: Vite + React starter template
-  type: CodeExamples
-- url: https://github.com/freestyle-sh/freestyle-react-native-template
-  name: React Native starter template
-  type: CodeExamples
-- url: https://github.com/freestyle-sh/freestyle-deno-template
-  name: Deno starter template
-  type: CodeExamples
-- url: https://github.com/freestyle-sh/freestyle-expo
-  name: Expo dev-server template
-  type: CodeExamples
-- url: https://docs.freestyle.sh/v2/vms/integrations/node
-  type: Documentation
-  name: Node.js VM Integration
-- url: https://docs.freestyle.sh/v2/vms/integrations/python
-  type: Documentation
-  name: Python VM Integration
-- url: https://docs.freestyle.sh/v2/vms/integrations/bun
-  type: Documentation
-  name: Bun VM Integration
-- url: https://docs.freestyle.sh/v2/vms/integrations/deno
-  type: Documentation
-  name: Deno VM Integration
-- url: https://docs.freestyle.sh/v2/vms/integrations/ruby
-  type: Documentation
-  name: Ruby VM Integration
-- url: https://docs.freestyle.sh/v2/vms/integrations/java
-  type: Documentation
-  name: Java VM Integration
-- url: https://docs.freestyle.sh/v2/vms/integrations/postgres
-  type: Documentation
-  name: PostgreSQL VM Integration
-- url: https://docs.freestyle.sh/v2/vms/integrations/opencode
-  type: Documentation
-  name: OpenCode VM Integration
-- url: https://docs.freestyle.sh/v2/vms/integrations/web-terminal
-  type: Documentation
-  name: Web Terminal VM Integration
-- url: https://docs.freestyle.sh/v2/vms/custom-integrations
-  type: Documentation
-  name: Custom VM Integrations
-- url: https://docs.freestyle.sh/v2/vms/cli
-  type: Documentation
-  name: VM CLI
-- url: https://docs.freestyle.sh/v2/git/cli
-  type: Documentation
-  name: Git CLI
-- url: https://docs.freestyle.sh/v2/serverless/deployments/cli
-  type: Documentation
-  name: Deployments CLI
-- url: https://docs.freestyle.sh/v2/serverless/runs/cli
-  type: Documentation
-  name: Runs CLI
-- url: https://docs.freestyle.sh/v2/domains/cli
-  type: Documentation
-  name: Domains CLI
-- url: plans/freestyle-sh-plans-pricing.yml
-  type: Plans
-- url: rate-limits/freestyle-sh-rate-limits.yml
-  type: RateLimits
-- url: finops/freestyle-sh-finops.yml
-  type: FinOps
-- type: Features
-  data:
-  - Linux microVMs that boot in under 600ms with restored memory snapshots
-  - Live VM forking — clone a running VM into multiple copies in milliseconds
-  - Pause and resume — hibernate idle VMs and pay nothing while paused
-  - Snapshots (memory + disk) with persistent snapshot retention on Hobby+
-  - Multi-tenant Git hosting with branchable filesystems for AI agents
-  - GitHub bidirectional sync (pull, push, or both) per repository
-  - Full-text search across files, commit messages, and diffs
-  - Webhook triggers on commits and refs
-  - Per-repo and per-VM identity permissions with scoped access tokens
-  - Custom domains with verification, wildcard SSL, DNS record management, and
-    deployment mappings
-  - Serverless Runs (execute) for ephemeral JS/TS code execution
-  - Serverless Deployments for hosted Node.js apps and static sites
-  - Cron schedules with execution history and metrics timeline
-  - Observability logs across VMs, deployments, runs, and identities
-  - First-class language integrations — Node.js, Bun, Deno, Python, uv, Ruby,
-    Java, PostgreSQL, OpenCode, Web Terminal
-  - TypeScript and Python SDKs plus Vercel AI, LangGraph, and Mastra SDK adapters
-  - rigkit CLI for local dev machines
-  - SSH access to VMs
-  - Bearer-token auth (Authorization header) for all REST APIs
-  - Pricing per vCPU-hour, GiB-memory-hour, and GiB-storage-hour with daily free
-    allowances
-  - Plan tiers Free, Hobby ($50/mo + usage), Pro ($500/mo + usage), Enterprise
-  sources:
-  - https://www.freestyle.sh
-  - https://www.freestyle.sh/pricing
-  - https://docs.freestyle.sh/v2/about
-  - https://docs.freestyle.sh/v2/vms/about
-  - https://docs.freestyle.sh/v2/git/about
-  - https://api.freestyle.sh/openapi.json
-  updated: '2026-05-25'
-- type: UseCases
-  data:
-  - AI app builders (Lovable, Bolt, V0 style) provisioning a sandbox VM per project
-    with cloned source, dev servers, and *.style.dev preview domains
-  - Background agents (Devin, Cursor Agent style) forking a base VM into parallel
-    workers — one builds the API, one builds the UI, one writes tests
-  - Code review bots (CodeRabbit, Greptile style) cloning a repo at a PR SHA,
-    running lint/test, and posting a Claude-generated review
-  - Long-running AI assistants (Claude, OpenClaw, Cowork style) using a persistent
-    VM with 60s idle pause to keep per-user state at $0 cost between turns
-  - LLM code-interpreter style — execute model-generated code safely in an
-    isolated microVM with egress control
-  - Sandboxed AI agent evals on ephemeral microVMs (one VM per eval run)
-  - Multi-tenant SaaS where each end user gets their own Freestyle Git repo and
-    isolated VM
-  - Reinforcement learning on microVMs — fan out, train, fold in
-  - Deep-research agents that spawn, suspend on idle, and resume on event
-  - Hosted code playgrounds for educational and developer-tool products
-- type: Integrations
-  data:
-  - Anthropic Claude — Code Execution tool, Managed Agents, Skills (Freestyle
-    sandbox positioned as an alternative or complement to Anthropic's hosted code
-    execution sandbox)
-  - GitHub — bidirectional repo sync, GitHub Sync configuration per repo
-  - Vercel AI SDK — first-party adapter in sandbox_sdks
-  - LangGraph — first-party adapter in sandbox_sdks
-  - Mastra — first-party adapter in sandbox_sdks
-  - Node.js, Bun, Deno — first-class VM runtimes
-  - Python (with uv), Ruby, Java — first-class VM runtimes
-  - PostgreSQL — managed inside VMs
-  - OpenCode — VM integration
-  - Cloudstate — Freestyle's own JavaScript database runtime
-  - Adorable — Freestyle's own open-source Lovable-style AI app builder
-  - Astro, Next.js, SvelteKit, Solid Start, React Native, Expo, Vite — starter
-    templates
-- type: Solutions
-  data:
-  - VMs and Git for AI Agents — give agents real Linux VMs with a Git-backed
-    branchable filesystem, replacing per-step container snapshots with
-    full-machine VM snapshots
-  - Multi-tenant App Hosting — every end user or AI project gets its own VM,
-    repo, and custom domain
-  - AI Code Sandboxing — safer alternative to running LLM-generated code in your
-    own process, with egress control and microVM isolation
-  - Background Agent Infrastructure — persistent VMs that pause when idle and
-    resume on event for long-running agentic workloads
+  - type: Portal
+    url: https://www.freestyle.sh
+  - type: Documentation
+    url: https://docs.freestyle.sh
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2
+  - type: GettingStarted
+    url: https://docs.freestyle.sh/v2/about
+  - url: https://api.freestyle.sh/openapi.json
+    name: Freestyle Sandboxes OpenAPI
+    type: OpenAPI
+  - url: https://admin.freestyle.sh
+    type: SignUp
+    name: Freestyle Admin Console
+  - url: https://admin.freestyle.sh
+    type: Dashboard
+    name: Freestyle Dashboard
+  - url: https://www.freestyle.sh/pricing
+    type: Pricing
+    name: Freestyle Pricing
+  - url: https://www.freestyle.sh/blog
+    type: Blog
+    name: Freestyle Blog
+  - url: https://status.freestyle.sh
+    type: StatusPage
+  - url: https://discord.com/invite/YTRprVkdnz
+    type: Forum
+    name: Freestyle Discord
+  - url: https://www.freestyle.sh/privacy
+    type: PrivacyPolicy
+  - url: https://github.com/freestyle-sh
+    type: GitHubOrganization
+  - url: https://github.com/freestyle-sh/sandbox_sdks
+    name: Freestyle Sandboxes SDKs (TypeScript)
+    type: SDK
+  - url: https://github.com/freestyle-sh/sandbox-sdks-py
+    name: Freestyle Sandboxes Python SDK
+    type: SDK
+  - url: https://github.com/freestyle-sh/rigkit
+    name: Freestyle Dev Machine CLI and SDK (rigkit)
+    type: SDK
+  - url: https://github.com/freestyle-sh/freestyle-auth
+    name: Freestyle Auth (open source)
+    type: Tool
+  - url: https://github.com/freestyle-sh/Adorable
+    name: Adorable — Open Source Lovable
+    type: Tool
+  - url: https://github.com/freestyle-sh/cloudstate
+    name: Cloudstate — JavaScript Database Runtime
+    type: Tool
+  - url: https://github.com/freestyle-sh/freestyle-execute-chat
+    name: Freestyle Execute Chat example
+    type: CodeExamples
+  - url: https://github.com/freestyle-sh/freestyle-astro-template
+    name: Astro starter template
+    type: CodeExamples
+  - url: https://github.com/freestyle-sh/freestyle-sveltekit-template
+    name: SvelteKit starter template
+    type: CodeExamples
+  - url: https://github.com/freestyle-sh/freestyle-solid-template
+    name: Solid Start starter template
+    type: CodeExamples
+  - url: https://github.com/freestyle-sh/freestyle-next-template
+    name: Next.js starter template
+    type: CodeExamples
+  - url: https://github.com/freestyle-sh/freestyle-vite-react
+    name: Vite + React starter template
+    type: CodeExamples
+  - url: https://github.com/freestyle-sh/freestyle-react-native-template
+    name: React Native starter template
+    type: CodeExamples
+  - url: https://github.com/freestyle-sh/freestyle-deno-template
+    name: Deno starter template
+    type: CodeExamples
+  - url: https://github.com/freestyle-sh/freestyle-expo
+    name: Expo dev-server template
+    type: CodeExamples
+  - url: https://docs.freestyle.sh/v2/vms/integrations/node
+    type: Documentation
+    name: Node.js VM Integration
+  - url: https://docs.freestyle.sh/v2/vms/integrations/python
+    type: Documentation
+    name: Python VM Integration
+  - url: https://docs.freestyle.sh/v2/vms/integrations/bun
+    type: Documentation
+    name: Bun VM Integration
+  - url: https://docs.freestyle.sh/v2/vms/integrations/deno
+    type: Documentation
+    name: Deno VM Integration
+  - url: https://docs.freestyle.sh/v2/vms/integrations/ruby
+    type: Documentation
+    name: Ruby VM Integration
+  - url: https://docs.freestyle.sh/v2/vms/integrations/java
+    type: Documentation
+    name: Java VM Integration
+  - url: https://docs.freestyle.sh/v2/vms/integrations/postgres
+    type: Documentation
+    name: PostgreSQL VM Integration
+  - url: https://docs.freestyle.sh/v2/vms/integrations/opencode
+    type: Documentation
+    name: OpenCode VM Integration
+  - url: https://docs.freestyle.sh/v2/vms/integrations/web-terminal
+    type: Documentation
+    name: Web Terminal VM Integration
+  - url: https://docs.freestyle.sh/v2/vms/custom-integrations
+    type: Documentation
+    name: Custom VM Integrations
+  - url: https://docs.freestyle.sh/v2/vms/cli
+    type: Documentation
+    name: VM CLI
+  - url: https://docs.freestyle.sh/v2/git/cli
+    type: Documentation
+    name: Git CLI
+  - url: https://docs.freestyle.sh/v2/serverless/deployments/cli
+    type: Documentation
+    name: Deployments CLI
+  - url: https://docs.freestyle.sh/v2/serverless/runs/cli
+    type: Documentation
+    name: Runs CLI
+  - url: https://docs.freestyle.sh/v2/domains/cli
+    type: Documentation
+    name: Domains CLI
+  - url: plans/freestyle-sh-plans-pricing.yml
+    type: Plans
+  - url: rate-limits/freestyle-sh-rate-limits.yml
+    type: RateLimits
+  - url: finops/freestyle-sh-finops.yml
+    type: FinOps
+  - type: Features
+    data:
+      - Linux microVMs that boot in under 600ms with restored memory snapshots
+      - Live VM forking — clone a running VM into multiple copies in milliseconds
+      - Pause and resume — hibernate idle VMs and pay nothing while paused
+      - Snapshots (memory + disk) with persistent snapshot retention on Hobby+
+      - Multi-tenant Git hosting with branchable filesystems for AI agents
+      - GitHub bidirectional sync (pull, push, or both) per repository
+      - Full-text search across files, commit messages, and diffs
+      - Webhook triggers on commits and refs
+      - Per-repo and per-VM identity permissions with scoped access tokens
+      - Custom domains with verification, wildcard SSL, DNS record management, and deployment mappings
+      - Serverless Runs (execute) for ephemeral JS/TS code execution
+      - Serverless Deployments for hosted Node.js apps and static sites
+      - Cron schedules with execution history and metrics timeline
+      - Observability logs across VMs, deployments, runs, and identities
+      - >-
+        First-class language integrations — Node.js, Bun, Deno, Python, uv, Ruby, Java, PostgreSQL, OpenCode, Web
+        Terminal
+      - TypeScript and Python SDKs plus Vercel AI, LangGraph, and Mastra SDK adapters
+      - rigkit CLI for local dev machines
+      - SSH access to VMs
+      - Bearer-token auth (Authorization header) for all REST APIs
+      - Pricing per vCPU-hour, GiB-memory-hour, and GiB-storage-hour with daily free allowances
+      - Plan tiers Free, Hobby ($50/mo + usage), Pro ($500/mo + usage), Enterprise
+    sources:
+      - https://www.freestyle.sh
+      - https://www.freestyle.sh/pricing
+      - https://docs.freestyle.sh/v2/about
+      - https://docs.freestyle.sh/v2/vms/about
+      - https://docs.freestyle.sh/v2/git/about
+      - https://api.freestyle.sh/openapi.json
+    updated: '2026-05-25'
+  - type: UseCases
+    data:
+      - >-
+        AI app builders (Lovable, Bolt, V0 style) provisioning a sandbox VM per project with cloned source, dev servers,
+        and *.style.dev preview domains
+      - >-
+        Background agents (Devin, Cursor Agent style) forking a base VM into parallel workers — one builds the API, one
+        builds the UI, one writes tests
+      - >-
+        Code review bots (CodeRabbit, Greptile style) cloning a repo at a PR SHA, running lint/test, and posting a
+        Claude-generated review
+      - >-
+        Long-running AI assistants (Claude, OpenClaw, Cowork style) using a persistent VM with 60s idle pause to keep
+        per-user state at $0 cost between turns
+      - LLM code-interpreter style — execute model-generated code safely in an isolated microVM with egress control
+      - Sandboxed AI agent evals on ephemeral microVMs (one VM per eval run)
+      - Multi-tenant SaaS where each end user gets their own Freestyle Git repo and isolated VM
+      - Reinforcement learning on microVMs — fan out, train, fold in
+      - Deep-research agents that spawn, suspend on idle, and resume on event
+      - Hosted code playgrounds for educational and developer-tool products
+  - type: Integrations
+    data:
+      - >-
+        Anthropic Claude — Code Execution tool, Managed Agents, Skills (Freestyle sandbox positioned as an alternative
+        or complement to Anthropic's hosted code execution sandbox)
+      - GitHub — bidirectional repo sync, GitHub Sync configuration per repo
+      - Vercel AI SDK — first-party adapter in sandbox_sdks
+      - LangGraph — first-party adapter in sandbox_sdks
+      - Mastra — first-party adapter in sandbox_sdks
+      - Node.js, Bun, Deno — first-class VM runtimes
+      - Python (with uv), Ruby, Java — first-class VM runtimes
+      - PostgreSQL — managed inside VMs
+      - OpenCode — VM integration
+      - Cloudstate — Freestyle's own JavaScript database runtime
+      - Adorable — Freestyle's own open-source Lovable-style AI app builder
+      - Astro, Next.js, SvelteKit, Solid Start, React Native, Expo, Vite — starter templates
+  - type: Solutions
+    data:
+      - >-
+        VMs and Git for AI Agents — give agents real Linux VMs with a Git-backed branchable filesystem, replacing
+        per-step container snapshots with full-machine VM snapshots
+      - Multi-tenant App Hosting — every end user or AI project gets its own VM, repo, and custom domain
+      - >-
+        AI Code Sandboxing — safer alternative to running LLM-generated code in your own process, with egress control
+        and microVM isolation
+      - >-
+        Background Agent Infrastructure — persistent VMs that pause when idle and resume on event for long-running
+        agentic workloads
 created: '2026-05-25T00:00:00.000Z'
 modified: '2026-05-25'
 position: Producing
-description: Freestyle is the infrastructure for code you didn't write — VMs and Git for AI agents. The platform
-  provides Linux microVMs that boot in under 600ms with live-fork, pause-resume, and persistent snapshots; a
-  multi-tenant Git service with branchable filesystems, GitHub Sync, full-text search, and webhook triggers; an
-  Execute (Serverless Runs) API for ephemeral JavaScript/TypeScript code; a Web Deployments API for hosted
-  Node.js apps and static sites; Cron schedules; custom Domains with wildcard SSL; an Identity service for
-  scoped per-user and per-agent access tokens; and Observability logs. Freestyle is a direct sandbox option for
-  AI app builders, background agents, code review bots, and long-running assistants — a usage-priced
-  alternative to running Anthropic's hosted Code Execution tool or building bespoke microVM infrastructure on
-  Firecracker, Modal, or E2B.
+description: >-
+  Freestyle is the infrastructure for code you didn't write — VMs and Git for AI agents. The platform provides Linux
+  microVMs that boot in under 600ms with live-fork, pause-resume, and persistent snapshots; a multi-tenant Git service
+  with branchable filesystems, GitHub Sync, full-text search, and webhook triggers; an Execute (Serverless Runs) API for
+  ephemeral JavaScript/TypeScript code; a Web Deployments API for hosted Node.js apps and static sites; Cron schedules;
+  custom Domains with wildcard SSL; an Identity service for scoped per-user and per-agent access tokens; and
+  Observability logs. Freestyle is a direct sandbox option for AI app builders, background agents, code review bots, and
+  long-running assistants — a usage-priced alternative to running Anthropic's hosted Code Execution tool or building
+  bespoke microVM infrastructure on Firecracker, Modal, or E2B.
 maintainers:
-- FN: Kin Lane
-  email: info@apievangelist.com
-  X: apievangelist
-  url: https://apievangelist.com
+  - FN: Kin Lane
+    email: info@apievangelist.com
+    X: apievangelist
+    url: https://apievangelist.com
 specificationVersion: '0.16'
