@@ -1,0 +1,846 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Freestyle VMs API",
+    "version": "0.1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "VM",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "list_vms",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/v1/vms",
+            "params": [
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "vmState",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "includeDeleted",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "search",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "List VMs"
+        },
+        {
+          "info": {
+            "name": "create_vm",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.freestyle.sh/v1/vms",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create VM"
+        },
+        {
+          "info": {
+            "name": "get_build",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/v1/vms/builds/:build_id",
+            "params": [
+              {
+                "name": "build_id",
+                "value": "",
+                "type": "path",
+                "description": "Build id"
+              }
+            ]
+          },
+          "docs": "Fetch a single build by id."
+        },
+        {
+          "info": {
+            "name": "list_build_phases",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/v1/vms/builds/:build_id/phases",
+            "params": [
+              {
+                "name": "build_id",
+                "value": "",
+                "type": "path",
+                "description": "Build id"
+              }
+            ]
+          },
+          "docs": "Append-only timeline of phases this build passed through. Phases are ordered by started_at; the last entry is the current phase."
+        },
+        {
+          "info": {
+            "name": "list_snapshots",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/v1/vms/snapshots",
+            "params": [
+              {
+                "name": "includeDeleted",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "includeFailed",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "includeBuilding",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "List all snapshots."
+        },
+        {
+          "info": {
+            "name": "create_snapshot",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.freestyle.sh/v1/vms/snapshots",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create a snapshot by creating a temporary VM, starting it, snapshotting it, then deleting the VM. Supports multi-layer recursive specs via `spec.snapshot`."
+        },
+        {
+          "info": {
+            "name": "get_snapshot",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/v1/vms/snapshots/:snapshot_id",
+            "params": [
+              {
+                "name": "snapshot_id",
+                "value": "",
+                "type": "path",
+                "description": "Snapshot id"
+              }
+            ]
+          },
+          "docs": "Fetch a single snapshot by id. Returns deleted/failed rows too — useful for opening a deep-link to a layer-snapshot that's since been cleaned up."
+        },
+        {
+          "info": {
+            "name": "update_snapshot",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://api.freestyle.sh/v1/vms/snapshots/:snapshot_id",
+            "params": [
+              {
+                "name": "snapshot_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the snapshot to update"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Update snapshot metadata"
+        },
+        {
+          "info": {
+            "name": "delete_snapshot",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.freestyle.sh/v1/vms/snapshots/:snapshot_id",
+            "params": [
+              {
+                "name": "snapshot_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the snapshot to delete"
+              }
+            ]
+          },
+          "docs": "Delete a snapshot"
+        },
+        {
+          "info": {
+            "name": "resize_vm",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.freestyle.sh/v1/vms/:id/resize",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Resize VM"
+        },
+        {
+          "info": {
+            "name": "get_vm",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/v1/vms/:vm_id",
+            "params": [
+              {
+                "name": "vm_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Get VM"
+        },
+        {
+          "info": {
+            "name": "delete_vm",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.freestyle.sh/v1/vms/:vm_id",
+            "params": [
+              {
+                "name": "vm_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the VM to delete"
+              }
+            ]
+          },
+          "docs": "Delete VM"
+        },
+        {
+          "info": {
+            "name": "wait_vm",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.freestyle.sh/v1/vms/:vm_id/await",
+            "params": [
+              {
+                "name": "vm_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the VM to wait for"
+              }
+            ]
+          },
+          "docs": "Wait for VM to stop"
+        },
+        {
+          "info": {
+            "name": "get_build_for_vm",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/v1/vms/:vm_id/build",
+            "params": [
+              {
+                "name": "vm_id",
+                "value": "",
+                "type": "path",
+                "description": "VM id"
+              }
+            ]
+          },
+          "docs": "Fetch the build that produced a VM. Joins through vm_records.build_id."
+        },
+        {
+          "info": {
+            "name": "exec_await",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.freestyle.sh/v1/vms/:vm_id/exec-await",
+            "params": [
+              {
+                "name": "vm_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the VM to execute the command in"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Execute command in VM and await result"
+        },
+        {
+          "info": {
+            "name": "get_file",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/v1/vms/:vm_id/files/:filepath",
+            "params": [
+              {
+                "name": "vm_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the VM to get the file from"
+              },
+              {
+                "name": "filepath",
+                "value": "",
+                "type": "path",
+                "description": "The path of the file to get"
+              }
+            ]
+          },
+          "docs": "Get file from VM"
+        },
+        {
+          "info": {
+            "name": "put_file",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.freestyle.sh/v1/vms/:vm_id/files/:filepath",
+            "params": [
+              {
+                "name": "vm_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the VM to put the file to"
+              },
+              {
+                "name": "filepath",
+                "value": "",
+                "type": "path",
+                "description": "The path of the file to put"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Put file to VM"
+        },
+        {
+          "info": {
+            "name": "fork_vm",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.freestyle.sh/v1/vms/:vm_id/fork",
+            "params": [
+              {
+                "name": "vm_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Fork VM"
+        },
+        {
+          "info": {
+            "name": "kill_vm",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.freestyle.sh/v1/vms/:vm_id/kill",
+            "params": [
+              {
+                "name": "vm_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the VM to kill"
+              }
+            ]
+          },
+          "docs": "Kill VM"
+        },
+        {
+          "info": {
+            "name": "optimize_vm",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.freestyle.sh/v1/vms/:vm_id/optimize",
+            "params": [
+              {
+                "name": "vm_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the VM to optimize"
+              }
+            ]
+          },
+          "docs": "Suspends a VM and reallocates storage for more efficient forking."
+        },
+        {
+          "info": {
+            "name": "snapshot_vm",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.freestyle.sh/v1/vms/:vm_id/snapshot",
+            "params": [
+              {
+                "name": "vm_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create a snapshot of a VM. The snapshot is stored in a special snapshots folder and cannot be booted directly, but can be used to create new VMs."
+        },
+        {
+          "info": {
+            "name": "start_vm",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.freestyle.sh/v1/vms/:vm_id/start",
+            "params": [
+              {
+                "name": "vm_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Start VM"
+        },
+        {
+          "info": {
+            "name": "stats_stream",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/v1/vms/:vm_id/stats/stream",
+            "params": [
+              {
+                "name": "vm_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the VM to stream stats for"
+              },
+              {
+                "name": "interval_ms",
+                "value": "",
+                "type": "query",
+                "description": "Sample interval in ms (default 1000, clamped 100-10000)"
+              }
+            ]
+          },
+          "docs": "Stream live VM stats (memory + CPU) as NDJSON. Sourced from inside the guest — untrusted, do not use for billing."
+        },
+        {
+          "info": {
+            "name": "stop_vm",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.freestyle.sh/v1/vms/:vm_id/stop",
+            "params": [
+              {
+                "name": "vm_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the VM to stop"
+              }
+            ]
+          },
+          "docs": "Stop VM"
+        },
+        {
+          "info": {
+            "name": "suspend_vm",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.freestyle.sh/v1/vms/:vm_id/suspend",
+            "params": [
+              {
+                "name": "vm_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the VM to suspend"
+              }
+            ]
+          },
+          "docs": "Suspend VM"
+        },
+        {
+          "info": {
+            "name": "batch_restart_services",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.freestyle.sh/v1/vms/:vm_id/systemd/restart",
+            "params": [
+              {
+                "name": "vm_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the VM"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Restart multiple systemd services"
+        },
+        {
+          "info": {
+            "name": "list_services",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/v1/vms/:vm_id/systemd/services",
+            "params": [
+              {
+                "name": "vm_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the VM"
+              }
+            ]
+          },
+          "docs": "List all systemd services for a VM"
+        },
+        {
+          "info": {
+            "name": "create_service",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.freestyle.sh/v1/vms/:vm_id/systemd/services",
+            "params": [
+              {
+                "name": "vm_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the VM"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create a new systemd service"
+        },
+        {
+          "info": {
+            "name": "delete_service",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.freestyle.sh/v1/vms/:vm_id/systemd/services/:service_id",
+            "params": [
+              {
+                "name": "vm_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the VM"
+              },
+              {
+                "name": "service_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the service"
+              }
+            ]
+          },
+          "docs": "Delete a systemd service"
+        },
+        {
+          "info": {
+            "name": "get_service_logs",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/v1/vms/:vm_id/systemd/services/:service_id/logs",
+            "params": [
+              {
+                "name": "vm_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the VM"
+              },
+              {
+                "name": "service_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the service"
+              },
+              {
+                "name": "lines",
+                "value": "",
+                "type": "query",
+                "description": "Number of log lines to return"
+              },
+              {
+                "name": "since",
+                "value": "",
+                "type": "query",
+                "description": "Only show logs since this timestamp"
+              }
+            ]
+          },
+          "docs": "Get logs for a systemd service"
+        },
+        {
+          "info": {
+            "name": "get_service_status",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/v1/vms/:vm_id/systemd/services/:service_id/status",
+            "params": [
+              {
+                "name": "vm_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the VM"
+              },
+              {
+                "name": "service_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the service"
+              }
+            ]
+          },
+          "docs": "Get status of a systemd service"
+        },
+        {
+          "info": {
+            "name": "batch_start_services",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.freestyle.sh/v1/vms/:vm_id/systemd/start",
+            "params": [
+              {
+                "name": "vm_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the VM"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Start multiple systemd services"
+        },
+        {
+          "info": {
+            "name": "batch_stop_services",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.freestyle.sh/v1/vms/:vm_id/systemd/stop",
+            "params": [
+              {
+                "name": "vm_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the VM"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Stop multiple systemd services"
+        },
+        {
+          "info": {
+            "name": "list_terminals",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/v1/vms/:vm_id/terminals",
+            "params": [
+              {
+                "name": "vm_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the VM"
+              }
+            ]
+          },
+          "docs": "List all terminal sessions for a VM"
+        },
+        {
+          "info": {
+            "name": "get_terminal_logs",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/v1/vms/:vm_id/terminals/:terminal_id/logs",
+            "params": [
+              {
+                "name": "vm_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the VM"
+              },
+              {
+                "name": "terminal_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the terminal session"
+              }
+            ]
+          },
+          "docs": "Get terminal logs as plain text array"
+        },
+        {
+          "info": {
+            "name": "get_terminal_xterm",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/v1/vms/:vm_id/terminals/:terminal_id/xterm-256color",
+            "params": [
+              {
+                "name": "vm_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the VM"
+              },
+              {
+                "name": "terminal_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the terminal session"
+              }
+            ]
+          },
+          "docs": "Get terminal output with xterm formatting"
+        },
+        {
+          "info": {
+            "name": "watch_files",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.freestyle.sh/v1/vms/:vm_id/watch-files",
+            "params": [
+              {
+                "name": "vm_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the VM to watch files for"
+              }
+            ]
+          },
+          "docs": "Watch VM Files"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,452 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Freestyle Identity API",
+    "version": "0.1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Auth",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get Background Request Result",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/auth/v1/background-requests/:request_id",
+            "params": [
+              {
+                "name": "request_id",
+                "value": "",
+                "type": "path",
+                "description": "Background request ID"
+              }
+            ]
+          },
+          "docs": "Replay the stored response for a backgrounded request when it finishes."
+        },
+        {
+          "info": {
+            "name": "Get Current User",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/auth/v1/whoami"
+          },
+          "docs": "Returns information about the currently authenticated user or identity."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Identity",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List Identities",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/identity/v1/identities",
+            "params": [
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "includeManaged",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "List identities created by your account."
+        },
+        {
+          "info": {
+            "name": "Create an Identity",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.freestyle.sh/identity/v1/identities"
+          },
+          "docs": "Create an identity. This identity will be used to authenticate with the Git server."
+        },
+        {
+          "info": {
+            "name": "Delete an Identity",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.freestyle.sh/identity/v1/identities/:identity",
+            "params": [
+              {
+                "name": "identity",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Delete an identity. This will revoke all permissions granted to this identity."
+        },
+        {
+          "info": {
+            "name": "List Repository Permissions for an Identity",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/identity/v1/identities/:identity/permissions/git",
+            "params": [
+              {
+                "name": "identity",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of repositories to return"
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query",
+                "description": "Offset for the list of repositories"
+              }
+            ]
+          },
+          "docs": "List repository permissions for an identity. This will return a list of repositories that the identity has access to."
+        },
+        {
+          "info": {
+            "name": "Get the Git Permission of an Identity on a Repository",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/identity/v1/identities/:identity/permissions/git/:repo",
+            "params": [
+              {
+                "name": "identity",
+                "value": "",
+                "type": "path",
+                "description": "The git identity ID"
+              },
+              {
+                "name": "repo",
+                "value": "",
+                "type": "path",
+                "description": "The git repository ID"
+              }
+            ]
+          },
+          "docs": "Get the permission of an identity on a repository. This will return the access level of the identity on the repository."
+        },
+        {
+          "info": {
+            "name": "Grant a Git Repository Permission to an Identity",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.freestyle.sh/identity/v1/identities/:identity/permissions/git/:repo",
+            "params": [
+              {
+                "name": "identity",
+                "value": "",
+                "type": "path",
+                "description": "The git identity ID"
+              },
+              {
+                "name": "repo",
+                "value": "",
+                "type": "path",
+                "description": "The git repository ID"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Grant a permission to an identity on a repository"
+        },
+        {
+          "info": {
+            "name": "Update a Git Repository Permission for an Identity",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.freestyle.sh/identity/v1/identities/:identity/permissions/git/:repo",
+            "params": [
+              {
+                "name": "identity",
+                "value": "",
+                "type": "path",
+                "description": "The git identity ID"
+              },
+              {
+                "name": "repo",
+                "value": "",
+                "type": "path",
+                "description": "The git repository ID"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Update a permission for an identity on a repository"
+        },
+        {
+          "info": {
+            "name": "Revoke Git Repository Permission From an Identity",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.freestyle.sh/identity/v1/identities/:identity/permissions/git/:repo",
+            "params": [
+              {
+                "name": "identity",
+                "value": "",
+                "type": "path",
+                "description": "The git identity ID"
+              },
+              {
+                "name": "repo",
+                "value": "",
+                "type": "path",
+                "description": "The git repository ID"
+              }
+            ]
+          },
+          "docs": "Revoke a permission to an identity on a repository"
+        },
+        {
+          "info": {
+            "name": "List VM Permissions for an Identity",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/identity/v1/identities/:identity/permissions/vm",
+            "params": [
+              {
+                "name": "identity",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "List all VM permissions granted to a specific Git identity"
+        },
+        {
+          "info": {
+            "name": "Get VM Permission Details",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/identity/v1/identities/:identity/permissions/vm/:vm_id",
+            "params": [
+              {
+                "name": "identity",
+                "value": "",
+                "type": "path",
+                "description": "The git identity ID"
+              },
+              {
+                "name": "vm_id",
+                "value": "",
+                "type": "path",
+                "description": "The VM ID"
+              }
+            ]
+          },
+          "docs": "Get the details of a VM permission for a specific identity and VM"
+        },
+        {
+          "info": {
+            "name": "Grant VM Permission to an Identity for a VM",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.freestyle.sh/identity/v1/identities/:identity/permissions/vm/:vm_id",
+            "params": [
+              {
+                "name": "identity",
+                "value": "",
+                "type": "path",
+                "description": "The git identity ID"
+              },
+              {
+                "name": "vm_id",
+                "value": "",
+                "type": "path",
+                "description": "The VM ID"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Grant VM access permission to an identity for a specific VM. Optionally restrict access to specific Linux users."
+        },
+        {
+          "info": {
+            "name": "Update Allowed Users for VM Permission",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.freestyle.sh/identity/v1/identities/:identity/permissions/vm/:vm_id",
+            "params": [
+              {
+                "name": "identity",
+                "value": "",
+                "type": "path",
+                "description": "The git identity ID"
+              },
+              {
+                "name": "vm_id",
+                "value": "",
+                "type": "path",
+                "description": "The VM ID"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Update the list of allowed users for a VM permission. Set to null to allow all users, or provide a list to restrict access."
+        },
+        {
+          "info": {
+            "name": "Revoke VM Permission From an Identity for a VM",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.freestyle.sh/identity/v1/identities/:identity/permissions/vm/:vm_id",
+            "params": [
+              {
+                "name": "identity",
+                "value": "",
+                "type": "path",
+                "description": "The git identity ID"
+              },
+              {
+                "name": "vm_id",
+                "value": "",
+                "type": "path",
+                "description": "The VM ID"
+              }
+            ]
+          },
+          "docs": "Revoke VM permission from an identity for a specific VM"
+        },
+        {
+          "info": {
+            "name": "List Access Tokens for an Identity",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/identity/v1/identities/:identity/tokens",
+            "params": [
+              {
+                "name": "identity",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "List access tokens for an identity"
+        },
+        {
+          "info": {
+            "name": "Create an Access Token for an Identity",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.freestyle.sh/identity/v1/identities/:identity/tokens",
+            "params": [
+              {
+                "name": "identity",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Create an access token for an identity"
+        },
+        {
+          "info": {
+            "name": "Revoke an Access Token for an Identity",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.freestyle.sh/identity/v1/identities/:identity/tokens/:token",
+            "params": [
+              {
+                "name": "identity",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "token",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Revoke an access token for an identity"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

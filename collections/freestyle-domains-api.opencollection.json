@@ -1,0 +1,271 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Freestyle Domains API",
+    "version": "0.1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "DNS",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List DNS Records",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/dns/v1/records",
+            "params": [
+              {
+                "name": "domain",
+                "value": "example.com",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "List DNS Records"
+        },
+        {
+          "info": {
+            "name": "Create DNS Record",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.freestyle.sh/dns/v1/records",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create DNS Record"
+        },
+        {
+          "info": {
+            "name": "Delete DNS Record",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.freestyle.sh/dns/v1/records",
+            "params": [
+              {
+                "name": "domain",
+                "value": "example.com",
+                "type": "query"
+              },
+              {
+                "name": "record",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Delete DNS Record"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Certs",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Provision a Wildcard Certificate",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.freestyle.sh/domains/v1/certs/:domain/wildcard",
+            "params": [
+              {
+                "name": "domain",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Provisions a wildcard certificate for a verified domain\n\n\nThis speeds up deploys on all subdomains of the domain. In order to use it, you must add the following record to your DNS config:\n\n`_acme-challenge.yourdomain.com` NS `dns.freestyle.sh`"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Domains",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List Domains for an Account",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/domains/v1/domains",
+            "params": [
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "implicitlyOwned",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "This lists the domains that an account has verified ownership of. This includes the *.style.dev domains the account has claimed."
+        },
+        {
+          "info": {
+            "name": "List Domain Mappings",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/domains/v1/mappings",
+            "params": [
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "domainOwnership",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "domain",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "List domain mappings for any query based on exact domain or domain ownership (the domain ownership that gave the right to use the domain)"
+        },
+        {
+          "info": {
+            "name": "Insert Domain Mapping",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.freestyle.sh/domains/v1/mappings/:domain",
+            "params": [
+              {
+                "name": "domain",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "This will unmap any other deployment to this domain. Provide either deployment_id or vm_id (with optional vm_port), but not both."
+        },
+        {
+          "info": {
+            "name": "Remove Domain Mapping",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.freestyle.sh/domains/v1/mappings/:domain",
+            "params": [
+              {
+                "name": "domain",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Remove Domain Mapping"
+        },
+        {
+          "info": {
+            "name": "List Domain Verification Requests for an Account",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/domains/v1/verifications"
+          },
+          "docs": "Lists domain verification requests for the current account."
+        },
+        {
+          "info": {
+            "name": "Create a Domain Verification Request",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.freestyle.sh/domains/v1/verifications",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "This creates a Freestyle Domain Verification Request. It returns a `verificationCode` for your domain. You need to place this code in a TXT record at `_freestyle_custom_hostname.thedomain.com`, then call the [verify domain](/#tag/domains/PUT/domains/v1/verifications) endpoint with the domain to verify it."
+        },
+        {
+          "info": {
+            "name": "Verify a Domain Verification Request",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.freestyle.sh/domains/v1/verifications",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "This checks a pre-existing verification request for a domain. To create a verification request, call the [create domain verification](/#tag/domains/POST/domains/v1/verifications) endpoint. This endpoint will check if the domain has a TXT record with the verification code. If it does, the domain will be verified."
+        },
+        {
+          "info": {
+            "name": "Delete a Domain Verification Request",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.freestyle.sh/domains/v1/verifications",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "This deletes a Freestyle Domain Verification Request. This does not remove the domain from the account if it has already been verified, however the verification code will no longer be valid."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,1098 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Freestyle Git API",
+    "version": "0.1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Git",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List Repositories",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/git/v1/repo",
+            "params": [
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of repositories to return"
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query",
+                "description": "Offset for the list of repositories"
+              },
+              {
+                "name": "search",
+                "value": "",
+                "type": "query",
+                "description": "Search filter by repository name or ID"
+              }
+            ]
+          },
+          "docs": "List repositories with metadata."
+        },
+        {
+          "info": {
+            "name": "Create a Repository",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.freestyle.sh/git/v1/repo",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create a repository. Once the repository is created, it will also be created on the Git server.\nThe repository name must be unique within your account.\n\nOnce created, you can then push your code to this repository.\n\nThe repo will be available at `git.freestyle.sh/{repo-id}`\n"
+        },
+        {
+          "info": {
+            "name": "Get Repository Default Branch",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/git/v1/repo/:repo_id/default-branch",
+            "params": [
+              {
+                "name": "repo_id",
+                "value": "",
+                "type": "path",
+                "description": "The repository ID"
+              }
+            ]
+          },
+          "docs": "Get the default branch name for a repository."
+        },
+        {
+          "info": {
+            "name": "Set Repository Default Branch",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.freestyle.sh/git/v1/repo/:repo_id/default-branch",
+            "params": [
+              {
+                "name": "repo_id",
+                "value": "",
+                "type": "path",
+                "description": "The repository ID"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Set the default branch name for a repository. This will update the HEAD reference to point to the new default branch."
+        },
+        {
+          "info": {
+            "name": "Get GitHub Sync Configuration",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/git/v1/repo/:repo_id/github-sync",
+            "params": [
+              {
+                "name": "repo_id",
+                "value": "",
+                "type": "path",
+                "description": "Repository ID"
+              }
+            ]
+          },
+          "docs": "Get the GitHub sync configuration for a repository, if configured."
+        },
+        {
+          "info": {
+            "name": "Configure GitHub Sync for Repository",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.freestyle.sh/git/v1/repo/:repo_id/github-sync",
+            "params": [
+              {
+                "name": "repo_id",
+                "value": "",
+                "type": "path",
+                "description": "Repository ID"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Configure GitHub synchronization for an existing Freestyle repository. This links your Freestyle repository to a GitHub repository for automatic syncing. Requires the GitHub repository name in 'owner/repo' format."
+        },
+        {
+          "info": {
+            "name": "Remove GitHub Sync Configuration",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.freestyle.sh/git/v1/repo/:repo_id/github-sync",
+            "params": [
+              {
+                "name": "repo_id",
+                "value": "",
+                "type": "path",
+                "description": "Repository ID"
+              }
+            ]
+          },
+          "docs": "Remove GitHub sync configuration from a repository. This stops automatic syncing but doesn't affect the repository content."
+        },
+        {
+          "info": {
+            "name": "Get Repository Visibility",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/git/v1/repo/:repo_id/visibility",
+            "params": [
+              {
+                "name": "repo_id",
+                "value": "",
+                "type": "path",
+                "description": "The repository ID"
+              }
+            ]
+          },
+          "docs": "Get the visibility (public or private) for a repository."
+        },
+        {
+          "info": {
+            "name": "Set Repository Visibility",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.freestyle.sh/git/v1/repo/:repo_id/visibility",
+            "params": [
+              {
+                "name": "repo_id",
+                "value": "",
+                "type": "path",
+                "description": "The repository ID"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Set the visibility (public or private) for a repository."
+        },
+        {
+          "info": {
+            "name": "Get Repository Information",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/git/v1/repo/:repo",
+            "params": [
+              {
+                "name": "repo",
+                "value": "",
+                "type": "path",
+                "description": "The repository id"
+              }
+            ]
+          },
+          "docs": "Retrieve information about a specific repository, including its ID, name, and default branch."
+        },
+        {
+          "info": {
+            "name": "Delete a Repository",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.freestyle.sh/git/v1/repo/:repo",
+            "params": [
+              {
+                "name": "repo",
+                "value": "",
+                "type": "path",
+                "description": "The repository id"
+              }
+            ]
+          },
+          "docs": "Delete a repository. This is irreversible, and will also delete the repository on the Git server."
+        },
+        {
+          "info": {
+            "name": "Create a Commit with Files",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.freestyle.sh/git/v1/repo/:repo/commits",
+            "params": [
+              {
+                "name": "repo",
+                "value": "",
+                "type": "path",
+                "description": "The repository id"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create a commit from files with automatic tree building and branch updates. Supports text files (UTF-8), binary files (base64), file deletions, and optimistic concurrency control via expectedSha. If the target branch does not exist, it is created as an orphan branch with this commit as its root."
+        },
+        {
+          "info": {
+            "name": "Compare Two Commits",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/git/v1/repo/:repo/compare",
+            "params": [
+              {
+                "name": "repo",
+                "value": "",
+                "type": "path",
+                "description": "The repository id"
+              },
+              {
+                "name": "base",
+                "value": "main",
+                "type": "query",
+                "description": "Base revision (commit SHA, branch name, tag, or any valid Git revision)"
+              },
+              {
+                "name": "head",
+                "value": "dev",
+                "type": "query",
+                "description": "Head revision (commit SHA, branch name, tag, or any valid Git revision)"
+              }
+            ]
+          },
+          "docs": "Get the comparison between two commits in a repository"
+        },
+        {
+          "info": {
+            "name": "Get the Contents of a File or Directory",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/git/v1/repo/:repo/contents/:path",
+            "params": [
+              {
+                "name": "rev",
+                "value": "",
+                "type": "query",
+                "description": "The git revision (branch name, commit SHA, etc.). Defaults to HEAD."
+              },
+              {
+                "name": "recursive",
+                "value": "",
+                "type": "query",
+                "description": "If true, directory entries include their descendants recursively.\nDefaults to false (immediate children only)."
+              },
+              {
+                "name": "repo",
+                "value": "",
+                "type": "path",
+                "description": "The repository ID."
+              },
+              {
+                "name": "path",
+                "value": "",
+                "type": "path",
+                "description": "The path to the file or directory. Empty for root."
+              }
+            ]
+          },
+          "docs": "Get the contents of a file or directory in a repository"
+        },
+        {
+          "info": {
+            "name": "Get a Blob Object",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/git/v1/repo/:repo/git/blobs/:hash",
+            "params": [
+              {
+                "name": "repo",
+                "value": "",
+                "type": "path",
+                "description": "The repository id"
+              },
+              {
+                "name": "hash",
+                "value": "",
+                "type": "path",
+                "description": "The object's hash"
+              }
+            ]
+          },
+          "docs": "Get a blob from the Git database. The contents will always be base64 encoded."
+        },
+        {
+          "info": {
+            "name": "List Commits for a Repository",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/git/v1/repo/:repo/git/commits",
+            "params": [
+              {
+                "name": "repo",
+                "value": "",
+                "type": "path",
+                "description": "The repository id"
+              },
+              {
+                "name": "branch",
+                "value": "main",
+                "type": "query",
+                "description": "Branch name (defaults to HEAD)"
+              },
+              {
+                "name": "limit",
+                "value": "50",
+                "type": "query",
+                "description": "Maximum number of commits to return (default: 50, max: 500)"
+              },
+              {
+                "name": "offset",
+                "value": "0",
+                "type": "query",
+                "description": "Number of commits to skip (default: 0)"
+              },
+              {
+                "name": "order",
+                "value": "",
+                "type": "query",
+                "description": "Sort order: \"desc\" (newest first, default) or \"asc\" (oldest first)"
+              },
+              {
+                "name": "since",
+                "value": "abc123",
+                "type": "query",
+                "description": "Start point (older commit) for filtering/pagination (commit SHA)\n- When used alone with order=desc: Returns commits newer than this (exclusive). Use for \"what's new since X?\"\n- When used alone with order=asc: Starts from this commit (inclusive). Use with next_commit for pagination.\n- When used with `until`: Defines the base of a range (like git's A..B where this is A)"
+              },
+              {
+                "name": "until",
+                "value": "def456",
+                "type": "query",
+                "description": "End point (newer commit) for filtering/pagination (commit SHA)\n- When used alone with order=desc: Starts from this commit (inclusive). Use with next_commit for pagination.\n- When used alone with order=asc: Returns commits up to and including this commit.\n- When used with `since`: Defines the head of a range (like git's A..B where this is B)\n\nWhen both `since` and `until` are provided, `until` must be a descendant of `since`."
+              },
+              {
+                "name": "disableTotalCount",
+                "value": "",
+                "type": "query",
+                "description": "If true, skip the exhaustive history walk used to compute `total`.\nDefaults to false. When true, the `total` field is omitted from the\nresponse. Use this for cursor-based pagination where `total` is unused."
+              }
+            ]
+          },
+          "docs": "List commits with flexible filtering and pagination. Supports:\n- Cursor-based pagination (recommended): Use `next_commit` from response with `until` (desc order) or `since` (asc order)\n- Commit ranges: Specify both `since` and `until` to get commits between them (like git's `since..until`)\n- Order control: `order=desc` (newest first, default) or `order=asc` (oldest first)\n- Legacy offset pagination: Use `offset` param (deprecated, incompatible with since/until)\n\nRequires repository visibility to"
+        },
+        {
+          "info": {
+            "name": "Create a Commit From Git Objects",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.freestyle.sh/git/v1/repo/:repo/git/commits",
+            "params": [
+              {
+                "name": "repo",
+                "value": "",
+                "type": "path",
+                "description": "The repository id"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create a commit from tree and parent SHAs. This is a git object database operation for advanced use cases. For file-based commits, use the high-level endpoint at /git/v1/repo/{repo}/commits."
+        },
+        {
+          "info": {
+            "name": "Get a Commit Object",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/git/v1/repo/:repo/git/commits/:hash",
+            "params": [
+              {
+                "name": "repo",
+                "value": "",
+                "type": "path",
+                "description": "The repository id"
+              },
+              {
+                "name": "hash",
+                "value": "",
+                "type": "path",
+                "description": "The object's hash"
+              }
+            ]
+          },
+          "docs": "Get a commit from the Git database with detailed information."
+        },
+        {
+          "info": {
+            "name": "List Branches in a Repo",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/git/v1/repo/:repo/git/refs/heads/",
+            "params": [
+              {
+                "name": "repo",
+                "value": "",
+                "type": "path",
+                "description": "The repository id"
+              }
+            ]
+          },
+          "docs": "Get a list of all branches in the Git repository. Returns branch names and their commit SHAs."
+        },
+        {
+          "info": {
+            "name": "Create a New Branch",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.freestyle.sh/git/v1/repo/:repo/git/refs/heads/:*branch",
+            "params": [
+              {
+                "name": "repo",
+                "value": "",
+                "type": "path",
+                "description": "The repository id"
+              },
+              {
+                "name": "branch",
+                "value": "",
+                "type": "path",
+                "description": "The branch's name"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create a new branch in the Git repository. If sha is not provided, the branch is created from the default branch HEAD."
+        },
+        {
+          "info": {
+            "name": "Get a Branch Reference",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/git/v1/repo/:repo/git/refs/heads/:branch",
+            "params": [
+              {
+                "name": "repo",
+                "value": "",
+                "type": "path",
+                "description": "The repository id"
+              },
+              {
+                "name": "branch",
+                "value": "",
+                "type": "path",
+                "description": "The branch's name"
+              }
+            ]
+          },
+          "docs": "Get a reference to a branch in the Git repository. Returns the ref name and SHA of the branch."
+        },
+        {
+          "info": {
+            "name": "List All Tags in a Repository",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/git/v1/repo/:repo/git/refs/tags/",
+            "params": [
+              {
+                "name": "repo",
+                "value": "",
+                "type": "path",
+                "description": "The repository id"
+              }
+            ]
+          },
+          "docs": "List all tags in the Git repository with full details. Returns both annotated tags (with tagger and message)\n        and lightweight tags. For each tag, the `sha` field contains the tag object SHA (for annotated tags) or\n        commit SHA (for lightweight tags), while `target.sha` always contains the commit SHA the tag points to."
+        },
+        {
+          "info": {
+            "name": "Get a Tag by Name",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/git/v1/repo/:repo/git/refs/tags/:tag",
+            "params": [
+              {
+                "name": "repo",
+                "value": "",
+                "type": "path",
+                "description": "The repository id"
+              },
+              {
+                "name": "tag",
+                "value": "",
+                "type": "path",
+                "description": "The tag's name"
+              }
+            ]
+          },
+          "docs": "Get a tag by its name. This is the recommended endpoint for retrieving tag information.\n        Works with both annotated tags (returns tagger, message, and target commit) and lightweight tags\n        (returns only name and target commit). For annotated tags, the `sha` field contains the tag object's SHA,\n        while `target.sha` contains the commit SHA. For lightweight tags, both fields contain the same commit SHA.\n\n        **Note**: If you need to retrieve an annotated tag object by its SHA "
+        },
+        {
+          "info": {
+            "name": "Get an Annotated Tag Object by SHA (advanced)",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/git/v1/repo/:repo/git/tags/:hash",
+            "params": [
+              {
+                "name": "repo",
+                "value": "",
+                "type": "path",
+                "description": "The repository id"
+              },
+              {
+                "name": "hash",
+                "value": "",
+                "type": "path",
+                "description": "The object's hash"
+              }
+            ]
+          },
+          "docs": "Low-level endpoint for retrieving annotated tag objects directly from the Git database by their SHA hash.\n        This endpoint only works with annotated tags and requires the tag object's SHA, not the tag name.\n\n\n        **Most users should use `/git/v1/repo/{repo}/git/refs/tags/{tag}` instead**, which works with both\n        annotated and lightweight tags and accepts tag names rather than SHAs. This endpoint is primarily\n        for advanced use cases that need direct access to git database ob"
+        },
+        {
+          "info": {
+            "name": "Get a Tree Object",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/git/v1/repo/:repo/git/trees/:hash",
+            "params": [
+              {
+                "name": "repo",
+                "value": "",
+                "type": "path",
+                "description": "The repository id"
+              },
+              {
+                "name": "hash",
+                "value": "",
+                "type": "path",
+                "description": "The object's hash"
+              }
+            ]
+          },
+          "docs": "Get a tree from the Git database with its entries."
+        },
+        {
+          "info": {
+            "name": "List Repair Jobs for a Repository",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/git/v1/repo/:repo/repair",
+            "params": [
+              {
+                "name": "repo",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Returns every repair job (pending, running, completed, failed, cancelled) currently in the git server's in-memory registry. Pod restarts on the git server clear the list."
+        },
+        {
+          "info": {
+            "name": "Schedule a Repo-repair Job",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.freestyle.sh/git/v1/repo/:repo/repair",
+            "params": [
+              {
+                "name": "repo",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "depth",
+                "value": "1",
+                "type": "query",
+                "description": "How far back from each ref tip to walk. Tip is depth=1.\nOmit to walk the entire history (slow on huge repos)."
+              }
+            ]
+          },
+          "docs": "Spawns a background task on the git server that walks every ref's reachable history, substitutes missing blobs/trees with empty stand-ins, and persistently updates each ref to point at the rewritten tip. Returns immediately with a job ID; poll GET /git/v1/repo/{repo}/repair/{jobId} for status. Subject to a per-account concurrency cap."
+        },
+        {
+          "info": {
+            "name": "Get the Status of a Repair Job",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/git/v1/repo/:repo/repair/:job_id",
+            "params": [
+              {
+                "name": "repo",
+                "value": "",
+                "type": "path",
+                "description": "Repository ID"
+              },
+              {
+                "name": "job_id",
+                "value": "",
+                "type": "path",
+                "description": "Repair job ID returned by POST"
+              }
+            ]
+          },
+          "docs": "Get the Status of a Repair Job"
+        },
+        {
+          "info": {
+            "name": "Cancel a Running Repair Job",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.freestyle.sh/git/v1/repo/:repo/repair/:job_id",
+            "params": [
+              {
+                "name": "repo",
+                "value": "",
+                "type": "path",
+                "description": "Repository ID"
+              },
+              {
+                "name": "job_id",
+                "value": "",
+                "type": "path",
+                "description": "Repair job ID returned by POST"
+              }
+            ]
+          },
+          "docs": "Sets the cancel flag on the repair job. The worker observes it at the next commit/tree boundary and exits with status=cancelled. Already-terminal jobs are returned unchanged."
+        },
+        {
+          "info": {
+            "name": "Full-text Search Across Repository Files",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/git/v1/repo/:repo/search",
+            "params": [
+              {
+                "name": "repo",
+                "value": "",
+                "type": "path",
+                "description": "The repository id"
+              },
+              {
+                "name": "query",
+                "value": "",
+                "type": "query",
+                "description": "The text (or regex pattern) to search for in file contents."
+              },
+              {
+                "name": "rev",
+                "value": "",
+                "type": "query",
+                "description": "The git revision (branch name, commit SHA, etc.). Defaults to HEAD."
+              },
+              {
+                "name": "pathPattern",
+                "value": "",
+                "type": "query",
+                "description": "Optional glob pattern to filter included file paths (e.g. \"*.rs\", \"src/**/*.ts\")."
+              },
+              {
+                "name": "excludePattern",
+                "value": "",
+                "type": "query",
+                "description": "Optional glob pattern to exclude file paths (e.g. \"node_modules/**\", \"*.min.js\")."
+              },
+              {
+                "name": "maxResults",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of matching files to return. Defaults to 100, max 1000."
+              },
+              {
+                "name": "caseSensitive",
+                "value": "",
+                "type": "query",
+                "description": "Whether the query is a case-sensitive search. Defaults to false."
+              },
+              {
+                "name": "isRegex",
+                "value": "",
+                "type": "query",
+                "description": "Whether the query is a regex pattern. Defaults to false."
+              },
+              {
+                "name": "wholeWord",
+                "value": "",
+                "type": "query",
+                "description": "Whether to match whole words only. Defaults to false."
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query",
+                "description": "Number of results to skip for pagination. Defaults to 0."
+              }
+            ]
+          },
+          "docs": "Search for text or regex patterns across all files in a repository at a given revision"
+        },
+        {
+          "info": {
+            "name": "Search Commit Messages",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/git/v1/repo/:repo/search/commits",
+            "params": [
+              {
+                "name": "repo",
+                "value": "",
+                "type": "path",
+                "description": "The repository id"
+              },
+              {
+                "name": "query",
+                "value": "",
+                "type": "query",
+                "description": "The text (or regex pattern) to search for in commit messages."
+              },
+              {
+                "name": "rev",
+                "value": "",
+                "type": "query",
+                "description": "The git revision to start walking from. Defaults to HEAD."
+              },
+              {
+                "name": "maxResults",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of matching commits to return. Defaults to 100, max 1000."
+              },
+              {
+                "name": "isRegex",
+                "value": "",
+                "type": "query",
+                "description": "Whether the query is a regex. Defaults to false."
+              },
+              {
+                "name": "caseSensitive",
+                "value": "",
+                "type": "query",
+                "description": "Whether the query is case-sensitive. Defaults to false."
+              }
+            ]
+          },
+          "docs": "Search for commits by their message text in a repository"
+        },
+        {
+          "info": {
+            "name": "Search File Content Changes Across Commits",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/git/v1/repo/:repo/search/diffs",
+            "params": [
+              {
+                "name": "repo",
+                "value": "",
+                "type": "path",
+                "description": "The repository id"
+              },
+              {
+                "name": "query",
+                "value": "",
+                "type": "query",
+                "description": "The text (or regex pattern) to search for in changed file content."
+              },
+              {
+                "name": "rev",
+                "value": "",
+                "type": "query",
+                "description": "The git revision to start walking from. Defaults to HEAD."
+              },
+              {
+                "name": "pathPattern",
+                "value": "",
+                "type": "query",
+                "description": "Optional glob pattern to filter included file paths."
+              },
+              {
+                "name": "excludePattern",
+                "value": "",
+                "type": "query",
+                "description": "Optional glob pattern to exclude file paths."
+              },
+              {
+                "name": "maxResults",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of matching commits to return. Defaults to 100, max 1000."
+              },
+              {
+                "name": "caseSensitive",
+                "value": "",
+                "type": "query",
+                "description": "Whether the query is case-sensitive. Defaults to false."
+              },
+              {
+                "name": "isRegex",
+                "value": "",
+                "type": "query",
+                "description": "Whether the query is a regex pattern. Defaults to false."
+              },
+              {
+                "name": "wholeWord",
+                "value": "",
+                "type": "query",
+                "description": "Whether to match whole words only. Defaults to false."
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query",
+                "description": "Number of results to skip for pagination. Defaults to 0."
+              }
+            ]
+          },
+          "docs": "Search through commit diffs for content that was added or changed, returning which commits introduced the matching content"
+        },
+        {
+          "info": {
+            "name": "Search for Files by Name",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/git/v1/repo/:repo/search/files",
+            "params": [
+              {
+                "name": "repo",
+                "value": "",
+                "type": "path",
+                "description": "The repository id"
+              },
+              {
+                "name": "query",
+                "value": "",
+                "type": "query",
+                "description": "The filename pattern to search for (matched against full paths)."
+              },
+              {
+                "name": "rev",
+                "value": "",
+                "type": "query",
+                "description": "The git revision (branch name, commit SHA, etc.). Defaults to HEAD."
+              },
+              {
+                "name": "maxResults",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of results. Defaults to 100, max 1000."
+              },
+              {
+                "name": "isRegex",
+                "value": "",
+                "type": "query",
+                "description": "Whether the query is a regex. Defaults to false (glob-style matching)."
+              },
+              {
+                "name": "caseSensitive",
+                "value": "",
+                "type": "query",
+                "description": "Whether the query is case-sensitive. Defaults to false."
+              }
+            ]
+          },
+          "docs": "Search for files by their path/name in a repository"
+        },
+        {
+          "info": {
+            "name": "Download a Tarball of a Repo",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/git/v1/repo/:repo/tarball",
+            "params": [
+              {
+                "name": "rev",
+                "value": "",
+                "type": "query",
+                "description": "The git revision (branch name, commit SHA, etc.). Defaults to HEAD."
+              },
+              {
+                "name": "repo",
+                "value": "",
+                "type": "path",
+                "description": "The repository id"
+              }
+            ]
+          },
+          "docs": "Download the contents of a repo as a tarball."
+        },
+        {
+          "info": {
+            "name": "List Git Triggers for a Repository",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/git/v1/repo/:repo/trigger",
+            "params": [
+              {
+                "name": "repo",
+                "value": "",
+                "type": "path",
+                "description": "The repository id"
+              }
+            ]
+          },
+          "docs": "List git triggers for the given repository."
+        },
+        {
+          "info": {
+            "name": "Create a Git Trigger",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.freestyle.sh/git/v1/repo/:repo/trigger",
+            "params": [
+              {
+                "name": "repo",
+                "value": "",
+                "type": "path",
+                "description": "The repository id"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create a git trigger for the given repository."
+        },
+        {
+          "info": {
+            "name": "Delete a Git Trigger",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.freestyle.sh/git/v1/repo/:repo/trigger/:trigger",
+            "params": [
+              {
+                "name": "repo",
+                "value": "",
+                "type": "path",
+                "description": "The repository id"
+              },
+              {
+                "name": "trigger",
+                "value": "",
+                "type": "path",
+                "description": "The trigger id"
+              }
+            ]
+          },
+          "docs": "Delete a git trigger. This is irreversible."
+        },
+        {
+          "info": {
+            "name": "Download a Zip of a Repo",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/git/v1/repo/:repo/zip",
+            "params": [
+              {
+                "name": "rev",
+                "value": "",
+                "type": "query",
+                "description": "The git revision (branch name, commit SHA, etc.). Defaults to HEAD."
+              },
+              {
+                "name": "repo",
+                "value": "",
+                "type": "path",
+                "description": "The repository id"
+              }
+            ]
+          },
+          "docs": "Download the contents of a repo as a zip."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

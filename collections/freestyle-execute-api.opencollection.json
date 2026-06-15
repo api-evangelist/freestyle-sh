@@ -1,0 +1,98 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Freestyle Execute API",
+    "version": "0.1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Execute",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List Execute Runs",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/execute/v1/deployments",
+            "params": [
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "List execute runs."
+        },
+        {
+          "info": {
+            "name": "Get Information on Execute Run",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/execute/v1/deployments/:deployment",
+            "params": [
+              {
+                "name": "deployment",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Get information on execute run"
+        },
+        {
+          "info": {
+            "name": "Get Saved Output for an Execute Run",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/execute/v1/deployments/:deployment/output",
+            "params": [
+              {
+                "name": "deployment",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Get saved output for execute run"
+        },
+        {
+          "info": {
+            "name": "Execute Code",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.freestyle.sh/execute/v3/script",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Send a TypeScript or JavaScript module, get the result"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

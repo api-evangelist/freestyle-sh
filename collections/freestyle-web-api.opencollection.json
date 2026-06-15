@@ -1,0 +1,214 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Freestyle Web Deployments API",
+    "version": "0.1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Web",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Deploy a Website",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.freestyle.sh/web/v1/deployment",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Deploy a website. Files is a map of file paths to file contents. Configuration is optional and contains additional information about the deployment."
+        },
+        {
+          "info": {
+            "name": "List Web Deploys",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/web/v1/deployments",
+            "params": [
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of deployments to return"
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query",
+                "description": "Offset for pagination"
+              },
+              {
+                "name": "search",
+                "value": "",
+                "type": "query",
+                "description": "Search by deployment ID or domain"
+              }
+            ]
+          },
+          "docs": "List web deploys."
+        },
+        {
+          "info": {
+            "name": "Get Information on Web Deploy",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/web/v1/deployments/:deployment_id"
+          },
+          "docs": "Get information about a web deploy by its ID."
+        },
+        {
+          "info": {
+            "name": "Fetch Content From a Deployment",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/web/v1/deployments/:deployment_id/fetch",
+            "params": [
+              {
+                "name": "deployment_id",
+                "value": "",
+                "type": "path",
+                "description": "Deployment ID"
+              }
+            ]
+          },
+          "docs": "Fetch content from a deployment by making a request to nginx-web with the deployment ID header. Supports any HTTP method."
+        },
+        {
+          "info": {
+            "name": "Fetch Content From a Deployment",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.freestyle.sh/web/v1/deployments/:deployment_id/fetch",
+            "params": [
+              {
+                "name": "deployment_id",
+                "value": "",
+                "type": "path",
+                "description": "Deployment ID"
+              }
+            ]
+          },
+          "docs": "Fetch content from a deployment by making a request to nginx-web with the deployment ID header. Supports any HTTP method."
+        },
+        {
+          "info": {
+            "name": "Fetch Content From a Deployment",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.freestyle.sh/web/v1/deployments/:deployment_id/fetch",
+            "params": [
+              {
+                "name": "deployment_id",
+                "value": "",
+                "type": "path",
+                "description": "Deployment ID"
+              }
+            ]
+          },
+          "docs": "Fetch content from a deployment by making a request to nginx-web with the deployment ID header. Supports any HTTP method."
+        },
+        {
+          "info": {
+            "name": "Fetch Content From a Deployment",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://api.freestyle.sh/web/v1/deployments/:deployment_id/fetch",
+            "params": [
+              {
+                "name": "deployment_id",
+                "value": "",
+                "type": "path",
+                "description": "Deployment ID"
+              }
+            ]
+          },
+          "docs": "Fetch content from a deployment by making a request to nginx-web with the deployment ID header. Supports any HTTP method."
+        },
+        {
+          "info": {
+            "name": "Fetch Content From a Deployment",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.freestyle.sh/web/v1/deployments/:deployment_id/fetch",
+            "params": [
+              {
+                "name": "deployment_id",
+                "value": "",
+                "type": "path",
+                "description": "Deployment ID"
+              }
+            ]
+          },
+          "docs": "Fetch content from a deployment by making a request to nginx-web with the deployment ID header. Supports any HTTP method."
+        },
+        {
+          "info": {
+            "name": "Fetch Content From a Deployment",
+            "type": "http"
+          },
+          "http": {
+            "method": "HEAD",
+            "url": "https://api.freestyle.sh/web/v1/deployments/:deployment_id/fetch",
+            "params": [
+              {
+                "name": "deployment_id",
+                "value": "",
+                "type": "path",
+                "description": "Deployment ID"
+              }
+            ]
+          },
+          "docs": "Fetch content from a deployment by making a request to nginx-web with the deployment ID header. Supports any HTTP method."
+        },
+        {
+          "info": {
+            "name": "Fetch Content From a Deployment",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://api.freestyle.sh/web/v1/deployments/:deployment_id/fetch",
+            "params": [
+              {
+                "name": "deployment_id",
+                "value": "",
+                "type": "path",
+                "description": "Deployment ID"
+              }
+            ]
+          },
+          "docs": "Fetch content from a deployment by making a request to nginx-web with the deployment ID header. Supports any HTTP method."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

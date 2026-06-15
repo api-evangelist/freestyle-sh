@@ -1,0 +1,1717 @@
+{
+  "item": [
+    {
+      "id": "a2b29c67-9b12-4c67-804c-a6e1ae6d09fe",
+      "name": "Cron",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "590005fb-690b-4895-934c-1d994a012f6c",
+          "name": "handle list schedules",
+          "request": {
+            "name": "handle list schedules",
+            "description": {},
+            "url": {
+              "path": [
+                "v1",
+                "cron",
+                "schedules"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "deploymentId",
+                  "value": "<null>"
+                },
+                {
+                  "disabled": false,
+                  "key": "metricsStart",
+                  "value": "<string,null-date-time>"
+                },
+                {
+                  "disabled": false,
+                  "key": "metricsEnd",
+                  "value": "<string,null-date-time>"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "713dcd4e-94cc-4cbf-bc6d-d27975f48131",
+              "name": "Schedules retrieved successfully",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "cron",
+                    "schedules"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "deploymentId",
+                      "value": "<null>"
+                    },
+                    {
+                      "key": "metricsStart",
+                      "value": "<string,null-date-time>"
+                    },
+                    {
+                      "key": "metricsEnd",
+                      "value": "<string,null-date-time>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"schedules\": [\n    {\n      \"id\": \"030e2771-a991-1374-b1eb-c9710948c5c0\",\n      \"accountId\": \"63435d3b-ef10-6e3c-4994-bfbbb15af386\",\n      \"cron\": \"string\",\n      \"timezone\": \"string\",\n      \"retries\": 9897,\n      \"payload\": \"\",\n      \"active\": true,\n      \"createdAt\": \"1968-04-05T20:53:50.796Z\",\n      \"updatedAt\": \"1949-10-05T10:17:53.674Z\",\n      \"deploymentId\": null,\n      \"name\": \"string\",\n      \"path\": \"string\",\n      \"runConfig\": {},\n      \"successRate\": 2873.7518644947436,\n      \"averageLatencyMs\": 1990.4476394721405,\n      \"executionCount\": 1877\n    },\n    {\n      \"id\": \"64accad8-0f27-87fb-3ff9-60c5e3163dd6\",\n      \"accountId\": \"7cdb553c-95f1-8734-464b-0023b7caa3c2\",\n      \"cron\": \"string\",\n      \"timezone\": \"string\",\n      \"retries\": 8133,\n      \"payload\": \"\",\n      \"active\": true,\n      \"createdAt\": \"2012-06-26T07:08:46.452Z\",\n      \"updatedAt\": \"1951-05-04T22:00:12.340Z\",\n      \"deploymentId\": null,\n      \"name\": \"string\",\n      \"path\": \"string\",\n      \"runConfig\": {},\n      \"successRate\": 4887.905194143609,\n      \"averageLatencyMs\": 2913.9683645180858,\n      \"executionCount\": 8712\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "e4af59b0-5e23-432d-91d9-092f5531ecb9",
+              "name": "Internal server error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "cron",
+                    "schedules"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "deploymentId",
+                      "value": "<null>"
+                    },
+                    {
+                      "key": "metricsStart",
+                      "value": "<string,null-date-time>"
+                    },
+                    {
+                      "key": "metricsEnd",
+                      "value": "<string,null-date-time>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "59148060-ea11-4caf-ab1a-0e27df08e7e3",
+          "name": "handle create schedule",
+          "request": {
+            "name": "handle create schedule",
+            "description": {},
+            "url": {
+              "path": [
+                "v1",
+                "cron",
+                "schedules"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cron\": \"<string>\",\n  \"deploymentId\": \"<null>\",\n  \"name\": \"<string,null>\",\n  \"path\": \"<string,null>\",\n  \"timezone\": \"<string>\",\n  \"retries\": \"<integer>\",\n  \"payload\": \"\",\n  \"run\": \"<null>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "4f97038c-7160-424f-a676-a1fe431cf96a",
+              "name": "Schedule created successfully",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "cron",
+                    "schedules"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"cron\": \"<string>\",\n  \"deploymentId\": \"<null>\",\n  \"name\": \"<string,null>\",\n  \"path\": \"<string,null>\",\n  \"timezone\": \"<string>\",\n  \"retries\": \"<integer>\",\n  \"payload\": \"\",\n  \"run\": \"<null>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"schedule\": {\n    \"id\": \"c0b94ade-1e47-69fd-89d4-cc48c41be066\",\n    \"accountId\": \"f08638b6-6d65-6a24-2a91-7d04f0734439\",\n    \"cron\": \"string\",\n    \"timezone\": \"string\",\n    \"retries\": 6970,\n    \"payload\": \"\",\n    \"active\": true,\n    \"createdAt\": \"1973-10-10T20:35:00.953Z\",\n    \"updatedAt\": \"2001-04-22T03:40:12.367Z\",\n    \"deploymentId\": null,\n    \"name\": \"string\",\n    \"path\": \"string\",\n    \"runConfig\": {}\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "fa3d1331-194c-4441-a098-71ef5ce34fe7",
+              "name": "Invalid request",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "cron",
+                    "schedules"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"cron\": \"<string>\",\n  \"deploymentId\": \"<null>\",\n  \"name\": \"<string,null>\",\n  \"path\": \"<string,null>\",\n  \"timezone\": \"<string>\",\n  \"retries\": \"<integer>\",\n  \"payload\": \"\",\n  \"run\": \"<null>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "7128aa67-62f6-4599-a79c-93f9ee193fb5",
+              "name": "Internal server error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "cron",
+                    "schedules"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"cron\": \"<string>\",\n  \"deploymentId\": \"<null>\",\n  \"name\": \"<string,null>\",\n  \"path\": \"<string,null>\",\n  \"timezone\": \"<string>\",\n  \"retries\": \"<integer>\",\n  \"payload\": \"\",\n  \"run\": \"<null>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "710ed714-c975-45da-99a7-2c13f9f2f8d5",
+          "name": "handle get schedule",
+          "request": {
+            "name": "handle get schedule",
+            "description": {},
+            "url": {
+              "path": [
+                "v1",
+                "cron",
+                "schedules",
+                ":id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "id",
+                  "description": "(Required) Schedule ID"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "5902240a-cfbd-4ec7-b55e-2d47df517b70",
+              "name": "Schedule retrieved successfully",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "cron",
+                    "schedules",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "id",
+                      "description": "(Required) Schedule ID"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"schedule\": {\n    \"id\": \"c0b94ade-1e47-69fd-89d4-cc48c41be066\",\n    \"accountId\": \"f08638b6-6d65-6a24-2a91-7d04f0734439\",\n    \"cron\": \"string\",\n    \"timezone\": \"string\",\n    \"retries\": 6970,\n    \"payload\": \"\",\n    \"active\": true,\n    \"createdAt\": \"1973-10-10T20:35:00.953Z\",\n    \"updatedAt\": \"2001-04-22T03:40:12.367Z\",\n    \"deploymentId\": null,\n    \"name\": \"string\",\n    \"path\": \"string\",\n    \"runConfig\": {}\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "079771eb-b4db-42bb-977f-c45f8cdfeeae",
+              "name": "Schedule not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "cron",
+                    "schedules",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "id",
+                      "description": "(Required) Schedule ID"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "dd680a93-2e32-496e-a697-052396fbda16",
+              "name": "Internal server error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "cron",
+                    "schedules",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "id",
+                      "description": "(Required) Schedule ID"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "12243b8d-e5d3-41bc-b680-68b80d2e771e",
+          "name": "handle delete schedule",
+          "request": {
+            "name": "handle delete schedule",
+            "description": {},
+            "url": {
+              "path": [
+                "v1",
+                "cron",
+                "schedules",
+                ":id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "id",
+                  "description": "(Required) Schedule ID"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "DELETE",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "c2ba8c5f-1bae-43aa-a340-f08f876a3b2c",
+              "name": "Schedule deleted successfully",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "cron",
+                    "schedules",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "id",
+                      "description": "(Required) Schedule ID"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "b826c742-d68d-401f-b600-60e8e60c9963",
+              "name": "Internal server error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "cron",
+                    "schedules",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "id",
+                      "description": "(Required) Schedule ID"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "ac4eae36-26ee-41de-afd1-6eb735e943c7",
+          "name": "handle update schedule",
+          "request": {
+            "name": "handle update schedule",
+            "description": {},
+            "url": {
+              "path": [
+                "v1",
+                "cron",
+                "schedules",
+                ":id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "id",
+                  "description": "(Required) Schedule ID"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "PATCH",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"deploymentId\": \"<null>\",\n  \"name\": \"<string,null>\",\n  \"active\": \"<boolean,null>\",\n  \"path\": \"<string,null>\",\n  \"cron\": \"<string,null>\",\n  \"timezone\": \"<string,null>\",\n  \"retries\": \"<integer,null-int32>\",\n  \"payload\": \"\",\n  \"run\": \"<null>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "01075307-26b5-4a07-8596-d80958777a32",
+              "name": "Schedule updated successfully",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "cron",
+                    "schedules",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "id",
+                      "description": "(Required) Schedule ID"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"deploymentId\": \"<null>\",\n  \"name\": \"<string,null>\",\n  \"active\": \"<boolean,null>\",\n  \"path\": \"<string,null>\",\n  \"cron\": \"<string,null>\",\n  \"timezone\": \"<string,null>\",\n  \"retries\": \"<integer,null-int32>\",\n  \"payload\": \"\",\n  \"run\": \"<null>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "03ffab0e-ff7d-469c-8741-3a41b50bf70e",
+              "name": "Schedule not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "cron",
+                    "schedules",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "id",
+                      "description": "(Required) Schedule ID"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"deploymentId\": \"<null>\",\n  \"name\": \"<string,null>\",\n  \"active\": \"<boolean,null>\",\n  \"path\": \"<string,null>\",\n  \"cron\": \"<string,null>\",\n  \"timezone\": \"<string,null>\",\n  \"retries\": \"<integer,null-int32>\",\n  \"payload\": \"\",\n  \"run\": \"<null>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "c544a3fd-7ecd-4221-a1c8-740fda741070",
+              "name": "Internal server error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "cron",
+                    "schedules",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "id",
+                      "description": "(Required) Schedule ID"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"deploymentId\": \"<null>\",\n  \"name\": \"<string,null>\",\n  \"active\": \"<boolean,null>\",\n  \"path\": \"<string,null>\",\n  \"cron\": \"<string,null>\",\n  \"timezone\": \"<string,null>\",\n  \"retries\": \"<integer,null-int32>\",\n  \"payload\": \"\",\n  \"run\": \"<null>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "38f167e9-c9e1-4e6c-beee-72ffd5c9e34a",
+          "name": "handle list schedule executions",
+          "request": {
+            "name": "handle list schedule executions",
+            "description": {},
+            "url": {
+              "path": [
+                "v1",
+                "cron",
+                "schedules",
+                ":id",
+                "executions"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "<integer,null-int64>"
+                },
+                {
+                  "disabled": false,
+                  "key": "offset",
+                  "value": "<integer,null-int64>"
+                }
+              ],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "id",
+                  "description": "(Required) Schedule ID"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "235a19b1-b9e6-42d5-a879-76f69ed8e852",
+              "name": "Executions retrieved successfully",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "cron",
+                    "schedules",
+                    ":id",
+                    "executions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "limit",
+                      "value": "<integer,null-int64>"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "<integer,null-int64>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "id",
+                      "description": "(Required) Schedule ID"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"executions\": [\n    {\n      \"attemptHistory\": [\n        {\n          \"id\": \"da13214f-4e3c-3e92-e583-f82729e333d9\",\n          \"executionId\": \"bc26a5d3-1721-2a86-9c0c-17e586593980\",\n          \"attemptNumber\": 9082,\n          \"status\": \"running\",\n          \"startedAt\": \"2012-12-04T17:08:26.520Z\",\n          \"createdAt\": \"1947-06-19T00:51:36.398Z\",\n          \"updatedAt\": \"2025-09-10T12:39:08.863Z\",\n          \"instanceId\": \"string\",\n          \"error\": \"string\",\n          \"completedAt\": \"1974-02-09T08:49:55.196Z\"\n        },\n        {\n          \"id\": \"93188e48-1a78-b228-5f2e-cbeedc0c68e5\",\n          \"executionId\": \"853feef1-f8d8-9222-20cf-a265763ca224\",\n          \"attemptNumber\": 8663,\n          \"status\": \"retry\",\n          \"startedAt\": \"1987-05-03T10:20:30.991Z\",\n          \"createdAt\": \"1954-04-04T02:09:35.538Z\",\n          \"updatedAt\": \"1961-06-15T16:26:40.235Z\",\n          \"instanceId\": \"string\",\n          \"error\": \"string\",\n          \"completedAt\": \"1970-11-28T12:54:35.567Z\"\n        }\n      ],\n      \"attempts\": 5697,\n      \"createdAt\": \"1965-08-31T10:37:58.129Z\",\n      \"id\": \"9b81395a-fbbc-4074-7641-606cf7c473a0\",\n      \"maxAttempts\": 433,\n      \"runAt\": \"1962-07-14T12:11:31.941Z\",\n      \"scheduleId\": \"251e702f-93df-1e4a-9795-36a0c3cc55b5\",\n      \"status\": \"queued\",\n      \"updatedAt\": \"2023-05-20T16:13:14.455Z\",\n      \"deploymentId\": null,\n      \"nextRetryAt\": \"2002-04-19T11:57:32.813Z\",\n      \"lockedAt\": \"1987-03-20T00:06:54.590Z\",\n      \"lockOwner\": \"string\",\n      \"lastError\": \"string\",\n      \"instanceId\": \"string\",\n      \"startedAt\": \"1990-09-30T18:20:20.156Z\",\n      \"completedAt\": \"2003-02-18T23:05:52.007Z\"\n    },\n    {\n      \"attemptHistory\": [\n        {\n          \"id\": \"8ca0b290-f56c-e4d1-d35f-22874d77e71d\",\n          \"executionId\": \"f29a51a2-d9ca-5918-2ee2-ae01c217994a\",\n          \"attemptNumber\": 8133,\n          \"status\": \"succeeded\",\n          \"startedAt\": \"1973-06-18T05:49:22.036Z\",\n          \"createdAt\": \"2019-06-17T15:11:22.122Z\",\n          \"updatedAt\": \"2019-08-31T02:24:21.668Z\",\n          \"instanceId\": \"string\",\n          \"error\": \"string\",\n          \"completedAt\": \"1983-08-29T18:38:27.765Z\"\n        },\n        {\n          \"id\": \"32e352ac-7787-aa4b-aafe-e16115093983\",\n          \"executionId\": \"b4031b9c-d283-e9cd-2128-e5c7dd82fa02\",\n          \"attemptNumber\": 1233,\n          \"status\": \"running\",\n          \"startedAt\": \"1970-10-14T10:54:03.833Z\",\n          \"createdAt\": \"1966-04-08T15:11:05.971Z\",\n          \"updatedAt\": \"1959-10-10T22:24:39.861Z\",\n          \"instanceId\": \"string\",\n          \"error\": \"string\",\n          \"completedAt\": \"1974-10-01T20:10:10.936Z\"\n        }\n      ],\n      \"attempts\": 4258,\n      \"createdAt\": \"1996-01-30T03:04:26.194Z\",\n      \"id\": \"934b03d0-45b5-bb49-007f-b8ea5dd548b7\",\n      \"maxAttempts\": 6016,\n      \"runAt\": \"1983-02-18T06:11:56.762Z\",\n      \"scheduleId\": \"5ac522c7-f59f-59ad-778f-e3316f68d18a\",\n      \"status\": \"retry\",\n      \"updatedAt\": \"1969-01-08T05:17:49.522Z\",\n      \"deploymentId\": null,\n      \"nextRetryAt\": \"2011-08-10T12:03:18.983Z\",\n      \"lockedAt\": \"1983-10-20T15:21:14.683Z\",\n      \"lockOwner\": \"string\",\n      \"lastError\": \"string\",\n      \"instanceId\": \"string\",\n      \"startedAt\": \"2014-09-01T22:04:16.828Z\",\n      \"completedAt\": \"1949-08-29T14:49:03.199Z\"\n    }\n  ],\n  \"total\": 7163,\n  \"offset\": 876,\n  \"limit\": 8183\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "b0205876-5093-4255-9812-423e7121ecf2",
+              "name": "Schedule not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "cron",
+                    "schedules",
+                    ":id",
+                    "executions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "limit",
+                      "value": "<integer,null-int64>"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "<integer,null-int64>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "id",
+                      "description": "(Required) Schedule ID"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "e9039a53-9547-4dd6-bdcc-3b69244709ef",
+              "name": "Internal server error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "cron",
+                    "schedules",
+                    ":id",
+                    "executions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "limit",
+                      "value": "<integer,null-int64>"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "<integer,null-int64>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "id",
+                      "description": "(Required) Schedule ID"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "7357481e-dd26-4e83-8404-a82488804022",
+          "name": "handle get metrics timeline",
+          "request": {
+            "name": "handle get metrics timeline",
+            "description": {},
+            "url": {
+              "path": [
+                "v1",
+                "cron",
+                "schedules",
+                ":id",
+                "metrics-timeline"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "start",
+                  "value": "<dateTime>",
+                  "description": "(Required) "
+                },
+                {
+                  "disabled": false,
+                  "key": "end",
+                  "value": "<dateTime>",
+                  "description": "(Required) "
+                },
+                {
+                  "disabled": false,
+                  "key": "bucketMinutes",
+                  "value": "<integer,null-int64>"
+                }
+              ],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "id",
+                  "description": "(Required) Schedule ID"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "f2c2e337-e420-4322-a6b5-102bef9d113d",
+              "name": "Metrics timeline retrieved successfully",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "cron",
+                    "schedules",
+                    ":id",
+                    "metrics-timeline"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "start",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "end",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "bucketMinutes",
+                      "value": "<integer,null-int64>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "id",
+                      "description": "(Required) Schedule ID"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"scheduleId\": \"992c443b-c527-ee28-c207-43bd2e05cd94\",\n  \"dataPoints\": [\n    {\n      \"timestamp\": \"2021-07-28T08:16:26.630Z\",\n      \"executionCount\": 1413,\n      \"succeededCount\": 5491,\n      \"succeededOnFirstTryCount\": 1063,\n      \"succeededOnRetryCount\": 3688,\n      \"failedCount\": 8936,\n      \"averageLatencyMs\": 9046.613442528478,\n      \"averageSuccessLatencyMs\": 6440.433447197234,\n      \"averageFailureLatencyMs\": 1074.2069681027845,\n      \"p50SuccessLatencyMs\": 7648.851032230286,\n      \"p90SuccessLatencyMs\": 9235.243366477856,\n      \"p99SuccessLatencyMs\": 2098.3708261005795\n    },\n    {\n      \"timestamp\": \"1998-05-22T11:01:14.891Z\",\n      \"executionCount\": 1541,\n      \"succeededCount\": 6224,\n      \"succeededOnFirstTryCount\": 7580,\n      \"succeededOnRetryCount\": 3214,\n      \"failedCount\": 6058,\n      \"averageLatencyMs\": 8333.319527117623,\n      \"averageSuccessLatencyMs\": 8128.143188774735,\n      \"averageFailureLatencyMs\": 5737.06935828623,\n      \"p50SuccessLatencyMs\": 4126.325028057109,\n      \"p90SuccessLatencyMs\": 6191.415561566368,\n      \"p99SuccessLatencyMs\": 5050.75196192863\n    }\n  ],\n  \"start\": \"1981-08-11T02:21:14.333Z\",\n  \"end\": \"1986-05-14T22:35:06.159Z\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "d26302ec-2574-4508-9a06-6f8597823054",
+              "name": "Schedule not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "cron",
+                    "schedules",
+                    ":id",
+                    "metrics-timeline"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "start",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "end",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "bucketMinutes",
+                      "value": "<integer,null-int64>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "id",
+                      "description": "(Required) Schedule ID"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "839186ba-c2df-4126-bcd0-84a2357d2c64",
+              "name": "Internal server error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "cron",
+                    "schedules",
+                    ":id",
+                    "metrics-timeline"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "start",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "end",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "bucketMinutes",
+                      "value": "<integer,null-int64>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "id",
+                      "description": "(Required) Schedule ID"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "a4d21e14-3c58-482d-8aae-b7194a3f325b",
+          "name": "handle get schedule success rate",
+          "request": {
+            "name": "handle get schedule success rate",
+            "description": {},
+            "url": {
+              "path": [
+                "v1",
+                "cron",
+                "schedules",
+                ":id",
+                "success-rate"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "start",
+                  "value": "<dateTime>",
+                  "description": "(Required) "
+                },
+                {
+                  "disabled": false,
+                  "key": "end",
+                  "value": "<dateTime>",
+                  "description": "(Required) "
+                }
+              ],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "id",
+                  "description": "(Required) Schedule ID"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "fe5b9fed-2733-4a6f-a35f-2c3e3aea50d9",
+              "name": "Success rate retrieved successfully",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "cron",
+                    "schedules",
+                    ":id",
+                    "success-rate"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "start",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "end",
+                      "value": "<dateTime>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "id",
+                      "description": "(Required) Schedule ID"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"total\": 4770,\n  \"succeeded\": 5842,\n  \"failed\": 9530,\n  \"successRate\": 1370.558702117044,\n  \"start\": \"2006-05-15T08:24:00.868Z\",\n  \"end\": \"1994-10-07T19:37:40.349Z\",\n  \"averageLatencyMs\": 1652.7811048562246\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "21ad3f29-33d4-452a-a38c-d6e9e9c75f71",
+              "name": "Schedule not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "cron",
+                    "schedules",
+                    ":id",
+                    "success-rate"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "start",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "end",
+                      "value": "<dateTime>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "id",
+                      "description": "(Required) Schedule ID"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "bd5e49e9-a5de-4305-9701-fb0aec34c50d",
+              "name": "Internal server error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "cron",
+                    "schedules",
+                    ":id",
+                    "success-rate"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "start",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "end",
+                      "value": "<dateTime>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "id",
+                      "description": "(Required) Schedule ID"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.freestyle.sh",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "0edbd974-3fa8-422b-9fae-1feb779396d4",
+    "name": "Freestyle Cron API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Schedule recurring serverless runs — create/update/delete cron schedules and inspect executions, success rate, and metrics timeline.\n\nContact Support:\n Name: Ben\n Email: ben@freestyle.sh",
+      "type": "text/plain"
+    }
+  }
+}

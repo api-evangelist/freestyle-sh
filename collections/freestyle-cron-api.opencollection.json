@@ -1,0 +1,212 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Freestyle Cron API",
+    "version": "0.1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Cron",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "handle_list_schedules",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/v1/cron/schedules",
+            "params": [
+              {
+                "name": "deploymentId",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "metricsStart",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "metricsEnd",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          }
+        },
+        {
+          "info": {
+            "name": "handle_create_schedule",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.freestyle.sh/v1/cron/schedules",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          }
+        },
+        {
+          "info": {
+            "name": "handle_get_schedule",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/v1/cron/schedules/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "Schedule ID"
+              }
+            ]
+          }
+        },
+        {
+          "info": {
+            "name": "handle_update_schedule",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://api.freestyle.sh/v1/cron/schedules/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "Schedule ID"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          }
+        },
+        {
+          "info": {
+            "name": "handle_delete_schedule",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.freestyle.sh/v1/cron/schedules/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "Schedule ID"
+              }
+            ]
+          }
+        },
+        {
+          "info": {
+            "name": "handle_list_schedule_executions",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/v1/cron/schedules/:id/executions",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "Schedule ID"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          }
+        },
+        {
+          "info": {
+            "name": "handle_get_metrics_timeline",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/v1/cron/schedules/:id/metrics-timeline",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "Schedule ID"
+              },
+              {
+                "name": "start",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "end",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "bucketMinutes",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          }
+        },
+        {
+          "info": {
+            "name": "handle_get_schedule_success_rate",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/v1/cron/schedules/:id/success-rate",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "Schedule ID"
+              },
+              {
+                "name": "start",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "end",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

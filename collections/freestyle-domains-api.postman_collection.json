@@ -1,0 +1,2891 @@
+{
+  "item": [
+    {
+      "id": "77f7a1fa-af23-49aa-94bb-5e66d3e5951e",
+      "name": "Domains",
+      "description": {
+        "content": "APIs for managing domains. This is only relevant when you want to start to deploy to custom domains. \nPlease read [this guide](https://github.com/freestyle-sh/sandbox_sdks/blob/main/docs/custom_domains.md) to understand how deployments work with custom domains.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "b8beb049-9677-4a20-b55e-3ebac4152b32",
+          "name": "Provision a Wildcard Certificate",
+          "request": {
+            "name": "Provision a Wildcard Certificate",
+            "description": {
+              "content": "Provisions a wildcard certificate for a verified domain\n\n\nThis speeds up deploys on all subdomains of the domain. In order to use it, you must add the following record to your DNS config:\n\n`_acme-challenge.yourdomain.com` NS `dns.freestyle.sh`",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "domains",
+                "v1",
+                "certs",
+                ":domain",
+                "wildcard"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "domain",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "ed66667d-e7a2-4e86-b421-d963043db578",
+              "name": "Domain verified",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "domains",
+                    "v1",
+                    "certs",
+                    ":domain",
+                    "wildcard"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "domain",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"domain\": \"example.com\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "02d32f7b-8ccd-423f-971f-b97ead470cb4",
+              "name": "Failed to preverify domain",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "domains",
+                    "v1",
+                    "certs",
+                    ":domain",
+                    "wildcard"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "domain",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "0f950357-dbc0-4a1d-92f0-d801c6f0faa9",
+          "name": "List Domains for an Account",
+          "request": {
+            "name": "List Domains for an Account",
+            "description": {
+              "content": "This lists the domains that an account has verified ownership of. This includes the *.style.dev domains the account has claimed.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "domains",
+                "v1",
+                "domains"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "<integer,null-int64>"
+                },
+                {
+                  "disabled": false,
+                  "key": "offset",
+                  "value": "<integer,null-int64>"
+                },
+                {
+                  "disabled": false,
+                  "key": "implicitlyOwned",
+                  "value": "<boolean,null>"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "aab7bb17-2dd0-45be-a941-e80547c7fb78",
+              "name": "List of domains",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "domains",
+                    "v1",
+                    "domains"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "limit",
+                      "value": "<integer,null-int64>"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "<integer,null-int64>"
+                    },
+                    {
+                      "key": "implicitlyOwned",
+                      "value": "<boolean,null>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"domain\": \"string\",\n    \"accountId\": \"c0a5b38c-1a9e-a324-4e7f-e510f3c0b0e4\",\n    \"createdAt\": \"1991-08-09T00:14:32.867Z\",\n    \"id\": \"42fc5945-c66f-a828-578a-95aa99c0d3f9\",\n    \"verifiedDns\": true,\n    \"implicitlyOwned\": false,\n    \"deployToDomain\": false,\n    \"manageDns\": false,\n    \"deployToSubdomains\": true\n  },\n  {\n    \"domain\": \"string\",\n    \"accountId\": \"11875722-eedb-a730-7113-706a8d2a404b\",\n    \"createdAt\": \"1957-12-28T14:50:10.871Z\",\n    \"id\": \"c3bf858f-9d19-e8a9-9ebf-f015311830c0\",\n    \"verifiedDns\": false,\n    \"implicitlyOwned\": true,\n    \"deployToDomain\": true,\n    \"manageDns\": true,\n    \"deployToSubdomains\": true\n  }\n]",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "e4435889-878d-4e1f-8934-d9a9e6ec17d1",
+              "name": "Failed to get domains",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "domains",
+                    "v1",
+                    "domains"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "limit",
+                      "value": "<integer,null-int64>"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "<integer,null-int64>"
+                    },
+                    {
+                      "key": "implicitlyOwned",
+                      "value": "<boolean,null>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "27b66485-967d-4593-81bb-6c3f37b2f401",
+          "name": "List Domain Mappings",
+          "request": {
+            "name": "List Domain Mappings",
+            "description": {
+              "content": "List domain mappings for any query based on exact domain or domain ownership (the domain ownership that gave the right to use the domain)",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "domains",
+                "v1",
+                "mappings"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "offset",
+                  "value": "<integer,null-int64>"
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "<integer,null-int64>"
+                },
+                {
+                  "disabled": false,
+                  "key": "domainOwnership",
+                  "value": "<string,null-uuid>"
+                },
+                {
+                  "disabled": false,
+                  "key": "domain",
+                  "value": "<string,null>"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "3402d0db-cddb-4acb-a44b-5fff02dbfaf0",
+              "name": "List of domain mappings",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "domains",
+                    "v1",
+                    "mappings"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "offset",
+                      "value": "<integer,null-int64>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "<integer,null-int64>"
+                    },
+                    {
+                      "key": "domainOwnership",
+                      "value": "<string,null-uuid>"
+                    },
+                    {
+                      "key": "domain",
+                      "value": "<string,null>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"id\": \"6322f07d-9f5f-9e87-c336-51203fa68255\",\n    \"domain\": \"string\",\n    \"ownershipId\": \"3ef3c686-09ea-ae55-4bad-c06d710b4f23\",\n    \"createdAt\": \"1975-08-13T14:52:24.228Z\",\n    \"deploymentId\": null,\n    \"vmId\": \"string\",\n    \"vmPort\": 7898,\n    \"unmappedAt\": \"2002-06-24T18:16:19.921Z\"\n  },\n  {\n    \"id\": \"cc936e6d-261a-ce72-5cba-138f723e68e0\",\n    \"domain\": \"string\",\n    \"ownershipId\": \"5e26faf3-f5bd-b113-0a42-3e8c59c685f5\",\n    \"createdAt\": \"1981-02-06T22:47:52.875Z\",\n    \"deploymentId\": null,\n    \"vmId\": \"string\",\n    \"vmPort\": 7834,\n    \"unmappedAt\": \"1967-06-13T05:14:19.010Z\"\n  }\n]",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "ffdc7836-9747-4214-9fb6-7f07b3c234bf",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "domains",
+                    "v1",
+                    "mappings"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "offset",
+                      "value": "<integer,null-int64>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "<integer,null-int64>"
+                    },
+                    {
+                      "key": "domainOwnership",
+                      "value": "<string,null-uuid>"
+                    },
+                    {
+                      "key": "domain",
+                      "value": "<string,null>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "de86c741-644a-4799-be47-8d9f3672d008",
+          "name": "Insert Domain Mapping",
+          "request": {
+            "name": "Insert Domain Mapping",
+            "description": {
+              "content": "This will unmap any other deployment to this domain. Provide either deployment_id or vm_id (with optional vm_port), but not both.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "domains",
+                "v1",
+                "mappings",
+                ":domain"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "domain",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"deploymentId\": \"<null>\",\n  \"vmId\": \"<null>\",\n  \"vmPort\": \"<integer,null-int32>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "85af9219-8fd6-4f3c-8de0-c6a399343a82",
+              "name": "Successfully mapped domain to deployment",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "domains",
+                    "v1",
+                    "mappings",
+                    ":domain"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "domain",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"deploymentId\": \"<null>\",\n  \"vmId\": \"<null>\",\n  \"vmPort\": \"<integer,null-int32>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"37b8fdd1-d598-e94e-5a77-825340676c76\",\n  \"domain\": \"string\",\n  \"ownershipId\": \"b626cd29-9aea-3418-3dd0-c80eaa078495\",\n  \"createdAt\": \"1958-02-08T08:33:44.859Z\",\n  \"deploymentId\": null,\n  \"vmId\": \"string\",\n  \"vmPort\": 3678,\n  \"unmappedAt\": \"2001-03-20T02:46:50.339Z\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "57f39793-51e3-4134-9bd4-84cfc610e76b",
+              "name": "Client error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "domains",
+                    "v1",
+                    "mappings",
+                    ":domain"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "domain",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"deploymentId\": \"<null>\",\n  \"vmId\": \"<null>\",\n  \"vmPort\": \"<integer,null-int32>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"FailedToCheckDomainMappingPermissions\": {\n      \"message\": \"string\"\n    }\n  },\n  \"headers\": {\n    \"key_0\": \"string\",\n    \"key_1\": \"string\",\n    \"key_2\": \"string\"\n  },\n  \"context\": {\n    \"key_0\": {}\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "00badf4d-b9e5-4c27-9b6f-92b51f673860",
+              "name": "Server error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "domains",
+                    "v1",
+                    "mappings",
+                    ":domain"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "domain",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"deploymentId\": \"<null>\",\n  \"vmId\": \"<null>\",\n  \"vmPort\": \"<integer,null-int32>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"FailedToCheckDomainMappingPermissions\": {\n      \"message\": \"string\"\n    }\n  },\n  \"headers\": {\n    \"key_0\": \"string\",\n    \"key_1\": \"string\",\n    \"key_2\": \"string\"\n  },\n  \"context\": {\n    \"key_0\": {}\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "b965bfb9-4f44-4a38-923d-3c1545f875ac",
+          "name": "Remove Domain Mapping",
+          "request": {
+            "name": "Remove Domain Mapping",
+            "description": {},
+            "url": {
+              "path": [
+                "domains",
+                "v1",
+                "mappings",
+                ":domain"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "domain",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "DELETE",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "b5c36862-23dc-4191-87ea-f847c1862a8d",
+              "name": "Successfully deleted domain mapping",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "domains",
+                    "v1",
+                    "mappings",
+                    ":domain"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "domain",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "bafd3e79-ce51-4152-be9e-709461844e54",
+              "name": "Possible errors: DomainAlreadyExists, InvalidRequest",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "domains",
+                    "v1",
+                    "mappings",
+                    ":domain"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "domain",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"message\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "83f1b427-d422-4ff5-a873-27813f8ab562",
+              "name": "Possible errors: FailedPermissionsCheck, DeploymentAccessDenied, VmAccessDeniedForMapping, DomainOwnershipNotVerified",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "domains",
+                    "v1",
+                    "mappings",
+                    ":domain"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "domain",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"message\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "4381a133-380c-43d1-8a6f-1ff1a977b487",
+              "name": "Error: FailedToProvisionCertificateForMapping",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "domains",
+                    "v1",
+                    "mappings",
+                    ":domain"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "domain",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"message\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "449c9a29-564d-4097-8d0b-3d3c18a6c67d",
+              "name": "Possible errors: FailedRemoveDomainMapping, FailedToInsertOwnership, FailedInsertDomainMapping",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "domains",
+                    "v1",
+                    "mappings",
+                    ":domain"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "domain",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"message\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "ab4bd954-36ba-4018-93bc-f49f3e9b42fb",
+              "name": "Error: FailedToCheckDomainMappingPermissions",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "domains",
+                    "v1",
+                    "mappings",
+                    ":domain"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "domain",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "Bad Gateway",
+              "code": 502,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"message\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "1b05cf35-6baf-400a-bc2e-4b348fbb49f1",
+          "name": "List Domain Verification Requests for an Account",
+          "request": {
+            "name": "List Domain Verification Requests for an Account",
+            "description": {
+              "content": "Lists domain verification requests for the current account.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "domains",
+                "v1",
+                "verifications"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "bbdedd8a-5dc1-41e9-b384-82d067c90b23",
+              "name": "List of verification codes",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "domains",
+                    "v1",
+                    "verifications"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"verificationCode\": \"string\",\n    \"domain\": \"string\",\n    \"createdAt\": \"1999-01-31T07:56:35.449Z\"\n  },\n  {\n    \"verificationCode\": \"string\",\n    \"domain\": \"string\",\n    \"createdAt\": \"2003-05-12T19:23:50.185Z\"\n  }\n]",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "503e2c78-5fe7-4526-9f0b-629adc2a758c",
+              "name": "Failed to get verification codes",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "domains",
+                    "v1",
+                    "verifications"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "88abed7d-b457-4d95-93d0-4686a9117d9e",
+          "name": "Verify a Domain Verification Request",
+          "request": {
+            "name": "Verify a Domain Verification Request",
+            "description": {
+              "content": "This checks a pre-existing verification request for a domain. To create a verification request, call the [create domain verification](/#tag/domains/POST/domains/v1/verifications) endpoint. This endpoint will check if the domain has a TXT record with the verification code. If it does, the domain will be verified.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "domains",
+                "v1",
+                "verifications"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "PUT",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"domain\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "2d35416e-cba0-4ae0-a7e1-27efa6307626",
+              "name": "Domain verified",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "domains",
+                    "v1",
+                    "verifications"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PUT",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"domain\": \"example.com\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"domain\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "627d4c62-f29c-43a2-b9ea-6ea87a0521a7",
+              "name": "Possible errors: InvalidDomain, FailedToCreateVerificationCode, FailedToDeleteVerification, VerificationFailed",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "domains",
+                    "v1",
+                    "verifications"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PUT",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"domain\": \"example.com\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"message\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "a0a98665-9042-4b11-9dce-344347868008",
+              "name": "Error: PermissionDenied",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "domains",
+                    "v1",
+                    "verifications"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PUT",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"domain\": \"example.com\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"message\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "d378d7af-f690-41a8-b673-d5e1226c4f6e",
+              "name": "Error: LimitExceeded",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "domains",
+                    "v1",
+                    "verifications"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PUT",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"domain\": \"example.com\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"message\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "729472d7-0272-45d4-89c6-5aac3469bf88",
+              "name": "Error: VerificationNotFound",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "domains",
+                    "v1",
+                    "verifications"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PUT",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"domain\": \"example.com\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"message\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "827025f8-81ba-4e69-a14f-54e468744016",
+              "name": "Error: FailedToProvisionCertificate",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "domains",
+                    "v1",
+                    "verifications"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PUT",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"domain\": \"example.com\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"message\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "871f43a9-43d3-4f59-8eea-7c06056a53da",
+              "name": "Possible errors: FailedToVerifyDomain, FailedToListVerifications, FailedToListDomains, FailedToInsertDomainMapping, InternalError",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "domains",
+                    "v1",
+                    "verifications"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PUT",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"domain\": \"example.com\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"message\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "2e6dc257-c455-4fab-915f-7319456ae93e",
+              "name": "Error: FailedToCheckPermissions",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "domains",
+                    "v1",
+                    "verifications"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PUT",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"domain\": \"example.com\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Gateway",
+              "code": 502,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"message\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "3ea2f316-3f2e-4804-9032-40e067d2268a",
+          "name": "Create a Domain Verification Request",
+          "request": {
+            "name": "Create a Domain Verification Request",
+            "description": {
+              "content": "This creates a Freestyle Domain Verification Request. It returns a `verificationCode` for your domain. You need to place this code in a TXT record at `_freestyle_custom_hostname.thedomain.com`, then call the [verify domain](/#tag/domains/PUT/domains/v1/verifications) endpoint with the domain to verify it.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "domains",
+                "v1",
+                "verifications"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"domain\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "e241b99c-b728-4c60-9439-1e92fc98c2ce",
+              "name": "Verification code created",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "domains",
+                    "v1",
+                    "verifications"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"domain\": \"example.com\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"6e96bad9-75f9-3092-a281-713f4861b172\",\n  \"domain\": \"example.com\",\n  \"accountId\": \"bb8bfeab-e53c-95cc-3ad4-92118490b29e\",\n  \"verificationCode\": \"freestyle-verification-v1-1234-5678-9012-3456\",\n  \"createdAt\": \"1974-06-24T23:42:06.307Z\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "d4ea839c-f31f-4c7b-b4b2-9f112eac6a45",
+              "name": "Failed to create verification code",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "domains",
+                    "v1",
+                    "verifications"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"domain\": \"example.com\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "79886208-180a-4ee2-8d1d-e239e20f9f7e",
+          "name": "Delete a Domain Verification Request",
+          "request": {
+            "name": "Delete a Domain Verification Request",
+            "description": {
+              "content": "This deletes a Freestyle Domain Verification Request. This does not remove the domain from the account if it has already been verified, however the verification code will no longer be valid.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "domains",
+                "v1",
+                "verifications"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "DELETE",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"domain\": \"<string>\",\n  \"verificationCode\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "08cd70d7-5724-44dc-9577-3c63b7b46976",
+              "name": "Verification code created",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "domains",
+                    "v1",
+                    "verifications"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"domain\": \"example.com\",\n  \"verificationCode\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"verificationCode\": \"string\",\n  \"domain\": \"example.com\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "3205e235-836d-48e1-852b-1dec8e1b03c0",
+              "name": "Failed to create verification code",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "domains",
+                    "v1",
+                    "verifications"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"domain\": \"example.com\",\n  \"verificationCode\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    },
+    {
+      "id": "2c54c712-36f1-4674-8625-8970811dc919",
+      "name": "DNS",
+      "description": {
+        "content": "APIs for managing DNS records.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "703b2957-5a99-43e3-94fb-d05e9e32dd30",
+          "name": "List DNS Records",
+          "request": {
+            "name": "List DNS Records",
+            "description": {},
+            "url": {
+              "path": [
+                "dns",
+                "v1",
+                "records"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "domain",
+                  "value": "<string>",
+                  "description": "(Required) "
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "57e64093-2283-4e49-8637-46c47608aa19",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "dns",
+                    "v1",
+                    "records"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "domain",
+                      "value": "example.com"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"records\": [\n    {\n      \"kind\": \"TXT\",\n      \"name\": \"string\",\n      \"value\": \"string\",\n      \"ttl\": \"string\",\n      \"managed\": false,\n      \"priority\": 9382\n    },\n    {\n      \"kind\": \"NS\",\n      \"name\": \"string\",\n      \"value\": \"string\",\n      \"ttl\": \"string\",\n      \"managed\": false,\n      \"priority\": 2181\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "83880f54-1f0a-4265-ae33-f0cbf50f300a",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "dns",
+                    "v1",
+                    "records"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "domain",
+                      "value": "example.com"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "9c8b604a-fca8-4d95-84ab-f5c138f25e9a",
+          "name": "Create DNS Record",
+          "request": {
+            "name": "Create DNS Record",
+            "description": {},
+            "url": {
+              "path": [
+                "dns",
+                "v1",
+                "records"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"domain\": \"<string>\",\n  \"record\": {\n    \"kind\": \"<string>\",\n    \"name\": \"<string>\",\n    \"value\": \"<string>\",\n    \"ttl\": \"<string,null>\",\n    \"priority\": \"<integer,null-int32>\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "8aa246f4-d859-4348-a3e9-a8390ee4edfc",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "dns",
+                    "v1",
+                    "records"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"domain\": \"<string>\",\n  \"record\": {\n    \"kind\": \"A\",\n    \"name\": \"string\",\n    \"value\": \"string\",\n    \"ttl\": \"string\",\n    \"priority\": 7650\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"record\": {\n    \"kind\": \"TXT\",\n    \"name\": \"string\",\n    \"value\": \"string\",\n    \"ttl\": \"string\",\n    \"managed\": true,\n    \"priority\": 8112\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "08a27f4a-0cb5-455e-a84b-474245ef5e1f",
+              "name": "Possible errors: DomainOwnershipError, RecordOwnershipError, DomainOwnershipVerificationFailed",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "dns",
+                    "v1",
+                    "records"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"domain\": \"<string>\",\n  \"record\": {\n    \"kind\": \"A\",\n    \"name\": \"string\",\n    \"value\": \"string\",\n    \"ttl\": \"string\",\n    \"priority\": 7650\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"message\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "b074d961-a05f-4ece-9527-127aebf8c4e6",
+              "name": "Possible errors: ErrorCreatingRecord, ErrorDeletingRecord",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "dns",
+                    "v1",
+                    "records"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"domain\": \"<string>\",\n  \"record\": {\n    \"kind\": \"A\",\n    \"name\": \"string\",\n    \"value\": \"string\",\n    \"ttl\": \"string\",\n    \"priority\": 7650\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"message\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "4fab9b8f-7549-4349-a7b6-e0ee8900c2ae",
+          "name": "Delete DNS Record",
+          "request": {
+            "name": "Delete DNS Record",
+            "description": {},
+            "url": {
+              "path": [
+                "dns",
+                "v1",
+                "records"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "domain",
+                  "value": "<string>",
+                  "description": "(Required) "
+                },
+                {
+                  "disabled": false,
+                  "key": "kind",
+                  "value": "<string>",
+                  "description": "(Required) "
+                },
+                {
+                  "disabled": false,
+                  "key": "name",
+                  "value": "<string>",
+                  "description": "(Required) "
+                },
+                {
+                  "disabled": false,
+                  "key": "value",
+                  "value": "<string>",
+                  "description": "(Required) "
+                },
+                {
+                  "disabled": false,
+                  "key": "ttl",
+                  "value": "<string>",
+                  "description": "(Required) "
+                },
+                {
+                  "disabled": false,
+                  "key": "managed",
+                  "value": "<boolean>",
+                  "description": "(Required) "
+                },
+                {
+                  "disabled": false,
+                  "key": "priority",
+                  "value": "<integer,null-int32>",
+                  "description": "(Required) "
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "DELETE",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "d4605829-84d8-434d-9094-a4cc19c17d61",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "dns",
+                    "v1",
+                    "records"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "domain",
+                      "value": "example.com"
+                    },
+                    {
+                      "key": "kind",
+                      "value": "A"
+                    },
+                    {
+                      "key": "name",
+                      "value": "string"
+                    },
+                    {
+                      "key": "value",
+                      "value": "string"
+                    },
+                    {
+                      "key": "ttl",
+                      "value": "string"
+                    },
+                    {
+                      "key": "managed",
+                      "value": "false"
+                    },
+                    {
+                      "key": "priority",
+                      "value": "5198"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "b18098be-06f3-4df7-8e83-0e423f7e346b",
+              "name": "Possible errors: DomainOwnershipError, RecordOwnershipError, DomainOwnershipVerificationFailed",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "dns",
+                    "v1",
+                    "records"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "domain",
+                      "value": "example.com"
+                    },
+                    {
+                      "key": "kind",
+                      "value": "A"
+                    },
+                    {
+                      "key": "name",
+                      "value": "string"
+                    },
+                    {
+                      "key": "value",
+                      "value": "string"
+                    },
+                    {
+                      "key": "ttl",
+                      "value": "string"
+                    },
+                    {
+                      "key": "managed",
+                      "value": "false"
+                    },
+                    {
+                      "key": "priority",
+                      "value": "5198"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"message\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "c5f7fc78-2afa-4746-b74b-cc6dffcf53c1",
+              "name": "Possible errors: ErrorCreatingRecord, ErrorDeletingRecord",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "dns",
+                    "v1",
+                    "records"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "domain",
+                      "value": "example.com"
+                    },
+                    {
+                      "key": "kind",
+                      "value": "A"
+                    },
+                    {
+                      "key": "name",
+                      "value": "string"
+                    },
+                    {
+                      "key": "value",
+                      "value": "string"
+                    },
+                    {
+                      "key": "ttl",
+                      "value": "string"
+                    },
+                    {
+                      "key": "managed",
+                      "value": "false"
+                    },
+                    {
+                      "key": "priority",
+                      "value": "5198"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"message\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    },
+    {
+      "id": "7f1f1399-3008-4871-a70c-804b674ee460",
+      "name": "Certs",
+      "description": {
+        "content": "APIs for managing SSL certificates.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "7625b25a-9c66-4334-89b8-7216d072da77",
+          "name": "Provision a Wildcard Certificate",
+          "request": {
+            "name": "Provision a Wildcard Certificate",
+            "description": {
+              "content": "Provisions a wildcard certificate for a verified domain\n\n\nThis speeds up deploys on all subdomains of the domain. In order to use it, you must add the following record to your DNS config:\n\n`_acme-challenge.yourdomain.com` NS `dns.freestyle.sh`",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "domains",
+                "v1",
+                "certs",
+                ":domain",
+                "wildcard"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "domain",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "825f93a3-a4fa-42fa-b250-ef82ebc1dfb2",
+              "name": "Domain verified",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "domains",
+                    "v1",
+                    "certs",
+                    ":domain",
+                    "wildcard"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "domain",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"domain\": \"example.com\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "32755369-7340-44f6-b7c2-7fdcc56ce594",
+              "name": "Failed to preverify domain",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "domains",
+                    "v1",
+                    "certs",
+                    ":domain",
+                    "wildcard"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "domain",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.freestyle.sh",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "5e991fd1-bfcb-4bfa-86da-056d80bb9c23",
+    "name": "Freestyle Domains API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Manage custom domains, domain verifications, DNS records, domain mappings, and wildcard SSL certificates for Freestyle Web Deployments and VMs.\n\nContact Support:\n Name: Ben\n Email: ben@freestyle.sh",
+      "type": "text/plain"
+    }
+  }
+}

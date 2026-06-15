@@ -1,0 +1,111 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Freestyle Observability API",
+    "version": "0.1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Observability",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Logs",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/observability/v1/logs",
+            "params": [
+              {
+                "name": "deploymentId",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "requestId",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "buildId",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "instanceId",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "domain",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "vmId",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "runId",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "vmService",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "pageToken",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "pageSize",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "startTime",
+                "value": "",
+                "type": "query",
+                "description": "Start time in RFC3339 format (e.g., \"2024-01-01T00:00:00Z\"). Defaults to 24 hours ago if not specified."
+              },
+              {
+                "name": "endTime",
+                "value": "",
+                "type": "query",
+                "description": "End time in RFC3339 format (e.g., \"2024-01-02T00:00:00Z\"). Defaults to now if not specified."
+              },
+              {
+                "name": "search",
+                "value": "",
+                "type": "query",
+                "description": "Full-text search filter — case-insensitive substring match on log message body."
+              },
+              {
+                "name": "resourceType",
+                "value": "",
+                "type": "query",
+                "description": "Filter logs by resource type: \"deployment\" or \"vm\". Only applies to account-wide queries."
+              }
+            ]
+          },
+          "docs": "Get logs for a deployment, domain, VM, or background request"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
