@@ -217,7 +217,7 @@ common:
     name: Freestyle Sandboxes OpenAPI
     type: OpenAPI
   - url: https://admin.freestyle.sh
-    type: SignUp
+    type: Signup
     name: Freestyle Admin Console
   - url: https://admin.freestyle.sh
     type: Dashboard
@@ -231,7 +231,7 @@ common:
   - url: https://status.freestyle.sh
     type: StatusPage
   - url: https://discord.com/invite/YTRprVkdnz
-    type: Forum
+    type: Forums
     name: Freestyle Discord
   - url: https://www.freestyle.sh/privacy
     type: PrivacyPolicy
@@ -239,22 +239,22 @@ common:
     type: GitHubOrganization
   - url: https://github.com/freestyle-sh/sandbox_sdks
     name: Freestyle Sandboxes SDKs (TypeScript)
-    type: SDK
+    type: SDKs
   - url: https://github.com/freestyle-sh/sandbox-sdks-py
     name: Freestyle Sandboxes Python SDK
-    type: SDK
+    type: SDKs
   - url: https://github.com/freestyle-sh/rigkit
     name: Freestyle Dev Machine CLI and SDK (rigkit)
-    type: SDK
+    type: SDKs
   - url: https://github.com/freestyle-sh/freestyle-auth
     name: Freestyle Auth (open source)
-    type: Tool
+    type: Tools
   - url: https://github.com/freestyle-sh/Adorable
     name: Adorable — Open Source Lovable
-    type: Tool
+    type: Tools
   - url: https://github.com/freestyle-sh/cloudstate
     name: Cloudstate — JavaScript Database Runtime
-    type: Tool
+    type: Tools
   - url: https://github.com/freestyle-sh/freestyle-execute-chat
     name: Freestyle Execute Chat example
     type: CodeExamples

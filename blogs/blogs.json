@@ -3,12 +3,12 @@
   "feeds": [
     {
       "source": "https://www.freestyle.sh/blog",
-      "feed_url": "https://www.freestyle.sh/blog",
-      "title": "",
+      "feed_url": "",
       "saved": 0,
-      "method": "none"
+      "method": "agent-scrape"
     }
   ],
-  "post_count": 12,
-  "fetched": "2026-06-14T20:42:17Z"
+  "post_count": 15,
+  "fetched": "2026-06-27T12:43:32Z",
+  "agent_pulled": "2026-06-27"
 }
