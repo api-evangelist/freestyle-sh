@@ -1,0 +1,21 @@
+generated: '2026-07-11'
+method: derived
+source: openapi/freestyle-cron-api-openapi.yml, openapi/freestyle-domains-api-openapi.yml, openapi/freestyle-execute-api-openapi.yml,
+  openapi/freestyle-git-api-openapi.yml, openapi/freestyle-identity-api-openapi.yml, openapi/freestyle-observability-api-openapi.yml,
+  openapi/freestyle-vm-api-openapi.yml, openapi/freestyle-web-api-openapi.yml
+summary:
+  types:
+  - http
+schemes:
+- name: bearerAuth
+  type: http
+  scheme: bearer
+  sources:
+  - openapi/freestyle-cron-api-openapi.yml
+  - openapi/freestyle-domains-api-openapi.yml
+  - openapi/freestyle-execute-api-openapi.yml
+  - openapi/freestyle-git-api-openapi.yml
+  - openapi/freestyle-identity-api-openapi.yml
+  - openapi/freestyle-observability-api-openapi.yml
+  - openapi/freestyle-vm-api-openapi.yml
+  - openapi/freestyle-web-api-openapi.yml
