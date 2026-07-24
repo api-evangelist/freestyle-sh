@@ -1,9 +1,8 @@
 openapi: 3.1.0
 info:
-  title: Freestyle Identity API
+  title: Freestyle Cron Auth Identity API
   version: 0.1.0
-  description: "Identity and access management for end users and agents \u2014 identities, access tokens, repository permissions,\
-    \ VM permissions, and bearer-token whoami/background-request lookup."
+  description: Schedule recurring serverless runs — create/update/delete cron schedules and inspect executions, success rate, and metrics timeline.
   contact:
     name: Ben
     email: ben@freestyle.sh
@@ -12,53 +11,12 @@ info:
 servers:
 - url: https://api.freestyle.sh
   description: Production
+security:
+- bearerAuth: []
 tags:
 - name: Identity
   description: APIs for managing identities and access tokens.
 paths:
-  /auth/v1/background-requests/{request_id}:
-    get:
-      tags:
-      - Auth
-      summary: Get Background Request Result
-      description: Replay the stored response for a backgrounded request when it finishes.
-      operationId: handle_get_background_request
-      parameters:
-      - name: request_id
-        in: path
-        description: Background request ID
-        required: true
-        schema:
-          $ref: '#/components/schemas/RequestId'
-      responses:
-        '200':
-          description: Completed request response replayed
-        '202':
-          description: Background request still running
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BackgroundRequestPendingResponse'
-        '404':
-          description: Background request not found or expired
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BackgroundRequestErrorResponse'
-  /auth/v1/whoami:
-    get:
-      tags:
-      - Auth
-      summary: Get Current User
-      description: Returns information about the currently authenticated user or identity.
-      operationId: handle_whoami
-      responses:
-        '200':
-          description: Current authenticated user information
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/WhoAmIResponse'
   /identity/v1/identities:
     get:
       tags:
@@ -138,8 +96,7 @@ paths:
       tags:
       - Identity
       summary: List Repository Permissions for an Identity
-      description: List repository permissions for an identity. This will return a list of repositories that the identity
-        has access to.
+      description: List repository permissions for an identity. This will return a list of repositories that the identity has access to.
       operationId: handle_list_git_permissions
       parameters:
       - name: identity
@@ -176,8 +133,7 @@ paths:
       tags:
       - Identity
       summary: Get the Git Permission of an Identity on a Repository
-      description: Get the permission of an identity on a repository. This will return the access level of the identity on
-        the repository.
+      description: Get the permission of an identity on a repository. This will return the access level of the identity on the repository.
       operationId: handle_describe_git_permission
       parameters:
       - name: identity
@@ -368,8 +324,7 @@ paths:
       tags:
       - Identity
       summary: Update Allowed Users for VM Permission
-      description: Update the list of allowed users for a VM permission. Set to null to allow all users, or provide a list
-        to restrict access.
+      description: Update the list of allowed users for a VM permission. Set to null to allow all users, or provide a list to restrict access.
       operationId: handle_update_allowed_users
       parameters:
       - name: identity
@@ -402,8 +357,7 @@ paths:
       tags:
       - Identity
       summary: Grant VM Permission to an Identity for a VM
-      description: Grant VM access permission to an identity for a specific VM. Optionally restrict access to specific Linux
-        users.
+      description: Grant VM access permission to an identity for a specific VM. Optionally restrict access to specific Linux users.
       operationId: handle_grant_vm_permission
       parameters:
       - name: identity
@@ -528,72 +482,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/EmptyResponse'
 components:
-  securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
   schemas:
-    ListIdentitiesSuccess:
-      type: object
-      required:
-      - identities
-      - offset
-      - total
-      properties:
-        identities:
-          type: array
-          items:
-            $ref: '#/components/schemas/FreestyleIdentity'
-        offset:
-          type: integer
-          format: int64
-          minimum: 0
-        total:
-          type: integer
-          format: int64
-          minimum: 0
-    BackgroundRequestErrorResponse:
-      type: object
-      required:
-      - message
-      properties:
-        message:
-          type: string
-    ListGitTokensSuccess:
-      type: object
-      required:
-      - tokens
-      properties:
-        tokens:
-          type: array
-          items:
-            $ref: '#/components/schemas/AccessTokenInfo'
-    DescribeGitPermissionSuccess:
-      type: object
-      required:
-      - identity
-      - repo
-      properties:
-        identity:
-          type: string
-          format: uuid
-        repo:
-          type: string
-          format: uuid
-        accessLevel:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/AccessLevel'
-    BackgroundRequestPendingResponse:
-      type: object
-      required:
-      - requestId
-      - status
-      properties:
-        requestId:
-          $ref: '#/components/schemas/RequestId'
-        status:
-          type: string
     AccessTokenInfo:
       type: object
       required:
@@ -602,6 +491,25 @@ components:
         id:
           type: string
           format: uuid
+    GrantGitPermissionRequest:
+      type: object
+      required:
+      - permission
+      properties:
+        permission:
+          $ref: '#/components/schemas/AccessLevel'
+    Visibility:
+      type: string
+      enum:
+      - public
+      - private
+    UpdateGitPermissionRequest:
+      type: object
+      required:
+      - permission
+      properties:
+        permission:
+          $ref: '#/components/schemas/AccessLevel'
     FreestyleIdentity:
       type: object
       required:
@@ -613,25 +521,17 @@ components:
           format: uuid
         managed:
           type: boolean
-    ListVmPermissionsSuccess:
+    CreatedToken:
       type: object
       required:
-      - permissions
-      - offset
-      - total
+      - id
+      - token
       properties:
-        permissions:
-          type: array
-          items:
-            $ref: '#/components/schemas/VmPermission'
-        offset:
-          type: integer
-          format: int64
-          minimum: 0
-        total:
-          type: integer
-          format: int64
-          minimum: 0
+        id:
+          type: string
+          format: uuid
+        token:
+          type: string
     AccessibleRepository:
       type: object
       description: Identical to [`RepositoryInfo`], but with the permissions field added.
@@ -655,38 +555,37 @@ components:
           $ref: '#/components/schemas/AccessLevel'
         visibility:
           $ref: '#/components/schemas/Visibility'
-    ListGitPermissionSuccess:
+    ListIdentitiesSuccess:
       type: object
       required:
-      - repositories
+      - identities
+      - offset
+      - total
       properties:
-        repositories:
+        identities:
           type: array
           items:
-            $ref: '#/components/schemas/AccessibleRepository'
-    AccessLevel:
-      type: string
-      enum:
-      - read
-      - write
-    RequestId:
-      type: string
-      description: "Branded request identifier \u2014 `ri-<20 lowercase alphanumeric chars>` for newly\nminted IDs. The wrapped\
-        \ string is otherwise opaque, so legacy UUID-formatted\nIDs (from in-flight requests during rollout) round-trip unchanged."
-    UpdateGitPermissionRequest:
+            $ref: '#/components/schemas/FreestyleIdentity'
+        offset:
+          type: integer
+          format: int64
+          minimum: 0
+        total:
+          type: integer
+          format: int64
+          minimum: 0
+    UpdateAllowedUsersRequestBody:
       type: object
-      required:
-      - permission
       properties:
-        permission:
-          $ref: '#/components/schemas/AccessLevel'
-    GrantGitPermissionRequest:
-      type: object
-      required:
-      - permission
-      properties:
-        permission:
-          $ref: '#/components/schemas/AccessLevel'
+        allowedUsers:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+          description: 'List of allowed Linux users. If null, identity can SSH as any user.
+
+            If specified, identity can only SSH as users in this list.'
     VmPermission:
       type: object
       description: Full VM permission record
@@ -729,48 +628,67 @@ components:
           description: 'List of allowed Linux users. If null, identity can SSH as any user.
 
             If specified, identity can only SSH as users in this list.'
-    Visibility:
+    AccessLevel:
       type: string
       enum:
-      - public
-      - private
+      - read
+      - write
+    DescribeGitPermissionSuccess:
+      type: object
+      required:
+      - identity
+      - repo
+      properties:
+        identity:
+          type: string
+          format: uuid
+        repo:
+          type: string
+          format: uuid
+        accessLevel:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/AccessLevel'
+    ListGitTokensSuccess:
+      type: object
+      required:
+      - tokens
+      properties:
+        tokens:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccessTokenInfo'
+    ListGitPermissionSuccess:
+      type: object
+      required:
+      - repositories
+      properties:
+        repositories:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccessibleRepository'
     EmptyResponse:
       type: object
-    WhoAmIResponse:
+    ListVmPermissionsSuccess:
       type: object
       required:
-      - accountId
+      - permissions
+      - offset
+      - total
       properties:
-        accountId:
-          type: string
-          format: uuid
-        identityId:
-          type:
-          - string
-          - 'null'
-          format: uuid
-    UpdateAllowedUsersRequestBody:
-      type: object
-      properties:
-        allowedUsers:
-          type:
-          - array
-          - 'null'
+        permissions:
+          type: array
           items:
-            type: string
-          description: 'List of allowed Linux users. If null, identity can SSH as any user.
-
-            If specified, identity can only SSH as users in this list.'
-    CreatedToken:
-      type: object
-      required:
-      - id
-      - token
-      properties:
-        id:
-          type: string
-          format: uuid
-        token:
-          type: string
-security:
-- bearerAuth: []
+            $ref: '#/components/schemas/VmPermission'
+        offset:
+          type: integer
+          format: int64
+          minimum: 0
+        total:
+          type: integer
+          format: int64
+          minimum: 0
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

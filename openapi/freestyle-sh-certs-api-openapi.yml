@@ -1,0 +1,68 @@
+openapi: 3.1.0
+info:
+  title: Freestyle Cron Auth Certs API
+  version: 0.1.0
+  description: Schedule recurring serverless runs — create/update/delete cron schedules and inspect executions, success rate, and metrics timeline.
+  contact:
+    name: Ben
+    email: ben@freestyle.sh
+  license:
+    name: Closed Source
+servers:
+- url: https://api.freestyle.sh
+  description: Production
+security:
+- bearerAuth: []
+tags:
+- name: Certs
+  description: APIs for managing SSL certificates.
+paths:
+  /domains/v1/certs/{domain}/wildcard:
+    post:
+      tags:
+      - Certs
+      summary: Provision a Wildcard Certificate
+      description: 'Provisions a wildcard certificate for a verified domain
+
+
+
+        This speeds up deploys on all subdomains of the domain. In order to use it, you must add the following record to your DNS config:
+
+
+        `_acme-challenge.yourdomain.com` NS `dns.freestyle.sh`'
+      operationId: handle_verify_wildcard
+      parameters:
+      - name: domain
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Domain verified
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - domain
+                properties:
+                  domain:
+                    type: string
+                    example: example.com
+        '400':
+          description: Failed to preverify domain
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - message
+                properties:
+                  message:
+                    type: string
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

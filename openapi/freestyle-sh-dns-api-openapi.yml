@@ -1,0 +1,251 @@
+openapi: 3.1.0
+info:
+  title: Freestyle Cron Auth DNS API
+  version: 0.1.0
+  description: Schedule recurring serverless runs — create/update/delete cron schedules and inspect executions, success rate, and metrics timeline.
+  contact:
+    name: Ben
+    email: ben@freestyle.sh
+  license:
+    name: Closed Source
+servers:
+- url: https://api.freestyle.sh
+  description: Production
+security:
+- bearerAuth: []
+tags:
+- name: DNS
+  description: APIs for managing DNS records.
+paths:
+  /dns/v1/records:
+    get:
+      tags:
+      - DNS
+      summary: List DNS Records
+      operationId: handle_list_records
+      parameters:
+      - name: domain
+        in: query
+        required: true
+        schema:
+          type: string
+        example: example.com
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListRecordsResponse'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - message
+                properties:
+                  message:
+                    type: string
+    post:
+      tags:
+      - DNS
+      summary: Create DNS Record
+      operationId: handle_create_record
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRecordParams'
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateRecordResponse'
+        '403':
+          description: 'Possible errors: DomainOwnershipError, RecordOwnershipError, DomainOwnershipVerificationFailed'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                - message
+                properties:
+                  error:
+                    type: string
+                    description: Error code in SCREAMING_SNAKE_CASE
+                  message:
+                    type: string
+                    description: Human-readable error message
+        '500':
+          description: 'Possible errors: ErrorCreatingRecord, ErrorDeletingRecord'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                - message
+                properties:
+                  error:
+                    type: string
+                    description: Error code in SCREAMING_SNAKE_CASE
+                  message:
+                    type: string
+                    description: Human-readable error message
+    delete:
+      tags:
+      - DNS
+      summary: Delete DNS Record
+      operationId: handle_delete_record
+      parameters:
+      - name: domain
+        in: query
+        required: true
+        schema:
+          type: string
+        example: example.com
+      - name: record
+        in: query
+        required: true
+        schema:
+          $ref: '#/components/schemas/DnsRecord'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteRecordResponse'
+        '403':
+          description: 'Possible errors: DomainOwnershipError, RecordOwnershipError, DomainOwnershipVerificationFailed'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                - message
+                properties:
+                  error:
+                    type: string
+                    description: Error code in SCREAMING_SNAKE_CASE
+                  message:
+                    type: string
+                    description: Human-readable error message
+        '500':
+          description: 'Possible errors: ErrorCreatingRecord, ErrorDeletingRecord'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                - message
+                properties:
+                  error:
+                    type: string
+                    description: Error code in SCREAMING_SNAKE_CASE
+                  message:
+                    type: string
+                    description: Human-readable error message
+components:
+  schemas:
+    DeleteRecordResponse:
+      type: object
+      required:
+      - message
+      properties:
+        message:
+          type: string
+    ListRecordsResponse:
+      type: object
+      required:
+      - records
+      properties:
+        records:
+          type: array
+          items:
+            $ref: '#/components/schemas/DnsRecord'
+    DnsRecordData:
+      type: object
+      required:
+      - kind
+      - name
+      - value
+      properties:
+        kind:
+          $ref: '#/components/schemas/DnsRecordKind'
+        name:
+          type: string
+        value:
+          type: string
+        ttl:
+          type:
+          - string
+          - 'null'
+        priority:
+          type:
+          - integer
+          - 'null'
+          format: int32
+          minimum: 0
+    DnsRecordKind:
+      type: string
+      enum:
+      - A
+      - AAAA
+      - CNAME
+      - TXT
+      - NS
+    CreateRecordResponse:
+      type: object
+      required:
+      - record
+      properties:
+        record:
+          $ref: '#/components/schemas/DnsRecord'
+    DnsRecord:
+      type: object
+      required:
+      - kind
+      - name
+      - value
+      - ttl
+      - managed
+      properties:
+        kind:
+          $ref: '#/components/schemas/DnsRecordKind'
+        name:
+          type: string
+        value:
+          type: string
+        ttl:
+          type: string
+        priority:
+          type:
+          - integer
+          - 'null'
+          format: int32
+          minimum: 0
+        managed:
+          type: boolean
+    CreateRecordParams:
+      type: object
+      required:
+      - domain
+      - record
+      properties:
+        domain:
+          type: string
+        record:
+          $ref: '#/components/schemas/DnsRecordData'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

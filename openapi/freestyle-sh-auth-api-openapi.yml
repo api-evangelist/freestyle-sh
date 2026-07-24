@@ -1,0 +1,104 @@
+openapi: 3.1.0
+info:
+  title: Freestyle Cron Auth API
+  version: 0.1.0
+  description: Schedule recurring serverless runs — create/update/delete cron schedules and inspect executions, success rate, and metrics timeline.
+  contact:
+    name: Ben
+    email: ben@freestyle.sh
+  license:
+    name: Closed Source
+servers:
+- url: https://api.freestyle.sh
+  description: Production
+security:
+- bearerAuth: []
+tags:
+- name: Auth
+paths:
+  /auth/v1/background-requests/{request_id}:
+    get:
+      tags:
+      - Auth
+      summary: Get Background Request Result
+      description: Replay the stored response for a backgrounded request when it finishes.
+      operationId: handle_get_background_request
+      parameters:
+      - name: request_id
+        in: path
+        description: Background request ID
+        required: true
+        schema:
+          $ref: '#/components/schemas/RequestId'
+      responses:
+        '200':
+          description: Completed request response replayed
+        '202':
+          description: Background request still running
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackgroundRequestPendingResponse'
+        '404':
+          description: Background request not found or expired
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackgroundRequestErrorResponse'
+  /auth/v1/whoami:
+    get:
+      tags:
+      - Auth
+      summary: Get Current User
+      description: Returns information about the currently authenticated user or identity.
+      operationId: handle_whoami
+      responses:
+        '200':
+          description: Current authenticated user information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WhoAmIResponse'
+components:
+  schemas:
+    WhoAmIResponse:
+      type: object
+      required:
+      - accountId
+      properties:
+        accountId:
+          type: string
+          format: uuid
+        identityId:
+          type:
+          - string
+          - 'null'
+          format: uuid
+    BackgroundRequestPendingResponse:
+      type: object
+      required:
+      - requestId
+      - status
+      properties:
+        requestId:
+          $ref: '#/components/schemas/RequestId'
+        status:
+          type: string
+    RequestId:
+      type: string
+      description: 'Branded request identifier — `ri-<20 lowercase alphanumeric chars>` for newly
+
+        minted IDs. The wrapped string is otherwise opaque, so legacy UUID-formatted
+
+        IDs (from in-flight requests during rollout) round-trip unchanged.'
+    BackgroundRequestErrorResponse:
+      type: object
+      required:
+      - message
+      properties:
+        message:
+          type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

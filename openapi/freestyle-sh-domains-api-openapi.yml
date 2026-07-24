@@ -1,9 +1,8 @@
 openapi: 3.1.0
 info:
-  title: Freestyle Domains API
+  title: Freestyle Cron Auth Domains API
   version: 0.1.0
-  description: Manage custom domains, domain verifications, DNS records, domain mappings, and wildcard SSL certificates for
-    Freestyle Web Deployments and VMs.
+  description: Schedule recurring serverless runs — create/update/delete cron schedules and inspect executions, success rate, and metrics timeline.
   contact:
     name: Ben
     email: ben@freestyle.sh
@@ -12,165 +11,22 @@ info:
 servers:
 - url: https://api.freestyle.sh
   description: Production
+security:
+- bearerAuth: []
 tags:
 - name: Domains
-  description: "APIs for managing domains. This is only relevant when you want to start to deploy to custom domains. \nPlease\
-    \ read [this guide](https://github.com/freestyle-sh/sandbox_sdks/blob/main/docs/custom_domains.md) to understand how deployments\
-    \ work with custom domains."
-- name: DNS
-  description: APIs for managing DNS records.
-- name: Certs
-  description: APIs for managing SSL certificates.
+  description: "APIs for managing domains. This is only relevant when you want to start to deploy to custom domains. \nPlease read [this guide](https://github.com/freestyle-sh/sandbox_sdks/blob/main/docs/custom_domains.md) to understand how deployments work with custom domains."
 paths:
-  /dns/v1/records:
-    get:
-      tags:
-      - DNS
-      summary: List DNS Records
-      operationId: handle_list_records
-      parameters:
-      - name: domain
-        in: query
-        required: true
-        schema:
-          type: string
-        example: example.com
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ListRecordsResponse'
-        '400':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - message
-                properties:
-                  message:
-                    type: string
-    post:
-      tags:
-      - DNS
-      summary: Create DNS Record
-      operationId: handle_create_record
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateRecordParams'
-        required: true
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CreateRecordResponse'
-        '403':
-          description: 'Possible errors: DomainOwnershipError, RecordOwnershipError, DomainOwnershipVerificationFailed'
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - error
-                - message
-                properties:
-                  error:
-                    type: string
-                    description: Error code in SCREAMING_SNAKE_CASE
-                  message:
-                    type: string
-                    description: Human-readable error message
-        '500':
-          description: 'Possible errors: ErrorCreatingRecord, ErrorDeletingRecord'
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - error
-                - message
-                properties:
-                  error:
-                    type: string
-                    description: Error code in SCREAMING_SNAKE_CASE
-                  message:
-                    type: string
-                    description: Human-readable error message
-    delete:
-      tags:
-      - DNS
-      summary: Delete DNS Record
-      operationId: handle_delete_record
-      parameters:
-      - name: domain
-        in: query
-        required: true
-        schema:
-          type: string
-        example: example.com
-      - name: record
-        in: query
-        required: true
-        schema:
-          $ref: '#/components/schemas/DnsRecord'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DeleteRecordResponse'
-        '403':
-          description: 'Possible errors: DomainOwnershipError, RecordOwnershipError, DomainOwnershipVerificationFailed'
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - error
-                - message
-                properties:
-                  error:
-                    type: string
-                    description: Error code in SCREAMING_SNAKE_CASE
-                  message:
-                    type: string
-                    description: Human-readable error message
-        '500':
-          description: 'Possible errors: ErrorCreatingRecord, ErrorDeletingRecord'
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - error
-                - message
-                properties:
-                  error:
-                    type: string
-                    description: Error code in SCREAMING_SNAKE_CASE
-                  message:
-                    type: string
-                    description: Human-readable error message
   /domains/v1/certs/{domain}/wildcard:
     post:
       tags:
-      - Certs
       - Domains
       summary: Provision a Wildcard Certificate
       description: 'Provisions a wildcard certificate for a verified domain
 
 
 
-        This speeds up deploys on all subdomains of the domain. In order to use it, you must add the following record to your
-        DNS config:
+        This speeds up deploys on all subdomains of the domain. In order to use it, you must add the following record to your DNS config:
 
 
         `_acme-challenge.yourdomain.com` NS `dns.freestyle.sh`'
@@ -210,8 +66,7 @@ paths:
       tags:
       - Domains
       summary: List Domains for an Account
-      description: This lists the domains that an account has verified ownership of. This includes the *.style.dev domains
-        the account has claimed.
+      description: This lists the domains that an account has verified ownership of. This includes the *.style.dev domains the account has claimed.
       operationId: handle_list_domains
       parameters:
       - name: limit
@@ -294,8 +149,7 @@ paths:
       tags:
       - Domains
       summary: List Domain Mappings
-      description: List domain mappings for any query based on exact domain or domain ownership (the domain ownership that
-        gave the right to use the domain)
+      description: List domain mappings for any query based on exact domain or domain ownership (the domain ownership that gave the right to use the domain)
       operationId: handle_list_domain_mappings
       parameters:
       - name: offset
@@ -345,8 +199,7 @@ paths:
       tags:
       - Domains
       summary: Insert Domain Mapping
-      description: This will unmap any other deployment to this domain. Provide either deployment_id or vm_id (with optional
-        vm_port), but not both.
+      description: This will unmap any other deployment to this domain. Provide either deployment_id or vm_id (with optional vm_port), but not both.
       operationId: handle_insert_domain_mapping
       parameters:
       - name: domain
@@ -520,9 +373,7 @@ paths:
       tags:
       - Domains
       summary: Verify a Domain Verification Request
-      description: This checks a pre-existing verification request for a domain. To create a verification request, call the
-        [create domain verification](/#tag/domains/POST/domains/v1/verifications) endpoint. This endpoint will check if the
-        domain has a TXT record with the verification code. If it does, the domain will be verified.
+      description: This checks a pre-existing verification request for a domain. To create a verification request, call the [create domain verification](/#tag/domains/POST/domains/v1/verifications) endpoint. This endpoint will check if the domain has a TXT record with the verification code. If it does, the domain will be verified.
       operationId: handle_verify_domain
       requestBody:
         content:
@@ -618,8 +469,7 @@ paths:
                     type: string
                     description: Human-readable error message
         '500':
-          description: 'Possible errors: FailedToVerifyDomain, FailedToListVerifications, FailedToListDomains, FailedToInsertDomainMapping,
-            InternalError'
+          description: 'Possible errors: FailedToVerifyDomain, FailedToListVerifications, FailedToListDomains, FailedToInsertDomainMapping, InternalError'
           content:
             application/json:
               schema:
@@ -654,9 +504,7 @@ paths:
       tags:
       - Domains
       summary: Create a Domain Verification Request
-      description: This creates a Freestyle Domain Verification Request. It returns a `verificationCode` for your domain.
-        You need to place this code in a TXT record at `_freestyle_custom_hostname.thedomain.com`, then call the [verify domain](/#tag/domains/PUT/domains/v1/verifications)
-        endpoint with the domain to verify it.
+      description: This creates a Freestyle Domain Verification Request. It returns a `verificationCode` for your domain. You need to place this code in a TXT record at `_freestyle_custom_hostname.thedomain.com`, then call the [verify domain](/#tag/domains/PUT/domains/v1/verifications) endpoint with the domain to verify it.
       operationId: handle_create_domain_verification
       requestBody:
         content:
@@ -686,8 +534,7 @@ paths:
       tags:
       - Domains
       summary: Delete a Domain Verification Request
-      description: This deletes a Freestyle Domain Verification Request. This does not remove the domain from the account
-        if it has already been verified, however the verification code will no longer be valid.
+      description: This deletes a Freestyle Domain Verification Request. This does not remove the domain from the account if it has already been verified, however the verification code will no longer be valid.
       operationId: handle_delete_domain_verification
       requestBody:
         content:
@@ -723,50 +570,49 @@ paths:
                   message:
                     type: string
 components:
-  securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
   schemas:
-    DnsRecordData:
+    Public_DomainMappingError:
+      $ref: '#/components/schemas/Error_DomainMappingError'
+      description: 'Public API error wrapper. Mark public APIs with `Public<T>` to ensure private error
+
+        details aren''t exposed.'
+    FreestyleSandboxDomainMapping:
       type: object
       required:
-      - kind
-      - name
-      - value
+      - id
+      - domain
+      - ownershipId
+      - createdAt
       properties:
-        kind:
-          $ref: '#/components/schemas/DnsRecordKind'
-        name:
+        id:
           type: string
-        value:
+          format: uuid
+        domain:
           type: string
-        ttl:
+        deploymentId:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/DeploymentId'
+        vmId:
           type:
           - string
           - 'null'
-        priority:
+        vmPort:
           type:
           - integer
           - 'null'
           format: int32
-          minimum: 0
-    FreestyleDomainVerificationRequest:
-      type: object
-      required:
-      - domain
-      properties:
-        domain:
+        ownershipId:
           type: string
-          description: The domain to create a verification code for
-          example: example.com
-    DeleteRecordResponse:
-      type: object
-      required:
-      - message
-      properties:
-        message:
+          format: uuid
+        createdAt:
           type: string
+          format: date-time
+        unmappedAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
     Error_DomainMappingError:
       type: object
       description: 'The structure of an error - should rarely be interacted with directly.
@@ -916,50 +762,28 @@ components:
           additionalProperties: {}
           propertyNames:
             type: string
-    FreestyleSandboxDomainMapping:
+    FreestyleDeleteDomainVerificationRequest:
       type: object
       required:
-      - id
       - domain
-      - ownershipId
-      - createdAt
+      - verificationCode
       properties:
-        id:
-          type: string
-          format: uuid
         domain:
           type: string
-        deploymentId:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/DeploymentId'
-        vmId:
-          type:
-          - string
-          - 'null'
-        vmPort:
-          type:
-          - integer
-          - 'null'
-          format: int32
-        ownershipId:
+          description: The domain to create a verification code for
+          example: example.com
+        verificationCode:
           type: string
-          format: uuid
-        createdAt:
-          type: string
-          format: date-time
-        unmappedAt:
-          type:
-          - string
-          - 'null'
-          format: date-time
-    CreateRecordResponse:
+          description: The verification code
+    CreateDomainMappingSuccess:
+      $ref: '#/components/schemas/FreestyleSandboxDomainMapping'
+    VerifyDomainSuccess:
       type: object
       required:
-      - record
+      - domain
       properties:
-        record:
-          $ref: '#/components/schemas/DnsRecord'
+        domain:
+          type: string
     CreateDomainMappingRequest:
       type: object
       properties:
@@ -976,11 +800,11 @@ components:
           - integer
           - 'null'
           format: int32
-    Public_DomainMappingError:
-      $ref: '#/components/schemas/Error_DomainMappingError'
-      description: 'Public API error wrapper. Mark public APIs with `Public<T>` to ensure private error
+    VmId:
+      type: string
+      description: 'VM ID — always 20 alphanumeric lowercase characters.
 
-        details aren''t exposed.'
+        New IDs are fully random. Legacy short IDs are right-padded with ''0'' on parse.'
     DomainVerificationRequest:
       type: object
       required:
@@ -1008,77 +832,15 @@ components:
           type: string
           format: date-time
           example: '1234567890'
-    SuccessfullyDeletedDomainMapping:
-      type: object
-    CreateDomainMappingSuccess:
-      $ref: '#/components/schemas/FreestyleSandboxDomainMapping'
-    DnsRecord:
-      type: object
-      required:
-      - kind
-      - name
-      - value
-      - ttl
-      - managed
-      properties:
-        kind:
-          $ref: '#/components/schemas/DnsRecordKind'
-        name:
-          type: string
-        value:
-          type: string
-        ttl:
-          type: string
-        priority:
-          type:
-          - integer
-          - 'null'
-          format: int32
-          minimum: 0
-        managed:
-          type: boolean
-    FreestyleDeleteDomainVerificationRequest:
+    FreestyleDomainVerificationRequest:
       type: object
       required:
       - domain
-      - verificationCode
       properties:
         domain:
           type: string
           description: The domain to create a verification code for
           example: example.com
-        verificationCode:
-          type: string
-          description: The verification code
-    VerifyDomainSuccess:
-      type: object
-      required:
-      - domain
-      properties:
-        domain:
-          type: string
-    DnsRecordKind:
-      type: string
-      enum:
-      - A
-      - AAAA
-      - CNAME
-      - TXT
-      - NS
-    VmId:
-      type: string
-      description: "VM ID \u2014 always 20 alphanumeric lowercase characters.\nNew IDs are fully random. Legacy short IDs\
-        \ are right-padded with '0' on parse."
-    CreateRecordParams:
-      type: object
-      required:
-      - domain
-      - record
-      properties:
-        domain:
-          type: string
-        record:
-          $ref: '#/components/schemas/DnsRecordData'
     FreestyleVerifyDomainRequest:
       oneOf:
       - type: object
@@ -1097,17 +859,12 @@ components:
             format: uuid
             example: 1234-5678-9012-3456
       description: Verify a domain verification request, can either be done for a domain, or for a specific request
+    SuccessfullyDeletedDomainMapping:
+      type: object
     DeploymentId:
       type: string
       format: uuid
-    ListRecordsResponse:
-      type: object
-      required:
-      - records
-      properties:
-        records:
-          type: array
-          items:
-            $ref: '#/components/schemas/DnsRecord'
-security:
-- bearerAuth: []
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

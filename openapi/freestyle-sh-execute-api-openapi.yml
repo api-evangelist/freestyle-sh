@@ -1,9 +1,8 @@
 openapi: 3.1.0
 info:
-  title: Freestyle Execute API
+  title: Freestyle Cron Auth Execute API
   version: 0.1.0
-  description: "Run user-supplied or AI-generated JavaScript/TypeScript code on demand \u2014 ephemeral execution, list runs,\
-    \ fetch saved output, with node-module caching."
+  description: Schedule recurring serverless runs — create/update/delete cron schedules and inspect executions, success rate, and metrics timeline.
   contact:
     name: Ben
     email: ben@freestyle.sh
@@ -12,11 +11,11 @@ info:
 servers:
 - url: https://api.freestyle.sh
   description: Production
+security:
+- bearerAuth: []
 tags:
 - name: Execute
-  description: APIs for running code. Send the code using the [execute](#tag/execute/POST/execute/v1/execute) endpoint, and
-    you'll get the output back. Works with any TypeScript or JavaScript code + handles any node modules and environment variables
-    you want.
+  description: APIs for running code. Send the code using the [execute](#tag/execute/POST/execute/v1/execute) endpoint, and you'll get the output back. Works with any TypeScript or JavaScript code + handles any node modules and environment variables you want.
 paths:
   /execute/v1/deployments:
     get:
@@ -249,59 +248,13 @@ paths:
                     type: string
                     description: Human-readable error message
 components:
-  securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
   schemas:
-    ExecuteRunInfo:
-      type: object
-      required:
-      - code
-      - nodeModules
-      properties:
-        code:
-          type: string
-        nodeModules:
-          type: object
-          additionalProperties:
-            type: string
-          propertyNames:
-            type: string
-    FreestyleNetworkPermission:
-      oneOf:
-      - allOf:
-        - $ref: '#/components/schemas/NetworkPermissionData'
-        - type: object
-          required:
-          - action
-          properties:
-            action:
-              type: string
-              enum:
-              - allow
-      - allOf:
-        - $ref: '#/components/schemas/NetworkPermissionData'
-        - type: object
-          required:
-          - action
-          properties:
-            action:
-              type: string
-              enum:
-              - deny
-    ExecuteScriptSuccess:
-      type: object
-      description: Success result from script execution
-      required:
-      - result
-      - logs
-      properties:
-        result: {}
-        logs:
-          type: array
-          items:
-            $ref: '#/components/schemas/JavascriptLog'
+    Behavior:
+      type: string
+      default: exact
+      enum:
+      - regex
+      - exact
     JavascriptLog:
       oneOf:
       - type: object
@@ -334,120 +287,6 @@ components:
             type: string
             enum:
             - error
-    FreestyleJavaScriptLog:
-      type: object
-      required:
-      - message
-      - type
-      properties:
-        message:
-          type: string
-          description: The log message
-          example: I'm a log!
-        type:
-          type: string
-          description: The log level
-          example: log
-    EgressDenyRules:
-      type: object
-      properties:
-        ips:
-          type:
-          - object
-          - 'null'
-          description: 'Blacklist of IPs. These override allow rules.
-
-            CIDR notation supported.'
-          additionalProperties:
-            type: array
-            items:
-              $ref: '#/components/schemas/EgressIpConfig'
-          propertyNames:
-            type: string
-    Behavior:
-      type: string
-      default: exact
-      enum:
-      - regex
-      - exact
-    EgressTransform:
-      type: object
-      properties:
-        headers:
-          type:
-          - object
-          - 'null'
-          description: Headers to set on outgoing requests
-          additionalProperties:
-            type: string
-          propertyNames:
-            type: string
-    EgressAllowRules:
-      type: object
-      properties:
-        domains:
-          type:
-          - object
-          - 'null'
-          description: 'Whitelist of domains. Empty object means no domains allowed.
-
-            "*" means allow all domains.
-
-            Domain name maps to a list of transformations (currently just headers).'
-          additionalProperties:
-            type: array
-            items:
-              $ref: '#/components/schemas/EgressDomainConfig'
-          propertyNames:
-            type: string
-        ips:
-          type:
-          - object
-          - 'null'
-          description: 'Whitelist of IPs. Empty object means no IPs allowed.
-
-            CIDR notation supported (e.g., "173.194.0.0/16").
-
-            IPs are allowed on any port/protocol.'
-          additionalProperties:
-            type: array
-            items:
-              $ref: '#/components/schemas/EgressIpConfig'
-          propertyNames:
-            type: string
-    EgressConfig:
-      type: object
-      properties:
-        allow:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/EgressAllowRules'
-            description: Allow rules for egress traffic
-        deny:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/EgressDenyRules'
-            description: Deny rules for egress traffic (evaluated after allow)
-    FreestyleExecuteScriptParams:
-      type: object
-      required:
-      - script
-      properties:
-        script:
-          type: string
-          description: The JavaScript or TypeScript script to execute
-          example: "export default () => {\n  // get the value of the factorials of the numbers from 1 to 10 combined\n  const\
-            \ a = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];\n\n  function factorial(n) {\n    if (n === 0) {\n      return 1;\n   \
-            \ }\n    return n * factorial(n - 1);\n  }\n\n  const b = a.map(factorial);\n\n  return b.reduce((a, b) => a +\
-            \ b);\n};\n"
-        executionId:
-          type:
-          - string
-          - 'null'
-          format: uuid
-          description: Optional execution ID for callers that need deterministic run correlation.
-        config:
-          $ref: '#/components/schemas/FreestyleExecuteScriptParamsConfiguration'
     NetworkPermissionData:
       type: object
       required:
@@ -457,51 +296,12 @@ components:
           type: string
         behavior:
           $ref: '#/components/schemas/Behavior'
-    ExecuteLogEntry:
-      type: object
-      required:
-      - deployment
-      - accountId
-      - provisionedAt
-      - state
-      - envVars
-      properties:
-        deployment:
-          type: string
-          format: uuid
-        accountId:
-          type: string
-          format: uuid
-        provisionedAt:
-          type: string
-          format: date-time
-        startedAt:
-          type:
-          - string
-          - 'null'
-          format: date-time
-        duration:
-          type:
-          - string
-          - 'null'
-        state:
-          $ref: '#/components/schemas/ExecuteRunState'
-        envVars:
-          type: object
-          additionalProperties:
-            type: string
-          propertyNames:
-            type: string
-    EgressDomainConfig:
-      type: object
-      properties:
-        transform:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/EgressTransform'
-          description: Transformations to apply to requests to this domain
+    ExecuteRunState:
+      type: string
+      enum:
+      - starting
+      - running
+      - complete
     FreestyleExecuteScriptParamsConfiguration:
       type: object
       properties:
@@ -547,8 +347,7 @@ components:
           minimum: 0
         peerDependencyResolution:
           type: boolean
-          description: If false, we'll not resolve peer dependencies for the packages given, this can speed up execute performance,
-            but will break packages with peers unless the peers are manually specified.
+          description: If false, we'll not resolve peer dependencies for the packages given, this can speed up execute performance, but will break packages with peers unless the peers are manually specified.
           default: true
         networkPermissions:
           type:
@@ -582,16 +381,79 @@ components:
           type:
           - boolean
           - 'null'
-          description: If true, Freestyle will not retain the code, any logs, environment variables, or results from this
-            execution.
+          description: If true, Freestyle will not retain the code, any logs, environment variables, or results from this execution.
           default: null
           example: false
-    ExecuteRunState:
-      type: string
-      enum:
-      - starting
-      - running
-      - complete
+    EgressConfig:
+      type: object
+      properties:
+        allow:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/EgressAllowRules'
+            description: Allow rules for egress traffic
+        deny:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/EgressDenyRules'
+            description: Deny rules for egress traffic (evaluated after allow)
+    ExecuteLogEntry:
+      type: object
+      required:
+      - deployment
+      - accountId
+      - provisionedAt
+      - state
+      - envVars
+      properties:
+        deployment:
+          type: string
+          format: uuid
+        accountId:
+          type: string
+          format: uuid
+        provisionedAt:
+          type: string
+          format: date-time
+        startedAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        duration:
+          type:
+          - string
+          - 'null'
+        state:
+          $ref: '#/components/schemas/ExecuteRunState'
+        envVars:
+          type: object
+          additionalProperties:
+            type: string
+          propertyNames:
+            type: string
+    FreestyleNetworkPermission:
+      oneOf:
+      - allOf:
+        - $ref: '#/components/schemas/NetworkPermissionData'
+        - type: object
+          required:
+          - action
+          properties:
+            action:
+              type: string
+              enum:
+              - allow
+      - allOf:
+        - $ref: '#/components/schemas/NetworkPermissionData'
+        - type: object
+          required:
+          - action
+          properties:
+            action:
+              type: string
+              enum:
+              - deny
     EgressIpConfig:
       type: object
       properties:
@@ -602,5 +464,135 @@ components:
           items:
             $ref: '#/components/schemas/EgressTransform'
           description: Transformations to apply to requests to this IP
-security:
-- bearerAuth: []
+    EgressDenyRules:
+      type: object
+      properties:
+        ips:
+          type:
+          - object
+          - 'null'
+          description: 'Blacklist of IPs. These override allow rules.
+
+            CIDR notation supported.'
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/EgressIpConfig'
+          propertyNames:
+            type: string
+    EgressDomainConfig:
+      type: object
+      properties:
+        transform:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/EgressTransform'
+          description: Transformations to apply to requests to this domain
+    FreestyleJavaScriptLog:
+      type: object
+      required:
+      - message
+      - type
+      properties:
+        message:
+          type: string
+          description: The log message
+          example: I'm a log!
+        type:
+          type: string
+          description: The log level
+          example: log
+    EgressTransform:
+      type: object
+      properties:
+        headers:
+          type:
+          - object
+          - 'null'
+          description: Headers to set on outgoing requests
+          additionalProperties:
+            type: string
+          propertyNames:
+            type: string
+    EgressAllowRules:
+      type: object
+      properties:
+        domains:
+          type:
+          - object
+          - 'null'
+          description: 'Whitelist of domains. Empty object means no domains allowed.
+
+            "*" means allow all domains.
+
+            Domain name maps to a list of transformations (currently just headers).'
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/EgressDomainConfig'
+          propertyNames:
+            type: string
+        ips:
+          type:
+          - object
+          - 'null'
+          description: 'Whitelist of IPs. Empty object means no IPs allowed.
+
+            CIDR notation supported (e.g., "173.194.0.0/16").
+
+            IPs are allowed on any port/protocol.'
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/EgressIpConfig'
+          propertyNames:
+            type: string
+    ExecuteRunInfo:
+      type: object
+      required:
+      - code
+      - nodeModules
+      properties:
+        code:
+          type: string
+        nodeModules:
+          type: object
+          additionalProperties:
+            type: string
+          propertyNames:
+            type: string
+    ExecuteScriptSuccess:
+      type: object
+      description: Success result from script execution
+      required:
+      - result
+      - logs
+      properties:
+        result: {}
+        logs:
+          type: array
+          items:
+            $ref: '#/components/schemas/JavascriptLog'
+    FreestyleExecuteScriptParams:
+      type: object
+      required:
+      - script
+      properties:
+        script:
+          type: string
+          description: The JavaScript or TypeScript script to execute
+          example: "export default () => {\n  // get the value of the factorials of the numbers from 1 to 10 combined\n  const a = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];\n\n  function factorial(n) {\n    if (n === 0) {\n      return 1;\n    }\n    return n * factorial(n - 1);\n  }\n\n  const b = a.map(factorial);\n\n  return b.reduce((a, b) => a + b);\n};\n"
+        executionId:
+          type:
+          - string
+          - 'null'
+          format: uuid
+          description: Optional execution ID for callers that need deterministic run correlation.
+        config:
+          $ref: '#/components/schemas/FreestyleExecuteScriptParamsConfiguration'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
