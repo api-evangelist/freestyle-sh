@@ -1,0 +1,776 @@
+openapi: 3.1.0
+info:
+  title: Freestyle Identity API
+  version: 0.1.0
+  description: "Identity and access management for end users and agents \u2014 identities, access tokens, repository permissions,\
+    \ VM permissions, and bearer-token whoami/background-request lookup."
+  contact:
+    name: Ben
+    email: ben@freestyle.sh
+  license:
+    name: Closed Source
+servers:
+- url: https://api.freestyle.sh
+  description: Production
+tags:
+- name: Identity
+  description: APIs for managing identities and access tokens.
+paths:
+  /auth/v1/background-requests/{request_id}:
+    get:
+      tags:
+      - Auth
+      summary: Get Background Request Result
+      description: Replay the stored response for a backgrounded request when it finishes.
+      operationId: handle_get_background_request
+      parameters:
+      - name: request_id
+        in: path
+        description: Background request ID
+        required: true
+        schema:
+          $ref: '#/components/schemas/RequestId'
+      responses:
+        '200':
+          description: Completed request response replayed
+        '202':
+          description: Background request still running
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackgroundRequestPendingResponse'
+        '404':
+          description: Background request not found or expired
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackgroundRequestErrorResponse'
+  /auth/v1/whoami:
+    get:
+      tags:
+      - Auth
+      summary: Get Current User
+      description: Returns information about the currently authenticated user or identity.
+      operationId: handle_whoami
+      responses:
+        '200':
+          description: Current authenticated user information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WhoAmIResponse'
+  /identity/v1/identities:
+    get:
+      tags:
+      - Identity
+      summary: List Identities
+      description: List identities created by your account.
+      operationId: handle_list_identities
+      parameters:
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          minimum: 0
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          minimum: 0
+      - name: includeManaged
+        in: query
+        required: false
+        schema:
+          type:
+          - boolean
+          - 'null'
+      responses:
+        '200':
+          description: List of identities
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListIdentitiesSuccess'
+    post:
+      tags:
+      - Identity
+      summary: Create an Identity
+      description: Create an identity. This identity will be used to authenticate with the Git server.
+      operationId: handle_create_identity
+      responses:
+        '200':
+          description: Identity created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FreestyleIdentity'
+  /identity/v1/identities/{identity}:
+    delete:
+      tags:
+      - Identity
+      summary: Delete an Identity
+      description: Delete an identity. This will revoke all permissions granted to this identity.
+      operationId: handle_delete_identity
+      parameters:
+      - name: identity
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Identity deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmptyResponse'
+  /identity/v1/identities/{identity}/permissions/git:
+    get:
+      tags:
+      - Identity
+      summary: List Repository Permissions for an Identity
+      description: List repository permissions for an identity. This will return a list of repositories that the identity
+        has access to.
+      operationId: handle_list_git_permissions
+      parameters:
+      - name: identity
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: limit
+        in: query
+        description: Maximum number of repositories to return
+        required: false
+        schema:
+          type: integer
+          format: int64
+          minimum: 0
+      - name: offset
+        in: query
+        description: Offset for the list of repositories
+        required: false
+        schema:
+          type: integer
+          format: int64
+          minimum: 0
+      responses:
+        '200':
+          description: Permission list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListGitPermissionSuccess'
+  /identity/v1/identities/{identity}/permissions/git/{repo}:
+    get:
+      tags:
+      - Identity
+      summary: Get the Git Permission of an Identity on a Repository
+      description: Get the permission of an identity on a repository. This will return the access level of the identity on
+        the repository.
+      operationId: handle_describe_git_permission
+      parameters:
+      - name: identity
+        in: path
+        description: The git identity ID
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: repo
+        in: path
+        description: The git repository ID
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Permission info
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DescribeGitPermissionSuccess'
+    put:
+      tags:
+      - Identity
+      summary: Update a Git Repository Permission for an Identity
+      description: Update a permission for an identity on a repository
+      operationId: handle_update_git_permission
+      parameters:
+      - name: identity
+        in: path
+        description: The git identity ID
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: repo
+        in: path
+        description: The git repository ID
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateGitPermissionRequest'
+        required: true
+      responses:
+        '200':
+          description: Permission updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmptyResponse'
+    post:
+      tags:
+      - Identity
+      summary: Grant a Git Repository Permission to an Identity
+      description: Grant a permission to an identity on a repository
+      operationId: handle_grant_git_permission
+      parameters:
+      - name: identity
+        in: path
+        description: The git identity ID
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: repo
+        in: path
+        description: The git repository ID
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GrantGitPermissionRequest'
+        required: true
+      responses:
+        '200':
+          description: Permission granted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmptyResponse'
+    delete:
+      tags:
+      - Identity
+      summary: Revoke Git Repository Permission From an Identity
+      description: Revoke a permission to an identity on a repository
+      operationId: handle_revoke_git_permission
+      parameters:
+      - name: identity
+        in: path
+        description: The git identity ID
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: repo
+        in: path
+        description: The git repository ID
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Permission revoked successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmptyResponse'
+  /identity/v1/identities/{identity}/permissions/vm:
+    get:
+      tags:
+      - Identity
+      summary: List VM Permissions for an Identity
+      description: List all VM permissions granted to a specific Git identity
+      operationId: handle_list_vm_permissions
+      parameters:
+      - name: identity
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          minimum: 0
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          minimum: 0
+      responses:
+        '200':
+          description: List of VM permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListVmPermissionsSuccess'
+  /identity/v1/identities/{identity}/permissions/vm/{vm_id}:
+    get:
+      tags:
+      - Identity
+      summary: Get VM Permission Details
+      description: Get the details of a VM permission for a specific identity and VM
+      operationId: handle_describe_vm_permission
+      parameters:
+      - name: identity
+        in: path
+        description: The git identity ID
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: vm_id
+        in: path
+        description: The VM ID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: VM permission details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VmPermission'
+    put:
+      tags:
+      - Identity
+      summary: Update Allowed Users for VM Permission
+      description: Update the list of allowed users for a VM permission. Set to null to allow all users, or provide a list
+        to restrict access.
+      operationId: handle_update_allowed_users
+      parameters:
+      - name: identity
+        in: path
+        description: The git identity ID
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: vm_id
+        in: path
+        description: The VM ID
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAllowedUsersRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Allowed users updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VmPermission'
+    post:
+      tags:
+      - Identity
+      summary: Grant VM Permission to an Identity for a VM
+      description: Grant VM access permission to an identity for a specific VM. Optionally restrict access to specific Linux
+        users.
+      operationId: handle_grant_vm_permission
+      parameters:
+      - name: identity
+        in: path
+        description: The git identity ID
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: vm_id
+        in: path
+        description: The VM ID
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GrantVmPermissionRequest'
+        required: true
+      responses:
+        '200':
+          description: VM permission granted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VmPermission'
+    delete:
+      tags:
+      - Identity
+      summary: Revoke VM Permission From an Identity for a VM
+      description: Revoke VM permission from an identity for a specific VM
+      operationId: handle_revoke_vm_permission
+      parameters:
+      - name: identity
+        in: path
+        description: The git identity ID
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: vm_id
+        in: path
+        description: The VM ID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: VM permission revoked successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmptyResponse'
+  /identity/v1/identities/{identity}/tokens:
+    get:
+      tags:
+      - Identity
+      summary: List Access Tokens for an Identity
+      description: List access tokens for an identity
+      operationId: handle_list_git_tokens
+      parameters:
+      - name: identity
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Token list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListGitTokensSuccess'
+    post:
+      tags:
+      - Identity
+      summary: Create an Access Token for an Identity
+      description: Create an access token for an identity
+      operationId: handle_create_git_token
+      parameters:
+      - name: identity
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Token created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreatedToken'
+  /identity/v1/identities/{identity}/tokens/{token}:
+    delete:
+      tags:
+      - Identity
+      summary: Revoke an Access Token for an Identity
+      description: Revoke an access token for an identity
+      operationId: handle_revoke_git_token
+      parameters:
+      - name: identity
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: token
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Token revoked
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmptyResponse'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    ListIdentitiesSuccess:
+      type: object
+      required:
+      - identities
+      - offset
+      - total
+      properties:
+        identities:
+          type: array
+          items:
+            $ref: '#/components/schemas/FreestyleIdentity'
+        offset:
+          type: integer
+          format: int64
+          minimum: 0
+        total:
+          type: integer
+          format: int64
+          minimum: 0
+    BackgroundRequestErrorResponse:
+      type: object
+      required:
+      - message
+      properties:
+        message:
+          type: string
+    ListGitTokensSuccess:
+      type: object
+      required:
+      - tokens
+      properties:
+        tokens:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccessTokenInfo'
+    DescribeGitPermissionSuccess:
+      type: object
+      required:
+      - identity
+      - repo
+      properties:
+        identity:
+          type: string
+          format: uuid
+        repo:
+          type: string
+          format: uuid
+        accessLevel:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/AccessLevel'
+    BackgroundRequestPendingResponse:
+      type: object
+      required:
+      - requestId
+      - status
+      properties:
+        requestId:
+          $ref: '#/components/schemas/RequestId'
+        status:
+          type: string
+    AccessTokenInfo:
+      type: object
+      required:
+      - id
+      properties:
+        id:
+          type: string
+          format: uuid
+    FreestyleIdentity:
+      type: object
+      required:
+      - id
+      - managed
+      properties:
+        id:
+          type: string
+          format: uuid
+        managed:
+          type: boolean
+    ListVmPermissionsSuccess:
+      type: object
+      required:
+      - permissions
+      - offset
+      - total
+      properties:
+        permissions:
+          type: array
+          items:
+            $ref: '#/components/schemas/VmPermission'
+        offset:
+          type: integer
+          format: int64
+          minimum: 0
+        total:
+          type: integer
+          format: int64
+          minimum: 0
+    AccessibleRepository:
+      type: object
+      description: Identical to [`RepositoryInfo`], but with the permissions field added.
+      required:
+      - id
+      - accountId
+      - permissions
+      - visibility
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type:
+          - string
+          - 'null'
+        accountId:
+          type: string
+          format: uuid
+        permissions:
+          $ref: '#/components/schemas/AccessLevel'
+        visibility:
+          $ref: '#/components/schemas/Visibility'
+    ListGitPermissionSuccess:
+      type: object
+      required:
+      - repositories
+      properties:
+        repositories:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccessibleRepository'
+    AccessLevel:
+      type: string
+      enum:
+      - read
+      - write
+    RequestId:
+      type: string
+      description: "Branded request identifier \u2014 `ri-<20 lowercase alphanumeric chars>` for newly\nminted IDs. The wrapped\
+        \ string is otherwise opaque, so legacy UUID-formatted\nIDs (from in-flight requests during rollout) round-trip unchanged."
+    UpdateGitPermissionRequest:
+      type: object
+      required:
+      - permission
+      properties:
+        permission:
+          $ref: '#/components/schemas/AccessLevel'
+    GrantGitPermissionRequest:
+      type: object
+      required:
+      - permission
+      properties:
+        permission:
+          $ref: '#/components/schemas/AccessLevel'
+    VmPermission:
+      type: object
+      description: Full VM permission record
+      required:
+      - id
+      - vmId
+      - identityId
+      - grantedAt
+      - grantedBy
+      properties:
+        id:
+          type: string
+          format: uuid
+        vmId:
+          type: string
+        identityId:
+          type: string
+          format: uuid
+        allowedUsers:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+        grantedAt:
+          type: string
+          format: date-time
+        grantedBy:
+          type: string
+          format: uuid
+    GrantVmPermissionRequest:
+      type: object
+      properties:
+        allowedUsers:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+          description: 'List of allowed Linux users. If null, identity can SSH as any user.
+
+            If specified, identity can only SSH as users in this list.'
+    Visibility:
+      type: string
+      enum:
+      - public
+      - private
+    EmptyResponse:
+      type: object
+    WhoAmIResponse:
+      type: object
+      required:
+      - accountId
+      properties:
+        accountId:
+          type: string
+          format: uuid
+        identityId:
+          type:
+          - string
+          - 'null'
+          format: uuid
+    UpdateAllowedUsersRequestBody:
+      type: object
+      properties:
+        allowedUsers:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+          description: 'List of allowed Linux users. If null, identity can SSH as any user.
+
+            If specified, identity can only SSH as users in this list.'
+    CreatedToken:
+      type: object
+      required:
+      - id
+      - token
+      properties:
+        id:
+          type: string
+          format: uuid
+        token:
+          type: string
+security:
+- bearerAuth: []

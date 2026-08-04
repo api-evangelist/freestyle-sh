@@ -1,0 +1,34 @@
+{
+  "provider": "freestyle-sh",
+  "sources": [
+    "freestyle-sh-auth-api-openapi.yml",
+    "freestyle-sh-certs-api-openapi.yml",
+    "freestyle-sh-cron-api-openapi.yml",
+    "freestyle-sh-dns-api-openapi.yml",
+    "freestyle-sh-domains-api-openapi.yml",
+    "freestyle-sh-execute-api-openapi.yml",
+    "freestyle-sh-git-api-openapi.yml",
+    "freestyle-sh-identity-api-openapi.yml",
+    "freestyle-sh-observability-api-openapi.yml",
+    "freestyle-sh-vm-api-openapi.yml",
+    "freestyle-sh-web-api-openapi.yml"
+  ],
+  "outputs": [
+    "freestyle-sh-auth-api-openapi.yml",
+    "freestyle-sh-certs-api-openapi.yml",
+    "freestyle-sh-cron-api-openapi.yml",
+    "freestyle-sh-dns-api-openapi.yml",
+    "freestyle-sh-domains-api-openapi.yml",
+    "freestyle-sh-execute-api-openapi.yml",
+    "freestyle-sh-git-api-openapi.yml",
+    "freestyle-sh-identity-api-openapi.yml",
+    "freestyle-sh-observability-api-openapi.yml",
+    "freestyle-sh-vm-api-openapi.yml",
+    "freestyle-sh-web-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}

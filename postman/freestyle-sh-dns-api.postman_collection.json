@@ -1,0 +1,730 @@
+{
+  "info": {
+    "_postman_id": "3f8a3fda-9f97-43e0-b5ca-cc8f02e693e9",
+    "name": "Freestyle Cron Auth DNS API",
+    "description": "Schedule recurring serverless runs \u2014 create/update/delete cron schedules and inspect executions, success rate, and metrics timeline.\n\nContact Support:\n Name: Ben\n Email: ben@freestyle.sh",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "createdAt": "2026-07-28T01:42:52.000Z",
+    "updatedAt": "2026-07-28T01:42:52.000Z",
+    "lastUpdatedBy": "35240",
+    "uid": "35240-3f8a3fda-9f97-43e0-b5ca-cc8f02e693e9"
+  },
+  "item": [
+    {
+      "name": "dns",
+      "item": [
+        {
+          "name": "v1",
+          "item": [
+            {
+              "name": "records",
+              "item": [
+                {
+                  "name": "List DNS Records",
+                  "id": "c678e8b5-eb7a-43a0-9a6e-07be58953615",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/dns/v1/records?domain=<string>",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "dns",
+                        "v1",
+                        "records"
+                      ],
+                      "query": [
+                        {
+                          "description": "(Required) ",
+                          "key": "domain",
+                          "value": "<string>"
+                        }
+                      ]
+                    }
+                  },
+                  "response": [
+                    {
+                      "id": "4e82538b-4f65-44ec-8367-352c68a9999a",
+                      "name": "New Response",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/dns/v1/records?domain=<string>",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "dns",
+                            "v1",
+                            "records"
+                          ],
+                          "query": [
+                            {
+                              "description": "(Required) ",
+                              "key": "domain",
+                              "value": "<string>"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"records\": [\n    {\n      \"kind\": \"A\",\n      \"name\": \"<string>\",\n      \"value\": \"<string>\",\n      \"ttl\": \"<string>\",\n      \"managed\": \"<boolean>\",\n      \"priority\": \"<integer,null>\"\n    },\n    {\n      \"kind\": \"NS\",\n      \"name\": \"<string>\",\n      \"value\": \"<string>\",\n      \"ttl\": \"<string>\",\n      \"managed\": \"<boolean>\",\n      \"priority\": \"<integer,null>\"\n    }\n  ]\n}",
+                      "createdAt": "2026-07-28T01:42:52.000Z",
+                      "updatedAt": "2026-07-28T01:42:52.000Z",
+                      "uid": "35240-4e82538b-4f65-44ec-8367-352c68a9999a"
+                    },
+                    {
+                      "id": "83eb132a-77e2-46ac-9c95-1d6b34679eea",
+                      "name": "New Response",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/dns/v1/records?domain=<string>",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "dns",
+                            "v1",
+                            "records"
+                          ],
+                          "query": [
+                            {
+                              "description": "(Required) ",
+                              "key": "domain",
+                              "value": "<string>"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Bad Request",
+                      "code": 400,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"message\": \"<string>\"\n}",
+                      "createdAt": "2026-07-28T01:42:52.000Z",
+                      "updatedAt": "2026-07-28T01:42:52.000Z",
+                      "uid": "35240-83eb132a-77e2-46ac-9c95-1d6b34679eea"
+                    }
+                  ],
+                  "createdAt": "2026-07-28T01:42:52.000Z",
+                  "updatedAt": "2026-07-28T01:42:52.000Z",
+                  "uid": "35240-c678e8b5-eb7a-43a0-9a6e-07be58953615"
+                },
+                {
+                  "name": "Create DNS Record",
+                  "id": "21c904df-7834-469e-8d99-ebbb02cdb36e",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"domain\": \"<string>\",\n  \"record\": {\n    \"kind\": \"CNAME\",\n    \"name\": \"<string>\",\n    \"value\": \"<string>\",\n    \"ttl\": \"<string,null>\",\n    \"priority\": \"<integer,null>\"\n  }\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/dns/v1/records",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "dns",
+                        "v1",
+                        "records"
+                      ]
+                    }
+                  },
+                  "response": [
+                    {
+                      "id": "3265deb3-c666-4307-8731-7af95a94d88e",
+                      "name": "New Response",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"domain\": \"<string>\",\n  \"record\": {\n    \"kind\": \"CNAME\",\n    \"name\": \"<string>\",\n    \"value\": \"<string>\",\n    \"ttl\": \"<string,null>\",\n    \"priority\": \"<integer,null>\"\n  }\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/dns/v1/records",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "dns",
+                            "v1",
+                            "records"
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"record\": {\n    \"kind\": \"NS\",\n    \"name\": \"<string>\",\n    \"value\": \"<string>\",\n    \"ttl\": \"<string>\",\n    \"managed\": \"<boolean>\",\n    \"priority\": \"<integer,null>\"\n  }\n}",
+                      "createdAt": "2026-07-28T01:42:52.000Z",
+                      "updatedAt": "2026-07-28T01:42:52.000Z",
+                      "uid": "35240-3265deb3-c666-4307-8731-7af95a94d88e"
+                    },
+                    {
+                      "id": "a8173b65-9457-40ee-91ca-5895d8886d6a",
+                      "name": "Possible errors: DomainOwnershipError, RecordOwnershipError, DomainOwnershipVerificationFailed",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"domain\": \"<string>\",\n  \"record\": {\n    \"kind\": \"CNAME\",\n    \"name\": \"<string>\",\n    \"value\": \"<string>\",\n    \"ttl\": \"<string,null>\",\n    \"priority\": \"<integer,null>\"\n  }\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/dns/v1/records",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "dns",
+                            "v1",
+                            "records"
+                          ]
+                        }
+                      },
+                      "status": "Forbidden",
+                      "code": 403,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"error\": \"<string>\",\n  \"message\": \"<string>\"\n}",
+                      "createdAt": "2026-07-28T01:42:52.000Z",
+                      "updatedAt": "2026-07-28T01:42:52.000Z",
+                      "uid": "35240-a8173b65-9457-40ee-91ca-5895d8886d6a"
+                    },
+                    {
+                      "id": "1a1c361d-4290-4470-84d6-b63208ab4dc3",
+                      "name": "Possible errors: ErrorCreatingRecord, ErrorDeletingRecord",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"domain\": \"<string>\",\n  \"record\": {\n    \"kind\": \"CNAME\",\n    \"name\": \"<string>\",\n    \"value\": \"<string>\",\n    \"ttl\": \"<string,null>\",\n    \"priority\": \"<integer,null>\"\n  }\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/dns/v1/records",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "dns",
+                            "v1",
+                            "records"
+                          ]
+                        }
+                      },
+                      "status": "Internal Server Error",
+                      "code": 500,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"error\": \"<string>\",\n  \"message\": \"<string>\"\n}",
+                      "createdAt": "2026-07-28T01:42:52.000Z",
+                      "updatedAt": "2026-07-28T01:42:52.000Z",
+                      "uid": "35240-1a1c361d-4290-4470-84d6-b63208ab4dc3"
+                    }
+                  ],
+                  "createdAt": "2026-07-28T01:42:52.000Z",
+                  "updatedAt": "2026-07-28T01:42:52.000Z",
+                  "uid": "35240-21c904df-7834-469e-8d99-ebbb02cdb36e"
+                },
+                {
+                  "name": "Delete DNS Record",
+                  "id": "b7bc60c6-040f-4811-9743-5a6e84360e08",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "method": "DELETE",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/dns/v1/records?domain=<string>&kind=CNAME&name=<string>&value=<string>&ttl=<string>&managed=<boolean>&priority=<integer,null>",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "dns",
+                        "v1",
+                        "records"
+                      ],
+                      "query": [
+                        {
+                          "description": "(Required) ",
+                          "key": "domain",
+                          "value": "<string>"
+                        },
+                        {
+                          "description": "(Required) ",
+                          "key": "kind",
+                          "value": "CNAME"
+                        },
+                        {
+                          "description": "(Required) ",
+                          "key": "name",
+                          "value": "<string>"
+                        },
+                        {
+                          "description": "(Required) ",
+                          "key": "value",
+                          "value": "<string>"
+                        },
+                        {
+                          "description": "(Required) ",
+                          "key": "ttl",
+                          "value": "<string>"
+                        },
+                        {
+                          "description": "(Required) ",
+                          "key": "managed",
+                          "value": "<boolean>"
+                        },
+                        {
+                          "description": "(Required) ",
+                          "key": "priority",
+                          "value": "<integer,null>"
+                        }
+                      ]
+                    }
+                  },
+                  "response": [
+                    {
+                      "id": "5bf49a50-c56c-4929-b8f7-a0ceb0b1b3d6",
+                      "name": "New Response",
+                      "originalRequest": {
+                        "method": "DELETE",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/dns/v1/records?domain=<string>&kind=CNAME&name=<string>&value=<string>&ttl=<string>&managed=<boolean>&priority=<integer,null>",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "dns",
+                            "v1",
+                            "records"
+                          ],
+                          "query": [
+                            {
+                              "description": "(Required) ",
+                              "key": "domain",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "(Required) ",
+                              "key": "kind",
+                              "value": "CNAME"
+                            },
+                            {
+                              "description": "(Required) ",
+                              "key": "name",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "(Required) ",
+                              "key": "value",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "(Required) ",
+                              "key": "ttl",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "(Required) ",
+                              "key": "managed",
+                              "value": "<boolean>"
+                            },
+                            {
+                              "description": "(Required) ",
+                              "key": "priority",
+                              "value": "<integer,null>"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"message\": \"<string>\"\n}",
+                      "createdAt": "2026-07-28T01:42:52.000Z",
+                      "updatedAt": "2026-07-28T01:42:52.000Z",
+                      "uid": "35240-5bf49a50-c56c-4929-b8f7-a0ceb0b1b3d6"
+                    },
+                    {
+                      "id": "4790b847-057d-4435-ab63-d90d2ba1c3cf",
+                      "name": "Possible errors: DomainOwnershipError, RecordOwnershipError, DomainOwnershipVerificationFailed",
+                      "originalRequest": {
+                        "method": "DELETE",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/dns/v1/records?domain=<string>&kind=CNAME&name=<string>&value=<string>&ttl=<string>&managed=<boolean>&priority=<integer,null>",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "dns",
+                            "v1",
+                            "records"
+                          ],
+                          "query": [
+                            {
+                              "description": "(Required) ",
+                              "key": "domain",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "(Required) ",
+                              "key": "kind",
+                              "value": "CNAME"
+                            },
+                            {
+                              "description": "(Required) ",
+                              "key": "name",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "(Required) ",
+                              "key": "value",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "(Required) ",
+                              "key": "ttl",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "(Required) ",
+                              "key": "managed",
+                              "value": "<boolean>"
+                            },
+                            {
+                              "description": "(Required) ",
+                              "key": "priority",
+                              "value": "<integer,null>"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Forbidden",
+                      "code": 403,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"error\": \"<string>\",\n  \"message\": \"<string>\"\n}",
+                      "createdAt": "2026-07-28T01:42:52.000Z",
+                      "updatedAt": "2026-07-28T01:42:52.000Z",
+                      "uid": "35240-4790b847-057d-4435-ab63-d90d2ba1c3cf"
+                    },
+                    {
+                      "id": "3fdcdceb-0dcf-429a-b487-122f0fa143f3",
+                      "name": "Possible errors: ErrorCreatingRecord, ErrorDeletingRecord",
+                      "originalRequest": {
+                        "method": "DELETE",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/dns/v1/records?domain=<string>&kind=CNAME&name=<string>&value=<string>&ttl=<string>&managed=<boolean>&priority=<integer,null>",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "dns",
+                            "v1",
+                            "records"
+                          ],
+                          "query": [
+                            {
+                              "description": "(Required) ",
+                              "key": "domain",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "(Required) ",
+                              "key": "kind",
+                              "value": "CNAME"
+                            },
+                            {
+                              "description": "(Required) ",
+                              "key": "name",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "(Required) ",
+                              "key": "value",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "(Required) ",
+                              "key": "ttl",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "(Required) ",
+                              "key": "managed",
+                              "value": "<boolean>"
+                            },
+                            {
+                              "description": "(Required) ",
+                              "key": "priority",
+                              "value": "<integer,null>"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Internal Server Error",
+                      "code": 500,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"error\": \"<string>\",\n  \"message\": \"<string>\"\n}",
+                      "createdAt": "2026-07-28T01:42:52.000Z",
+                      "updatedAt": "2026-07-28T01:42:52.000Z",
+                      "uid": "35240-3fdcdceb-0dcf-429a-b487-122f0fa143f3"
+                    }
+                  ],
+                  "createdAt": "2026-07-28T01:42:52.000Z",
+                  "updatedAt": "2026-07-28T01:42:52.000Z",
+                  "uid": "35240-b7bc60c6-040f-4811-9743-5a6e84360e08"
+                }
+              ],
+              "id": "54aa48f5-f285-412e-84db-6f99aec541a3",
+              "createdAt": "2026-07-28T01:42:52.000Z",
+              "updatedAt": "2026-07-28T01:42:52.000Z",
+              "uid": "35240-54aa48f5-f285-412e-84db-6f99aec541a3"
+            }
+          ],
+          "id": "15e68899-bdce-47db-92e3-f89c04469fef",
+          "createdAt": "2026-07-28T01:42:52.000Z",
+          "updatedAt": "2026-07-28T01:42:52.000Z",
+          "uid": "35240-15e68899-bdce-47db-92e3-f89c04469fef"
+        }
+      ],
+      "id": "359e5797-6309-41a9-9603-32e56a243933",
+      "createdAt": "2026-07-28T01:42:52.000Z",
+      "updatedAt": "2026-07-28T01:42:52.000Z",
+      "uid": "35240-359e5797-6309-41a9-9603-32e56a243933"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api.freestyle.sh"
+    }
+  ]
+}

@@ -1,0 +1,915 @@
+openapi: 3.1.0
+info:
+  title: Freestyle Web Deployments API
+  version: 0.1.0
+  description: "Deploy and manage hosted Node.js / static websites \u2014 push code, list and inspect deployments, fetch and\
+    \ update deployment files (HTTP-style fetch verbs)."
+  contact:
+    name: Ben
+    email: ben@freestyle.sh
+  license:
+    name: Closed Source
+servers:
+- url: https://api.freestyle.sh
+  description: Production
+tags:
+- name: Web
+  description: APIs for deploying websites. We handle node modules caching, scaling, certificates and the whole end to end
+    process. Send the code using the [deploy](#tag/web/POST/web/v1/deploy) endpoint, and you'll get a full hosted website
+    back. Works with any TypeScript or JavaScript codebase.
+paths:
+  /web/v1/deployment:
+    post:
+      tags:
+      - Web
+      summary: Deploy a Website
+      description: Deploy a website. Files is a map of file paths to file contents. Configuration is optional and contains
+        additional information about the deployment.
+      operationId: handle_deploy_web_v2
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FreestyleDeployWebPayloadV2'
+        required: true
+      responses:
+        '200':
+          description: successfully deployed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FreestyleDeployWebSuccessResponseV2'
+        '400':
+          description: 'Possible errors: WebDeploymentBadRequest, InvalidDomains, EntrypointNotFound, NoEntrypointFound'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                - message
+                properties:
+                  error:
+                    type: string
+                    description: Error code in SCREAMING_SNAKE_CASE
+                  message:
+                    type: string
+                    description: Human-readable error message
+        '403':
+          description: 'Possible errors: DeploymentLimitExceeded, TimeoutLimitExceeded, Forbidden, NoDomainOwnership'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                - message
+                properties:
+                  error:
+                    type: string
+                    description: Error code in SCREAMING_SNAKE_CASE
+                  message:
+                    type: string
+                    description: Human-readable error message
+        '404':
+          description: 'Error: DeploymentNotFound'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                - message
+                properties:
+                  error:
+                    type: string
+                    description: Error code in SCREAMING_SNAKE_CASE
+                  message:
+                    type: string
+                    description: Human-readable error message
+        '500':
+          description: 'Possible errors: Internal, DomainMappingError, UploadError, LockfileError'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                - message
+                properties:
+                  error:
+                    type: string
+                    description: Error code in SCREAMING_SNAKE_CASE
+                  message:
+                    type: string
+                    description: Human-readable error message
+        '502':
+          description: 'Possible errors: CertificateProvisioningError, ServerDeploymentFailed'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                - message
+                properties:
+                  error:
+                    type: string
+                    description: Error code in SCREAMING_SNAKE_CASE
+                  message:
+                    type: string
+                    description: Human-readable error message
+  /web/v1/deployments:
+    get:
+      tags:
+      - Web
+      summary: List Web Deploys
+      description: List web deploys.
+      operationId: handle_list_web_deploys
+      parameters:
+      - name: limit
+        in: query
+        description: Maximum number of deployments to return
+        required: true
+        schema:
+          type: integer
+          format: int64
+          minimum: 0
+      - name: offset
+        in: query
+        description: Offset for pagination
+        required: true
+        schema:
+          type: integer
+          format: int64
+          minimum: 0
+      - name: search
+        in: query
+        description: Search by deployment ID or domain
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: List of deployments
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListDeploymentsResponse'
+        '500':
+          description: 'Error: Internal'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                - message
+                properties:
+                  error:
+                    type: string
+                    description: Error code in SCREAMING_SNAKE_CASE
+                  message:
+                    type: string
+                    description: Human-readable error message
+  /web/v1/deployments/{deployment_id}:
+    get:
+      tags:
+      - Web
+      summary: Get Information on Web Deploy
+      description: Get information about a web deploy by its ID.
+      operationId: handle_get_web_deploy_details
+      responses: {}
+  /web/v1/deployments/{deployment_id}/fetch:
+    get:
+      tags:
+      - Web
+      summary: Fetch Content From a Deployment
+      description: Fetch content from a deployment by making a request to nginx-web with the deployment ID header. Supports
+        any HTTP method.
+      operationId: handle_fetch_deployment
+      parameters:
+      - name: deployment_id
+        in: path
+        description: Deployment ID
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Successful response from deployment
+        '403':
+          description: Forbidden
+        '404':
+          description: Deployment not found
+        '500':
+          description: Internal server error
+    put:
+      tags:
+      - Web
+      summary: Fetch Content From a Deployment
+      description: Fetch content from a deployment by making a request to nginx-web with the deployment ID header. Supports
+        any HTTP method.
+      operationId: handle_fetch_deployment
+      parameters:
+      - name: deployment_id
+        in: path
+        description: Deployment ID
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Successful response from deployment
+        '403':
+          description: Forbidden
+        '404':
+          description: Deployment not found
+        '500':
+          description: Internal server error
+    post:
+      tags:
+      - Web
+      summary: Fetch Content From a Deployment
+      description: Fetch content from a deployment by making a request to nginx-web with the deployment ID header. Supports
+        any HTTP method.
+      operationId: handle_fetch_deployment
+      parameters:
+      - name: deployment_id
+        in: path
+        description: Deployment ID
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Successful response from deployment
+        '403':
+          description: Forbidden
+        '404':
+          description: Deployment not found
+        '500':
+          description: Internal server error
+    delete:
+      tags:
+      - Web
+      summary: Fetch Content From a Deployment
+      description: Fetch content from a deployment by making a request to nginx-web with the deployment ID header. Supports
+        any HTTP method.
+      operationId: handle_fetch_deployment
+      parameters:
+      - name: deployment_id
+        in: path
+        description: Deployment ID
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Successful response from deployment
+        '403':
+          description: Forbidden
+        '404':
+          description: Deployment not found
+        '500':
+          description: Internal server error
+    options:
+      tags:
+      - Web
+      summary: Fetch Content From a Deployment
+      description: Fetch content from a deployment by making a request to nginx-web with the deployment ID header. Supports
+        any HTTP method.
+      operationId: handle_fetch_deployment
+      parameters:
+      - name: deployment_id
+        in: path
+        description: Deployment ID
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Successful response from deployment
+        '403':
+          description: Forbidden
+        '404':
+          description: Deployment not found
+        '500':
+          description: Internal server error
+    head:
+      tags:
+      - Web
+      summary: Fetch Content From a Deployment
+      description: Fetch content from a deployment by making a request to nginx-web with the deployment ID header. Supports
+        any HTTP method.
+      operationId: handle_fetch_deployment
+      parameters:
+      - name: deployment_id
+        in: path
+        description: Deployment ID
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Successful response from deployment
+        '403':
+          description: Forbidden
+        '404':
+          description: Deployment not found
+        '500':
+          description: Internal server error
+    patch:
+      tags:
+      - Web
+      summary: Fetch Content From a Deployment
+      description: Fetch content from a deployment by making a request to nginx-web with the deployment ID header. Supports
+        any HTTP method.
+      operationId: handle_fetch_deployment
+      parameters:
+      - name: deployment_id
+        in: path
+        description: Deployment ID
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Successful response from deployment
+        '403':
+          description: Forbidden
+        '404':
+          description: Deployment not found
+        '500':
+          description: Internal server error
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    FreestyleDeployWebSuccessResponseV2:
+      oneOf:
+      - type: object
+        required:
+        - deploymentId
+        - projectId
+        properties:
+          deploymentId:
+            $ref: '#/components/schemas/DeploymentId'
+          projectId:
+            $ref: '#/components/schemas/DeploymentId'
+          domains:
+            type:
+            - array
+            - 'null'
+            items:
+              type: string
+          entrypoint:
+            type:
+            - string
+            - 'null'
+            description: 'The entrypoint file for the website. If not specified we try to automatically detect it.
+
+              For static-only deployments (static: true), this will be None.'
+      - type: object
+        required:
+        - deploymentId
+        properties:
+          deploymentId:
+            $ref: '#/components/schemas/DeploymentId'
+    Behavior:
+      type: string
+      default: exact
+      enum:
+      - regex
+      - exact
+    RedirectConfig:
+      type: object
+      description: Redirect configuration for permanent or temporary redirects (Vercel-compatible)
+      required:
+      - source
+      - destination
+      properties:
+        source:
+          type: string
+          description: Source pattern (can be exact path or regex)
+        destination:
+          type: string
+          description: Destination path or URL
+        statusCode:
+          type:
+          - integer
+          - 'null'
+          format: int32
+          description: 'HTTP status code for redirect (301, 302, 307, 308). Takes precedence over `permanent`.
+
+            If neither `status_code` nor `permanent` is provided, defaults to 308.'
+          minimum: 0
+        permanent:
+          type:
+          - boolean
+          - 'null'
+          description: 'If true, uses 308 (permanent redirect). If false, uses 307 (temporary redirect).
+
+            Ignored if `status_code` is explicitly set. Vercel-compatible alternative to `status_code`.'
+    DeploymentState:
+      type: string
+      enum:
+      - provisioning
+      - deployed
+      - failed
+    NetworkPermissionData:
+      type: object
+      required:
+      - query
+      properties:
+        query:
+          type: string
+        behavior:
+          $ref: '#/components/schemas/Behavior'
+    EgressIpConfig:
+      type: object
+      properties:
+        transform:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/EgressTransform'
+          description: Transformations to apply to requests to this IP
+    HeaderKeyValue:
+      type: object
+      description: Key-value pair for headers
+      required:
+      - key
+      - value
+      properties:
+        key:
+          type: string
+          description: Header name
+        value:
+          type: string
+          description: Header value
+    EgressConfig:
+      type: object
+      properties:
+        allow:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/EgressAllowRules'
+            description: Allow rules for egress traffic
+        deny:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/EgressDenyRules'
+            description: Deny rules for egress traffic (evaluated after allow)
+    FreestyleNetworkPermission:
+      oneOf:
+      - allOf:
+        - $ref: '#/components/schemas/NetworkPermissionData'
+        - type: object
+          required:
+          - action
+          properties:
+            action:
+              type: string
+              enum:
+              - allow
+      - allOf:
+        - $ref: '#/components/schemas/NetworkPermissionData'
+        - type: object
+          required:
+          - action
+          properties:
+            action:
+              type: string
+              enum:
+              - deny
+    FreestyleDeployWebConfiguration:
+      type: object
+      properties:
+        name:
+          type:
+          - string
+          - 'null'
+        domains:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+        entrypoint:
+          type:
+          - string
+          - 'null'
+        envVars:
+          type:
+          - object
+          - 'null'
+          additionalProperties:
+            type: string
+          propertyNames:
+            type: string
+        nodeModules:
+          type:
+          - object
+          - 'null'
+          additionalProperties:
+            type: string
+          propertyNames:
+            type: string
+        timeout:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          description: The amount of milliseconds after with no traffic we kill your server. For rate limiting purposes we
+            count any started server as active for the 5 seconds after the last request.
+          minimum: 0
+        serverStartCheck:
+          type:
+          - boolean
+          - 'null'
+        networkPermissions:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/FreestyleNetworkPermission'
+        egress:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/EgressConfig'
+            description: Egress control configuration for outbound requests (domains, IPs, transformations)
+        build:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/DeploymentBuildOptions'
+        await:
+          type:
+          - boolean
+          - 'null'
+        staticDir:
+          type:
+          - string
+          - 'null'
+          description: 'Directory containing static files to be served directly (e.g., ".next/static", "_next/static").
+
+            Files are served at the URL path specified by static_path_prefix (defaults to root "/").'
+          example: .next/static
+        staticPathPrefix:
+          type:
+          - string
+          - 'null'
+          description: 'URL path prefix where static files are served (e.g., "/_next/static"). Defaults to "/" (root).
+
+            When set, only requests matching this prefix will be served from static_dir.'
+          example: /_next/static
+        publicDir:
+          type:
+          - string
+          - 'null'
+          description: 'Directory containing public files to be served at the root of the domain (e.g., "public").
+
+            These files are served without any path prefix - a file at public/favicon.ico is served at /favicon.ico.'
+          example: public
+        prerenderDir:
+          type:
+          - string
+          - 'null'
+          description: 'Directory containing prerendered HTML files (e.g., ".next/standalone/.next/server/app" for Next.js).
+
+            Files are served as: ${prerender_dir}/${path}.html or ${prerender_dir}/index.html for root.'
+          example: .next/standalone/.next/server/app
+        staticOnly:
+          type: boolean
+          description: Set to true for static-only deployments (no dynamic server/entrypoint required)
+        redirects:
+          type: array
+          items:
+            $ref: '#/components/schemas/RedirectConfig'
+          description: Redirects (permanent or temporary)
+        rewrites:
+          type: array
+          items:
+            $ref: '#/components/schemas/RewriteConfig'
+          description: Rewrites (internal URL rewrites with capture groups)
+        dynamic:
+          type: array
+          items:
+            $ref: '#/components/schemas/DynamicConfig'
+          description: Dynamic routes that should be handled by the worker
+        headers:
+          type: array
+          items:
+            $ref: '#/components/schemas/HeaderConfig'
+          description: Custom headers for matching paths
+        cleanUrls:
+          type: boolean
+          description: 'When true, all HTML files will have their extension removed. Visiting a path with .html will redirect
+            to extensionless path (308).
+
+            For example, a static file named about.html will be served when visiting /about. Visiting /about.html will redirect
+            to /about.'
+        trailingSlash:
+          type:
+          - boolean
+          - 'null'
+          description: 'When false, visiting a path with a trailing slash will redirect (308) to path without trailing slash.
+
+            When true, opposite behavior occurs. When None (default), no automatic redirects based on trailing slash.'
+        experimental:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/FreestyleDeployWebExperimentalConfiguration'
+            description: Experimental feature flags. Avoid relying on these for long-term API stability.
+    DynamicConfig:
+      type: object
+      description: Dynamic route configuration for paths that should be handled by the worker
+      required:
+      - source
+      properties:
+        source:
+          type: string
+          description: Source pattern (regex or glob pattern like "/api/.*" or "/api/**")
+        methods:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+          description: HTTP methods this route applies to (if None, applies to all methods)
+    DeploymentBuildOptions:
+      oneOf:
+      - type: boolean
+      - $ref: '#/components/schemas/CustomBuildOptions'
+    RewriteConfig:
+      type: object
+      description: Rewrite configuration for URL rewrites (internal, not visible to client)
+      required:
+      - source
+      - destination
+      properties:
+        source:
+          type: string
+          description: Source pattern (regex pattern)
+        destination:
+          type: string
+          description: Destination path with optional capture group substitution ($1, $2, etc.)
+    FreestyleDeployWebExperimentalConfiguration:
+      type: object
+      properties:
+        nextjsOptimization:
+          type: boolean
+    EgressDomainConfig:
+      type: object
+      properties:
+        transform:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/EgressTransform'
+          description: Transformations to apply to requests to this domain
+    DeploymentSource:
+      oneOf:
+      - type: object
+        title: Files
+        required:
+        - files
+        - kind
+        properties:
+          files:
+            type: object
+            additionalProperties:
+              $ref: '#/components/schemas/FreestyleFile'
+            propertyNames:
+              type: string
+          kind:
+            type: string
+            enum:
+            - files
+      - type: object
+        title: Tar
+        required:
+        - url
+        - kind
+        properties:
+          url:
+            type: string
+          kind:
+            type: string
+            enum:
+            - tar
+      - type: object
+        title: Git
+        description: '`dir` is the Directory to deploy from. If not provided, the root of the repository will be used.'
+        required:
+        - url
+        - kind
+        properties:
+          url:
+            type: string
+          branch:
+            type:
+            - string
+            - 'null'
+            example: main
+          dir:
+            type:
+            - string
+            - 'null'
+            example: dist
+          kind:
+            type: string
+            enum:
+            - git
+    EgressDenyRules:
+      type: object
+      properties:
+        ips:
+          type:
+          - object
+          - 'null'
+          description: 'Blacklist of IPs. These override allow rules.
+
+            CIDR notation supported.'
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/EgressIpConfig'
+          propertyNames:
+            type: string
+    DeploymentLogEntry:
+      type: object
+      required:
+      - deploymentId
+      - accountId
+      - provisionedAt
+      - timeout
+      - state
+      - domains
+      - envVars
+      properties:
+        deploymentId:
+          $ref: '#/components/schemas/DeploymentId'
+        accountId:
+          type: string
+          format: uuid
+        provisionedAt:
+          type: string
+          format: date-time
+        timeout:
+          type: string
+        state:
+          $ref: '#/components/schemas/DeploymentState'
+        deployedAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        domains:
+          type: array
+          items:
+            type: string
+        envVars:
+          type: object
+          additionalProperties:
+            type: string
+          propertyNames:
+            type: string
+    HeaderConfig:
+      type: object
+      description: Header configuration for setting custom headers on matching paths
+      required:
+      - source
+      - headers
+      properties:
+        source:
+          type: string
+          description: Source pattern (regex pattern)
+        headers:
+          type: array
+          items:
+            $ref: '#/components/schemas/HeaderKeyValue'
+          description: Headers to set (array of key-value pairs)
+    ListDeploymentsResponse:
+      type: object
+      required:
+      - entries
+      - total
+      - offset
+      properties:
+        entries:
+          type: array
+          items:
+            $ref: '#/components/schemas/DeploymentLogEntry'
+        total:
+          type: integer
+          format: int64
+          minimum: 0
+        offset:
+          type: integer
+          format: int64
+          minimum: 0
+    CustomBuildOptions:
+      type: object
+      required:
+      - command
+      properties:
+        command:
+          type: string
+        outDir:
+          type:
+          - string
+          - 'null'
+        envVars:
+          type:
+          - object
+          - 'null'
+          additionalProperties:
+            type: string
+          propertyNames:
+            type: string
+    EgressTransform:
+      type: object
+      properties:
+        headers:
+          type:
+          - object
+          - 'null'
+          description: Headers to set on outgoing requests
+          additionalProperties:
+            type: string
+          propertyNames:
+            type: string
+    EgressAllowRules:
+      type: object
+      properties:
+        domains:
+          type:
+          - object
+          - 'null'
+          description: 'Whitelist of domains. Empty object means no domains allowed.
+
+            "*" means allow all domains.
+
+            Domain name maps to a list of transformations (currently just headers).'
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/EgressDomainConfig'
+          propertyNames:
+            type: string
+        ips:
+          type:
+          - object
+          - 'null'
+          description: 'Whitelist of IPs. Empty object means no IPs allowed.
+
+            CIDR notation supported (e.g., "173.194.0.0/16").
+
+            IPs are allowed on any port/protocol.'
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/EgressIpConfig'
+          propertyNames:
+            type: string
+    DeploymentId:
+      type: string
+      format: uuid
+    FreestyleFile:
+      type: object
+      required:
+      - content
+      properties:
+        content:
+          type: string
+          description: The content of the file
+        encoding:
+          type: string
+          description: The encoding of the file. Either **utf-8** or **base64**
+        executable:
+          type: boolean
+          description: Whether the file should be marked executable after being written
+    FreestyleDeployWebPayloadV2:
+      type: object
+      required:
+      - source
+      - config
+      properties:
+        source:
+          $ref: '#/components/schemas/DeploymentSource'
+        config:
+          $ref: '#/components/schemas/FreestyleDeployWebConfiguration'
+security:
+- bearerAuth: []

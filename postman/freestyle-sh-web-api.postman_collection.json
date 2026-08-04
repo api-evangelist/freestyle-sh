@@ -1,0 +1,2127 @@
+{
+  "info": {
+    "_postman_id": "23742842-ec59-4b36-a7d5-b589a4a124c8",
+    "name": "Freestyle Cron Auth Web API",
+    "description": "Schedule recurring serverless runs \u2014 create/update/delete cron schedules and inspect executions, success rate, and metrics timeline.\n\nContact Support:\n Name: Ben\n Email: ben@freestyle.sh",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "createdAt": "2026-07-28T01:43:03.000Z",
+    "updatedAt": "2026-07-28T01:43:03.000Z",
+    "lastUpdatedBy": "35240",
+    "uid": "35240-23742842-ec59-4b36-a7d5-b589a4a124c8"
+  },
+  "item": [
+    {
+      "name": "web",
+      "item": [
+        {
+          "name": "v1",
+          "item": [
+            {
+              "name": "deployment",
+              "item": [
+                {
+                  "name": "Deploy a Website",
+                  "id": "cdc1bc40-f1c3-4386-b07c-7124ba1bdec4",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"source\": {\n    \"files\": {\n      \"magnafa6\": {\n        \"content\": \"<string>\",\n        \"encoding\": \"<string>\",\n        \"executable\": \"<boolean>\"\n      },\n      \"cupidatat_89\": {\n        \"content\": \"<string>\",\n        \"encoding\": \"<string>\",\n        \"executable\": \"<boolean>\"\n      },\n      \"culpa9\": {\n        \"content\": \"<string>\",\n        \"encoding\": \"<string>\",\n        \"executable\": \"<boolean>\"\n      },\n      \"aliqua_ccc\": {\n        \"content\": \"<string>\",\n        \"encoding\": \"<string>\",\n        \"executable\": \"<boolean>\"\n      },\n      \"ine\": {\n        \"content\": \"<string>\",\n        \"encoding\": \"<string>\",\n        \"executable\": \"<boolean>\"\n      }\n    },\n    \"kind\": \"files\"\n  },\n  \"config\": {\n    \"name\": \"<string,null>\",\n    \"domains\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"entrypoint\": \"<string,null>\",\n    \"envVars\": {\n      \"qui685\": \"<string>\"\n    },\n    \"nodeModules\": null,\n    \"timeout\": \"<integer,null-int64>\",\n    \"serverStartCheck\": \"<boolean,null>\",\n    \"networkPermissions\": [\n      {\n        \"action\": \"allow\",\n        \"query\": \"<string>\",\n        \"behavior\": \"exact\"\n      },\n      {\n        \"action\": \"allow\",\n        \"query\": \"<string>\",\n        \"behavior\": \"exact\"\n      }\n    ],\n    \"egress\": \"<null>\",\n    \"build\": \"<null>\",\n    \"await\": \"<boolean,null>\",\n    \"staticDir\": \"<string,null>\",\n    \"staticPathPrefix\": \"<string,null>\",\n    \"publicDir\": \"<string,null>\",\n    \"prerenderDir\": \"<string,null>\",\n    \"staticOnly\": \"<boolean>\",\n    \"redirects\": [\n      {\n        \"source\": \"<string>\",\n        \"destination\": \"<string>\",\n        \"statusCode\": \"<integer,null>\",\n        \"permanent\": \"<boolean,null>\"\n      },\n      {\n        \"source\": \"<string>\",\n        \"destination\": \"<string>\",\n        \"statusCode\": \"<integer,null>\",\n        \"permanent\": \"<boolean,null>\"\n      }\n    ],\n    \"rewrites\": [\n      {\n        \"source\": \"<string>\",\n        \"destination\": \"<string>\"\n      },\n      {\n        \"source\": \"<string>\",\n        \"destination\": \"<string>\"\n      }\n    ],\n    \"dynamic\": [\n      {\n        \"source\": \"<string>\",\n        \"methods\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      },\n      {\n        \"source\": \"<string>\",\n        \"methods\": null\n      }\n    ],\n    \"headers\": [\n      {\n        \"source\": \"<string>\",\n        \"headers\": [\n          {\n            \"key\": \"<string>\",\n            \"value\": \"<string>\"\n          },\n          {\n            \"key\": \"<string>\",\n            \"value\": \"<string>\"\n          }\n        ]\n      },\n      {\n        \"source\": \"<string>\",\n        \"headers\": [\n          {\n            \"key\": \"<string>\",\n            \"value\": \"<string>\"\n          },\n          {\n            \"key\": \"<string>\",\n            \"value\": \"<string>\"\n          }\n        ]\n      }\n    ],\n    \"cleanUrls\": \"<boolean>\",\n    \"trailingSlash\": \"<boolean,null>\",\n    \"experimental\": \"<null>\"\n  }\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/web/v1/deployment",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "web",
+                        "v1",
+                        "deployment"
+                      ]
+                    },
+                    "description": "Deploy a website. Files is a map of file paths to file contents. Configuration is optional and contains additional information about the deployment."
+                  },
+                  "response": [
+                    {
+                      "id": "416a7bb2-10bc-48ca-93d4-761086dc5bd6",
+                      "name": "successfully deployed",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"source\": {\n    \"files\": {\n      \"magnafa6\": {\n        \"content\": \"<string>\",\n        \"encoding\": \"<string>\",\n        \"executable\": \"<boolean>\"\n      },\n      \"cupidatat_89\": {\n        \"content\": \"<string>\",\n        \"encoding\": \"<string>\",\n        \"executable\": \"<boolean>\"\n      },\n      \"culpa9\": {\n        \"content\": \"<string>\",\n        \"encoding\": \"<string>\",\n        \"executable\": \"<boolean>\"\n      },\n      \"aliqua_ccc\": {\n        \"content\": \"<string>\",\n        \"encoding\": \"<string>\",\n        \"executable\": \"<boolean>\"\n      },\n      \"ine\": {\n        \"content\": \"<string>\",\n        \"encoding\": \"<string>\",\n        \"executable\": \"<boolean>\"\n      }\n    },\n    \"kind\": \"files\"\n  },\n  \"config\": {\n    \"name\": \"<string,null>\",\n    \"domains\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"entrypoint\": \"<string,null>\",\n    \"envVars\": {\n      \"qui685\": \"<string>\"\n    },\n    \"nodeModules\": null,\n    \"timeout\": \"<integer,null-int64>\",\n    \"serverStartCheck\": \"<boolean,null>\",\n    \"networkPermissions\": [\n      {\n        \"action\": \"allow\",\n        \"query\": \"<string>\",\n        \"behavior\": \"exact\"\n      },\n      {\n        \"action\": \"allow\",\n        \"query\": \"<string>\",\n        \"behavior\": \"exact\"\n      }\n    ],\n    \"egress\": \"<null>\",\n    \"build\": \"<null>\",\n    \"await\": \"<boolean,null>\",\n    \"staticDir\": \"<string,null>\",\n    \"staticPathPrefix\": \"<string,null>\",\n    \"publicDir\": \"<string,null>\",\n    \"prerenderDir\": \"<string,null>\",\n    \"staticOnly\": \"<boolean>\",\n    \"redirects\": [\n      {\n        \"source\": \"<string>\",\n        \"destination\": \"<string>\",\n        \"statusCode\": \"<integer,null>\",\n        \"permanent\": \"<boolean,null>\"\n      },\n      {\n        \"source\": \"<string>\",\n        \"destination\": \"<string>\",\n        \"statusCode\": \"<integer,null>\",\n        \"permanent\": \"<boolean,null>\"\n      }\n    ],\n    \"rewrites\": [\n      {\n        \"source\": \"<string>\",\n        \"destination\": \"<string>\"\n      },\n      {\n        \"source\": \"<string>\",\n        \"destination\": \"<string>\"\n      }\n    ],\n    \"dynamic\": [\n      {\n        \"source\": \"<string>\",\n        \"methods\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      },\n      {\n        \"source\": \"<string>\",\n        \"methods\": null\n      }\n    ],\n    \"headers\": [\n      {\n        \"source\": \"<string>\",\n        \"headers\": [\n          {\n            \"key\": \"<string>\",\n            \"value\": \"<string>\"\n          },\n          {\n            \"key\": \"<string>\",\n            \"value\": \"<string>\"\n          }\n        ]\n      },\n      {\n        \"source\": \"<string>\",\n        \"headers\": [\n          {\n            \"key\": \"<string>\",\n            \"value\": \"<string>\"\n          },\n          {\n            \"key\": \"<string>\",\n            \"value\": \"<string>\"\n          }\n        ]\n      }\n    ],\n    \"cleanUrls\": \"<boolean>\",\n    \"trailingSlash\": \"<boolean,null>\",\n    \"experimental\": \"<null>\"\n  }\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/web/v1/deployment",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "web",
+                            "v1",
+                            "deployment"
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"deploymentId\": \"<uuid>\",\n  \"projectId\": \"<uuid>\",\n  \"domains\": null,\n  \"entrypoint\": \"<string,null>\"\n}",
+                      "createdAt": "2026-07-28T01:43:04.000Z",
+                      "updatedAt": "2026-07-28T01:43:04.000Z",
+                      "uid": "35240-416a7bb2-10bc-48ca-93d4-761086dc5bd6"
+                    },
+                    {
+                      "id": "b2b9628a-b926-44b5-af41-914b697684ba",
+                      "name": "Possible errors: WebDeploymentBadRequest, InvalidDomains, EntrypointNotFound, NoEntrypointFound",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"source\": {\n    \"files\": {\n      \"magnafa6\": {\n        \"content\": \"<string>\",\n        \"encoding\": \"<string>\",\n        \"executable\": \"<boolean>\"\n      },\n      \"cupidatat_89\": {\n        \"content\": \"<string>\",\n        \"encoding\": \"<string>\",\n        \"executable\": \"<boolean>\"\n      },\n      \"culpa9\": {\n        \"content\": \"<string>\",\n        \"encoding\": \"<string>\",\n        \"executable\": \"<boolean>\"\n      },\n      \"aliqua_ccc\": {\n        \"content\": \"<string>\",\n        \"encoding\": \"<string>\",\n        \"executable\": \"<boolean>\"\n      },\n      \"ine\": {\n        \"content\": \"<string>\",\n        \"encoding\": \"<string>\",\n        \"executable\": \"<boolean>\"\n      }\n    },\n    \"kind\": \"files\"\n  },\n  \"config\": {\n    \"name\": \"<string,null>\",\n    \"domains\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"entrypoint\": \"<string,null>\",\n    \"envVars\": {\n      \"qui685\": \"<string>\"\n    },\n    \"nodeModules\": null,\n    \"timeout\": \"<integer,null-int64>\",\n    \"serverStartCheck\": \"<boolean,null>\",\n    \"networkPermissions\": [\n      {\n        \"action\": \"allow\",\n        \"query\": \"<string>\",\n        \"behavior\": \"exact\"\n      },\n      {\n        \"action\": \"allow\",\n        \"query\": \"<string>\",\n        \"behavior\": \"exact\"\n      }\n    ],\n    \"egress\": \"<null>\",\n    \"build\": \"<null>\",\n    \"await\": \"<boolean,null>\",\n    \"staticDir\": \"<string,null>\",\n    \"staticPathPrefix\": \"<string,null>\",\n    \"publicDir\": \"<string,null>\",\n    \"prerenderDir\": \"<string,null>\",\n    \"staticOnly\": \"<boolean>\",\n    \"redirects\": [\n      {\n        \"source\": \"<string>\",\n        \"destination\": \"<string>\",\n        \"statusCode\": \"<integer,null>\",\n        \"permanent\": \"<boolean,null>\"\n      },\n      {\n        \"source\": \"<string>\",\n        \"destination\": \"<string>\",\n        \"statusCode\": \"<integer,null>\",\n        \"permanent\": \"<boolean,null>\"\n      }\n    ],\n    \"rewrites\": [\n      {\n        \"source\": \"<string>\",\n        \"destination\": \"<string>\"\n      },\n      {\n        \"source\": \"<string>\",\n        \"destination\": \"<string>\"\n      }\n    ],\n    \"dynamic\": [\n      {\n        \"source\": \"<string>\",\n        \"methods\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      },\n      {\n        \"source\": \"<string>\",\n        \"methods\": null\n      }\n    ],\n    \"headers\": [\n      {\n        \"source\": \"<string>\",\n        \"headers\": [\n          {\n            \"key\": \"<string>\",\n            \"value\": \"<string>\"\n          },\n          {\n            \"key\": \"<string>\",\n            \"value\": \"<string>\"\n          }\n        ]\n      },\n      {\n        \"source\": \"<string>\",\n        \"headers\": [\n          {\n            \"key\": \"<string>\",\n            \"value\": \"<string>\"\n          },\n          {\n            \"key\": \"<string>\",\n            \"value\": \"<string>\"\n          }\n        ]\n      }\n    ],\n    \"cleanUrls\": \"<boolean>\",\n    \"trailingSlash\": \"<boolean,null>\",\n    \"experimental\": \"<null>\"\n  }\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/web/v1/deployment",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "web",
+                            "v1",
+                            "deployment"
+                          ]
+                        }
+                      },
+                      "status": "Bad Request",
+                      "code": 400,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"error\": \"<string>\",\n  \"message\": \"<string>\"\n}",
+                      "createdAt": "2026-07-28T01:43:04.000Z",
+                      "updatedAt": "2026-07-28T01:43:04.000Z",
+                      "uid": "35240-b2b9628a-b926-44b5-af41-914b697684ba"
+                    },
+                    {
+                      "id": "b08e3ad9-6f8f-4a22-a993-3bc6ac29aaac",
+                      "name": "Possible errors: DeploymentLimitExceeded, TimeoutLimitExceeded, Forbidden, NoDomainOwnership",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"source\": {\n    \"files\": {\n      \"magnafa6\": {\n        \"content\": \"<string>\",\n        \"encoding\": \"<string>\",\n        \"executable\": \"<boolean>\"\n      },\n      \"cupidatat_89\": {\n        \"content\": \"<string>\",\n        \"encoding\": \"<string>\",\n        \"executable\": \"<boolean>\"\n      },\n      \"culpa9\": {\n        \"content\": \"<string>\",\n        \"encoding\": \"<string>\",\n        \"executable\": \"<boolean>\"\n      },\n      \"aliqua_ccc\": {\n        \"content\": \"<string>\",\n        \"encoding\": \"<string>\",\n        \"executable\": \"<boolean>\"\n      },\n      \"ine\": {\n        \"content\": \"<string>\",\n        \"encoding\": \"<string>\",\n        \"executable\": \"<boolean>\"\n      }\n    },\n    \"kind\": \"files\"\n  },\n  \"config\": {\n    \"name\": \"<string,null>\",\n    \"domains\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"entrypoint\": \"<string,null>\",\n    \"envVars\": {\n      \"qui685\": \"<string>\"\n    },\n    \"nodeModules\": null,\n    \"timeout\": \"<integer,null-int64>\",\n    \"serverStartCheck\": \"<boolean,null>\",\n    \"networkPermissions\": [\n      {\n        \"action\": \"allow\",\n        \"query\": \"<string>\",\n        \"behavior\": \"exact\"\n      },\n      {\n        \"action\": \"allow\",\n        \"query\": \"<string>\",\n        \"behavior\": \"exact\"\n      }\n    ],\n    \"egress\": \"<null>\",\n    \"build\": \"<null>\",\n    \"await\": \"<boolean,null>\",\n    \"staticDir\": \"<string,null>\",\n    \"staticPathPrefix\": \"<string,null>\",\n    \"publicDir\": \"<string,null>\",\n    \"prerenderDir\": \"<string,null>\",\n    \"staticOnly\": \"<boolean>\",\n    \"redirects\": [\n      {\n        \"source\": \"<string>\",\n        \"destination\": \"<string>\",\n        \"statusCode\": \"<integer,null>\",\n        \"permanent\": \"<boolean,null>\"\n      },\n      {\n        \"source\": \"<string>\",\n        \"destination\": \"<string>\",\n        \"statusCode\": \"<integer,null>\",\n        \"permanent\": \"<boolean,null>\"\n      }\n    ],\n    \"rewrites\": [\n      {\n        \"source\": \"<string>\",\n        \"destination\": \"<string>\"\n      },\n      {\n        \"source\": \"<string>\",\n        \"destination\": \"<string>\"\n      }\n    ],\n    \"dynamic\": [\n      {\n        \"source\": \"<string>\",\n        \"methods\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      },\n      {\n        \"source\": \"<string>\",\n        \"methods\": null\n      }\n    ],\n    \"headers\": [\n      {\n        \"source\": \"<string>\",\n        \"headers\": [\n          {\n            \"key\": \"<string>\",\n            \"value\": \"<string>\"\n          },\n          {\n            \"key\": \"<string>\",\n            \"value\": \"<string>\"\n          }\n        ]\n      },\n      {\n        \"source\": \"<string>\",\n        \"headers\": [\n          {\n            \"key\": \"<string>\",\n            \"value\": \"<string>\"\n          },\n          {\n            \"key\": \"<string>\",\n            \"value\": \"<string>\"\n          }\n        ]\n      }\n    ],\n    \"cleanUrls\": \"<boolean>\",\n    \"trailingSlash\": \"<boolean,null>\",\n    \"experimental\": \"<null>\"\n  }\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/web/v1/deployment",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "web",
+                            "v1",
+                            "deployment"
+                          ]
+                        }
+                      },
+                      "status": "Forbidden",
+                      "code": 403,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"error\": \"<string>\",\n  \"message\": \"<string>\"\n}",
+                      "createdAt": "2026-07-28T01:43:04.000Z",
+                      "updatedAt": "2026-07-28T01:43:04.000Z",
+                      "uid": "35240-b08e3ad9-6f8f-4a22-a993-3bc6ac29aaac"
+                    },
+                    {
+                      "id": "3346acb4-0fd2-47fd-a8cb-e46257a183f9",
+                      "name": "Error: DeploymentNotFound",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"source\": {\n    \"files\": {\n      \"magnafa6\": {\n        \"content\": \"<string>\",\n        \"encoding\": \"<string>\",\n        \"executable\": \"<boolean>\"\n      },\n      \"cupidatat_89\": {\n        \"content\": \"<string>\",\n        \"encoding\": \"<string>\",\n        \"executable\": \"<boolean>\"\n      },\n      \"culpa9\": {\n        \"content\": \"<string>\",\n        \"encoding\": \"<string>\",\n        \"executable\": \"<boolean>\"\n      },\n      \"aliqua_ccc\": {\n        \"content\": \"<string>\",\n        \"encoding\": \"<string>\",\n        \"executable\": \"<boolean>\"\n      },\n      \"ine\": {\n        \"content\": \"<string>\",\n        \"encoding\": \"<string>\",\n        \"executable\": \"<boolean>\"\n      }\n    },\n    \"kind\": \"files\"\n  },\n  \"config\": {\n    \"name\": \"<string,null>\",\n    \"domains\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"entrypoint\": \"<string,null>\",\n    \"envVars\": {\n      \"qui685\": \"<string>\"\n    },\n    \"nodeModules\": null,\n    \"timeout\": \"<integer,null-int64>\",\n    \"serverStartCheck\": \"<boolean,null>\",\n    \"networkPermissions\": [\n      {\n        \"action\": \"allow\",\n        \"query\": \"<string>\",\n        \"behavior\": \"exact\"\n      },\n      {\n        \"action\": \"allow\",\n        \"query\": \"<string>\",\n        \"behavior\": \"exact\"\n      }\n    ],\n    \"egress\": \"<null>\",\n    \"build\": \"<null>\",\n    \"await\": \"<boolean,null>\",\n    \"staticDir\": \"<string,null>\",\n    \"staticPathPrefix\": \"<string,null>\",\n    \"publicDir\": \"<string,null>\",\n    \"prerenderDir\": \"<string,null>\",\n    \"staticOnly\": \"<boolean>\",\n    \"redirects\": [\n      {\n        \"source\": \"<string>\",\n        \"destination\": \"<string>\",\n        \"statusCode\": \"<integer,null>\",\n        \"permanent\": \"<boolean,null>\"\n      },\n      {\n        \"source\": \"<string>\",\n        \"destination\": \"<string>\",\n        \"statusCode\": \"<integer,null>\",\n        \"permanent\": \"<boolean,null>\"\n      }\n    ],\n    \"rewrites\": [\n      {\n        \"source\": \"<string>\",\n        \"destination\": \"<string>\"\n      },\n      {\n        \"source\": \"<string>\",\n        \"destination\": \"<string>\"\n      }\n    ],\n    \"dynamic\": [\n      {\n        \"source\": \"<string>\",\n        \"methods\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      },\n      {\n        \"source\": \"<string>\",\n        \"methods\": null\n      }\n    ],\n    \"headers\": [\n      {\n        \"source\": \"<string>\",\n        \"headers\": [\n          {\n            \"key\": \"<string>\",\n            \"value\": \"<string>\"\n          },\n          {\n            \"key\": \"<string>\",\n            \"value\": \"<string>\"\n          }\n        ]\n      },\n      {\n        \"source\": \"<string>\",\n        \"headers\": [\n          {\n            \"key\": \"<string>\",\n            \"value\": \"<string>\"\n          },\n          {\n            \"key\": \"<string>\",\n            \"value\": \"<string>\"\n          }\n        ]\n      }\n    ],\n    \"cleanUrls\": \"<boolean>\",\n    \"trailingSlash\": \"<boolean,null>\",\n    \"experimental\": \"<null>\"\n  }\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/web/v1/deployment",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "web",
+                            "v1",
+                            "deployment"
+                          ]
+                        }
+                      },
+                      "status": "Not Found",
+                      "code": 404,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"error\": \"<string>\",\n  \"message\": \"<string>\"\n}",
+                      "createdAt": "2026-07-28T01:43:04.000Z",
+                      "updatedAt": "2026-07-28T01:43:04.000Z",
+                      "uid": "35240-3346acb4-0fd2-47fd-a8cb-e46257a183f9"
+                    },
+                    {
+                      "id": "d8c4a99c-6069-4529-9d6f-7874c7ad4578",
+                      "name": "Possible errors: Internal, DomainMappingError, UploadError, LockfileError",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"source\": {\n    \"files\": {\n      \"magnafa6\": {\n        \"content\": \"<string>\",\n        \"encoding\": \"<string>\",\n        \"executable\": \"<boolean>\"\n      },\n      \"cupidatat_89\": {\n        \"content\": \"<string>\",\n        \"encoding\": \"<string>\",\n        \"executable\": \"<boolean>\"\n      },\n      \"culpa9\": {\n        \"content\": \"<string>\",\n        \"encoding\": \"<string>\",\n        \"executable\": \"<boolean>\"\n      },\n      \"aliqua_ccc\": {\n        \"content\": \"<string>\",\n        \"encoding\": \"<string>\",\n        \"executable\": \"<boolean>\"\n      },\n      \"ine\": {\n        \"content\": \"<string>\",\n        \"encoding\": \"<string>\",\n        \"executable\": \"<boolean>\"\n      }\n    },\n    \"kind\": \"files\"\n  },\n  \"config\": {\n    \"name\": \"<string,null>\",\n    \"domains\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"entrypoint\": \"<string,null>\",\n    \"envVars\": {\n      \"qui685\": \"<string>\"\n    },\n    \"nodeModules\": null,\n    \"timeout\": \"<integer,null-int64>\",\n    \"serverStartCheck\": \"<boolean,null>\",\n    \"networkPermissions\": [\n      {\n        \"action\": \"allow\",\n        \"query\": \"<string>\",\n        \"behavior\": \"exact\"\n      },\n      {\n        \"action\": \"allow\",\n        \"query\": \"<string>\",\n        \"behavior\": \"exact\"\n      }\n    ],\n    \"egress\": \"<null>\",\n    \"build\": \"<null>\",\n    \"await\": \"<boolean,null>\",\n    \"staticDir\": \"<string,null>\",\n    \"staticPathPrefix\": \"<string,null>\",\n    \"publicDir\": \"<string,null>\",\n    \"prerenderDir\": \"<string,null>\",\n    \"staticOnly\": \"<boolean>\",\n    \"redirects\": [\n      {\n        \"source\": \"<string>\",\n        \"destination\": \"<string>\",\n        \"statusCode\": \"<integer,null>\",\n        \"permanent\": \"<boolean,null>\"\n      },\n      {\n        \"source\": \"<string>\",\n        \"destination\": \"<string>\",\n        \"statusCode\": \"<integer,null>\",\n        \"permanent\": \"<boolean,null>\"\n      }\n    ],\n    \"rewrites\": [\n      {\n        \"source\": \"<string>\",\n        \"destination\": \"<string>\"\n      },\n      {\n        \"source\": \"<string>\",\n        \"destination\": \"<string>\"\n      }\n    ],\n    \"dynamic\": [\n      {\n        \"source\": \"<string>\",\n        \"methods\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      },\n      {\n        \"source\": \"<string>\",\n        \"methods\": null\n      }\n    ],\n    \"headers\": [\n      {\n        \"source\": \"<string>\",\n        \"headers\": [\n          {\n            \"key\": \"<string>\",\n            \"value\": \"<string>\"\n          },\n          {\n            \"key\": \"<string>\",\n            \"value\": \"<string>\"\n          }\n        ]\n      },\n      {\n        \"source\": \"<string>\",\n        \"headers\": [\n          {\n            \"key\": \"<string>\",\n            \"value\": \"<string>\"\n          },\n          {\n            \"key\": \"<string>\",\n            \"value\": \"<string>\"\n          }\n        ]\n      }\n    ],\n    \"cleanUrls\": \"<boolean>\",\n    \"trailingSlash\": \"<boolean,null>\",\n    \"experimental\": \"<null>\"\n  }\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/web/v1/deployment",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "web",
+                            "v1",
+                            "deployment"
+                          ]
+                        }
+                      },
+                      "status": "Internal Server Error",
+                      "code": 500,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"error\": \"<string>\",\n  \"message\": \"<string>\"\n}",
+                      "createdAt": "2026-07-28T01:43:04.000Z",
+                      "updatedAt": "2026-07-28T01:43:04.000Z",
+                      "uid": "35240-d8c4a99c-6069-4529-9d6f-7874c7ad4578"
+                    },
+                    {
+                      "id": "2e03535e-b804-40c6-819b-835b8fe8529a",
+                      "name": "Possible errors: CertificateProvisioningError, ServerDeploymentFailed",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"source\": {\n    \"files\": {\n      \"magnafa6\": {\n        \"content\": \"<string>\",\n        \"encoding\": \"<string>\",\n        \"executable\": \"<boolean>\"\n      },\n      \"cupidatat_89\": {\n        \"content\": \"<string>\",\n        \"encoding\": \"<string>\",\n        \"executable\": \"<boolean>\"\n      },\n      \"culpa9\": {\n        \"content\": \"<string>\",\n        \"encoding\": \"<string>\",\n        \"executable\": \"<boolean>\"\n      },\n      \"aliqua_ccc\": {\n        \"content\": \"<string>\",\n        \"encoding\": \"<string>\",\n        \"executable\": \"<boolean>\"\n      },\n      \"ine\": {\n        \"content\": \"<string>\",\n        \"encoding\": \"<string>\",\n        \"executable\": \"<boolean>\"\n      }\n    },\n    \"kind\": \"files\"\n  },\n  \"config\": {\n    \"name\": \"<string,null>\",\n    \"domains\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"entrypoint\": \"<string,null>\",\n    \"envVars\": {\n      \"qui685\": \"<string>\"\n    },\n    \"nodeModules\": null,\n    \"timeout\": \"<integer,null-int64>\",\n    \"serverStartCheck\": \"<boolean,null>\",\n    \"networkPermissions\": [\n      {\n        \"action\": \"allow\",\n        \"query\": \"<string>\",\n        \"behavior\": \"exact\"\n      },\n      {\n        \"action\": \"allow\",\n        \"query\": \"<string>\",\n        \"behavior\": \"exact\"\n      }\n    ],\n    \"egress\": \"<null>\",\n    \"build\": \"<null>\",\n    \"await\": \"<boolean,null>\",\n    \"staticDir\": \"<string,null>\",\n    \"staticPathPrefix\": \"<string,null>\",\n    \"publicDir\": \"<string,null>\",\n    \"prerenderDir\": \"<string,null>\",\n    \"staticOnly\": \"<boolean>\",\n    \"redirects\": [\n      {\n        \"source\": \"<string>\",\n        \"destination\": \"<string>\",\n        \"statusCode\": \"<integer,null>\",\n        \"permanent\": \"<boolean,null>\"\n      },\n      {\n        \"source\": \"<string>\",\n        \"destination\": \"<string>\",\n        \"statusCode\": \"<integer,null>\",\n        \"permanent\": \"<boolean,null>\"\n      }\n    ],\n    \"rewrites\": [\n      {\n        \"source\": \"<string>\",\n        \"destination\": \"<string>\"\n      },\n      {\n        \"source\": \"<string>\",\n        \"destination\": \"<string>\"\n      }\n    ],\n    \"dynamic\": [\n      {\n        \"source\": \"<string>\",\n        \"methods\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      },\n      {\n        \"source\": \"<string>\",\n        \"methods\": null\n      }\n    ],\n    \"headers\": [\n      {\n        \"source\": \"<string>\",\n        \"headers\": [\n          {\n            \"key\": \"<string>\",\n            \"value\": \"<string>\"\n          },\n          {\n            \"key\": \"<string>\",\n            \"value\": \"<string>\"\n          }\n        ]\n      },\n      {\n        \"source\": \"<string>\",\n        \"headers\": [\n          {\n            \"key\": \"<string>\",\n            \"value\": \"<string>\"\n          },\n          {\n            \"key\": \"<string>\",\n            \"value\": \"<string>\"\n          }\n        ]\n      }\n    ],\n    \"cleanUrls\": \"<boolean>\",\n    \"trailingSlash\": \"<boolean,null>\",\n    \"experimental\": \"<null>\"\n  }\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/web/v1/deployment",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "web",
+                            "v1",
+                            "deployment"
+                          ]
+                        }
+                      },
+                      "status": "Bad Gateway",
+                      "code": 502,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"error\": \"<string>\",\n  \"message\": \"<string>\"\n}",
+                      "createdAt": "2026-07-28T01:43:04.000Z",
+                      "updatedAt": "2026-07-28T01:43:04.000Z",
+                      "uid": "35240-2e03535e-b804-40c6-819b-835b8fe8529a"
+                    }
+                  ],
+                  "createdAt": "2026-07-28T01:43:04.000Z",
+                  "updatedAt": "2026-07-28T01:43:04.000Z",
+                  "uid": "35240-cdc1bc40-f1c3-4386-b07c-7124ba1bdec4"
+                }
+              ],
+              "id": "e28536e9-5adf-4a25-8e47-ed98729b3957",
+              "createdAt": "2026-07-28T01:43:04.000Z",
+              "updatedAt": "2026-07-28T01:43:04.000Z",
+              "uid": "35240-e28536e9-5adf-4a25-8e47-ed98729b3957"
+            },
+            {
+              "name": "deployments",
+              "item": [
+                {
+                  "name": "{deployment_id}",
+                  "item": [
+                    {
+                      "name": "fetch",
+                      "item": [
+                        {
+                          "name": "Fetch Content From a Deployment",
+                          "id": "efd4b30d-3c38-49cc-a056-54ba724057af",
+                          "protocolProfileBehavior": {
+                            "disableBodyPruning": true
+                          },
+                          "request": {
+                            "method": "GET",
+                            "header": [],
+                            "url": {
+                              "raw": "{{baseUrl}}/web/v1/deployments/:deployment_id/fetch",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "web",
+                                "v1",
+                                "deployments",
+                                ":deployment_id",
+                                "fetch"
+                              ],
+                              "variable": [
+                                {
+                                  "id": "644d6b77-ea59-4545-8f2a-fcd9c1981a24",
+                                  "key": "deployment_id",
+                                  "value": "<uuid>",
+                                  "description": "(Required) Deployment ID"
+                                }
+                              ]
+                            },
+                            "description": "Fetch content from a deployment by making a request to nginx-web with the deployment ID header. Supports any HTTP method."
+                          },
+                          "response": [
+                            {
+                              "id": "9d6c573c-1a13-499d-8409-89d00be66f0b",
+                              "name": "Successful response from deployment",
+                              "originalRequest": {
+                                "method": "GET",
+                                "header": [
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/web/v1/deployments/:deployment_id/fetch",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "web",
+                                    "v1",
+                                    "deployments",
+                                    ":deployment_id",
+                                    "fetch"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "deployment_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "OK",
+                              "code": 200,
+                              "_postman_previewlanguage": "text",
+                              "header": [],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": null,
+                              "createdAt": "2026-07-28T01:43:04.000Z",
+                              "updatedAt": "2026-07-28T01:43:04.000Z",
+                              "uid": "35240-9d6c573c-1a13-499d-8409-89d00be66f0b"
+                            },
+                            {
+                              "id": "0af9da77-ef90-4b74-9f8e-2b0afe166f76",
+                              "name": "Forbidden",
+                              "originalRequest": {
+                                "method": "GET",
+                                "header": [
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/web/v1/deployments/:deployment_id/fetch",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "web",
+                                    "v1",
+                                    "deployments",
+                                    ":deployment_id",
+                                    "fetch"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "deployment_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "Forbidden",
+                              "code": 403,
+                              "_postman_previewlanguage": "text",
+                              "header": [],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": null,
+                              "createdAt": "2026-07-28T01:43:04.000Z",
+                              "updatedAt": "2026-07-28T01:43:04.000Z",
+                              "uid": "35240-0af9da77-ef90-4b74-9f8e-2b0afe166f76"
+                            },
+                            {
+                              "id": "8c7ce5a6-7c1a-4157-b944-8037e750df8c",
+                              "name": "Deployment not found",
+                              "originalRequest": {
+                                "method": "GET",
+                                "header": [
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/web/v1/deployments/:deployment_id/fetch",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "web",
+                                    "v1",
+                                    "deployments",
+                                    ":deployment_id",
+                                    "fetch"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "deployment_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "Not Found",
+                              "code": 404,
+                              "_postman_previewlanguage": "text",
+                              "header": [],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": null,
+                              "createdAt": "2026-07-28T01:43:04.000Z",
+                              "updatedAt": "2026-07-28T01:43:04.000Z",
+                              "uid": "35240-8c7ce5a6-7c1a-4157-b944-8037e750df8c"
+                            },
+                            {
+                              "id": "14a78b92-91a8-401a-974c-07006aff535e",
+                              "name": "Internal server error",
+                              "originalRequest": {
+                                "method": "GET",
+                                "header": [
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/web/v1/deployments/:deployment_id/fetch",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "web",
+                                    "v1",
+                                    "deployments",
+                                    ":deployment_id",
+                                    "fetch"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "deployment_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "Internal Server Error",
+                              "code": 500,
+                              "_postman_previewlanguage": "text",
+                              "header": [],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": null,
+                              "createdAt": "2026-07-28T01:43:04.000Z",
+                              "updatedAt": "2026-07-28T01:43:04.000Z",
+                              "uid": "35240-14a78b92-91a8-401a-974c-07006aff535e"
+                            }
+                          ],
+                          "createdAt": "2026-07-28T01:43:04.000Z",
+                          "updatedAt": "2026-07-28T01:43:04.000Z",
+                          "uid": "35240-efd4b30d-3c38-49cc-a056-54ba724057af"
+                        },
+                        {
+                          "name": "Fetch Content From a Deployment",
+                          "id": "a9a33913-0216-40da-8742-55badadeed86",
+                          "protocolProfileBehavior": {
+                            "disableBodyPruning": true
+                          },
+                          "request": {
+                            "method": "PUT",
+                            "header": [],
+                            "url": {
+                              "raw": "{{baseUrl}}/web/v1/deployments/:deployment_id/fetch",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "web",
+                                "v1",
+                                "deployments",
+                                ":deployment_id",
+                                "fetch"
+                              ],
+                              "variable": [
+                                {
+                                  "id": "00748901-19d6-47b7-818b-4961e013537d",
+                                  "key": "deployment_id",
+                                  "value": "<uuid>",
+                                  "description": "(Required) Deployment ID"
+                                }
+                              ]
+                            },
+                            "description": "Fetch content from a deployment by making a request to nginx-web with the deployment ID header. Supports any HTTP method."
+                          },
+                          "response": [
+                            {
+                              "id": "711f740f-2549-46f1-ad38-9ff568d47f3c",
+                              "name": "Successful response from deployment",
+                              "originalRequest": {
+                                "method": "PUT",
+                                "header": [
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/web/v1/deployments/:deployment_id/fetch",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "web",
+                                    "v1",
+                                    "deployments",
+                                    ":deployment_id",
+                                    "fetch"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "deployment_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "OK",
+                              "code": 200,
+                              "_postman_previewlanguage": "text",
+                              "header": [],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": null,
+                              "createdAt": "2026-07-28T01:43:04.000Z",
+                              "updatedAt": "2026-07-28T01:43:04.000Z",
+                              "uid": "35240-711f740f-2549-46f1-ad38-9ff568d47f3c"
+                            },
+                            {
+                              "id": "33f727f9-434c-4f61-b994-1f80042a2272",
+                              "name": "Forbidden",
+                              "originalRequest": {
+                                "method": "PUT",
+                                "header": [
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/web/v1/deployments/:deployment_id/fetch",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "web",
+                                    "v1",
+                                    "deployments",
+                                    ":deployment_id",
+                                    "fetch"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "deployment_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "Forbidden",
+                              "code": 403,
+                              "_postman_previewlanguage": "text",
+                              "header": [],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": null,
+                              "createdAt": "2026-07-28T01:43:04.000Z",
+                              "updatedAt": "2026-07-28T01:43:04.000Z",
+                              "uid": "35240-33f727f9-434c-4f61-b994-1f80042a2272"
+                            },
+                            {
+                              "id": "c5d3deb0-89af-43c3-83fc-5e42bb44661e",
+                              "name": "Deployment not found",
+                              "originalRequest": {
+                                "method": "PUT",
+                                "header": [
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/web/v1/deployments/:deployment_id/fetch",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "web",
+                                    "v1",
+                                    "deployments",
+                                    ":deployment_id",
+                                    "fetch"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "deployment_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "Not Found",
+                              "code": 404,
+                              "_postman_previewlanguage": "text",
+                              "header": [],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": null,
+                              "createdAt": "2026-07-28T01:43:04.000Z",
+                              "updatedAt": "2026-07-28T01:43:04.000Z",
+                              "uid": "35240-c5d3deb0-89af-43c3-83fc-5e42bb44661e"
+                            },
+                            {
+                              "id": "3c6ece99-e484-4381-a597-724d4dc88b33",
+                              "name": "Internal server error",
+                              "originalRequest": {
+                                "method": "PUT",
+                                "header": [
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/web/v1/deployments/:deployment_id/fetch",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "web",
+                                    "v1",
+                                    "deployments",
+                                    ":deployment_id",
+                                    "fetch"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "deployment_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "Internal Server Error",
+                              "code": 500,
+                              "_postman_previewlanguage": "text",
+                              "header": [],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": null,
+                              "createdAt": "2026-07-28T01:43:04.000Z",
+                              "updatedAt": "2026-07-28T01:43:04.000Z",
+                              "uid": "35240-3c6ece99-e484-4381-a597-724d4dc88b33"
+                            }
+                          ],
+                          "createdAt": "2026-07-28T01:43:04.000Z",
+                          "updatedAt": "2026-07-28T01:43:04.000Z",
+                          "uid": "35240-a9a33913-0216-40da-8742-55badadeed86"
+                        },
+                        {
+                          "name": "Fetch Content From a Deployment",
+                          "id": "84ef54ed-0b94-468b-80a8-0ec44d80811c",
+                          "protocolProfileBehavior": {
+                            "disableBodyPruning": true
+                          },
+                          "request": {
+                            "method": "POST",
+                            "header": [],
+                            "url": {
+                              "raw": "{{baseUrl}}/web/v1/deployments/:deployment_id/fetch",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "web",
+                                "v1",
+                                "deployments",
+                                ":deployment_id",
+                                "fetch"
+                              ],
+                              "variable": [
+                                {
+                                  "id": "f2dd32a8-9edc-4f6c-8f0f-929c98280ab9",
+                                  "key": "deployment_id",
+                                  "value": "<uuid>",
+                                  "description": "(Required) Deployment ID"
+                                }
+                              ]
+                            },
+                            "description": "Fetch content from a deployment by making a request to nginx-web with the deployment ID header. Supports any HTTP method."
+                          },
+                          "response": [
+                            {
+                              "id": "fc1bbaba-f801-45f6-998e-c6e7bfa6897a",
+                              "name": "Successful response from deployment",
+                              "originalRequest": {
+                                "method": "POST",
+                                "header": [
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/web/v1/deployments/:deployment_id/fetch",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "web",
+                                    "v1",
+                                    "deployments",
+                                    ":deployment_id",
+                                    "fetch"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "deployment_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "OK",
+                              "code": 200,
+                              "_postman_previewlanguage": "text",
+                              "header": [],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": null,
+                              "createdAt": "2026-07-28T01:43:04.000Z",
+                              "updatedAt": "2026-07-28T01:43:04.000Z",
+                              "uid": "35240-fc1bbaba-f801-45f6-998e-c6e7bfa6897a"
+                            },
+                            {
+                              "id": "b0b0d56f-a749-416c-b507-81eb11c396c8",
+                              "name": "Forbidden",
+                              "originalRequest": {
+                                "method": "POST",
+                                "header": [
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/web/v1/deployments/:deployment_id/fetch",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "web",
+                                    "v1",
+                                    "deployments",
+                                    ":deployment_id",
+                                    "fetch"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "deployment_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "Forbidden",
+                              "code": 403,
+                              "_postman_previewlanguage": "text",
+                              "header": [],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": null,
+                              "createdAt": "2026-07-28T01:43:04.000Z",
+                              "updatedAt": "2026-07-28T01:43:04.000Z",
+                              "uid": "35240-b0b0d56f-a749-416c-b507-81eb11c396c8"
+                            },
+                            {
+                              "id": "b54c72e2-abd1-4c10-b609-b16168a05345",
+                              "name": "Deployment not found",
+                              "originalRequest": {
+                                "method": "POST",
+                                "header": [
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/web/v1/deployments/:deployment_id/fetch",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "web",
+                                    "v1",
+                                    "deployments",
+                                    ":deployment_id",
+                                    "fetch"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "deployment_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "Not Found",
+                              "code": 404,
+                              "_postman_previewlanguage": "text",
+                              "header": [],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": null,
+                              "createdAt": "2026-07-28T01:43:04.000Z",
+                              "updatedAt": "2026-07-28T01:43:04.000Z",
+                              "uid": "35240-b54c72e2-abd1-4c10-b609-b16168a05345"
+                            },
+                            {
+                              "id": "2ddae831-f2f0-4aaa-b9ef-869d991eaa40",
+                              "name": "Internal server error",
+                              "originalRequest": {
+                                "method": "POST",
+                                "header": [
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/web/v1/deployments/:deployment_id/fetch",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "web",
+                                    "v1",
+                                    "deployments",
+                                    ":deployment_id",
+                                    "fetch"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "deployment_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "Internal Server Error",
+                              "code": 500,
+                              "_postman_previewlanguage": "text",
+                              "header": [],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": null,
+                              "createdAt": "2026-07-28T01:43:04.000Z",
+                              "updatedAt": "2026-07-28T01:43:04.000Z",
+                              "uid": "35240-2ddae831-f2f0-4aaa-b9ef-869d991eaa40"
+                            }
+                          ],
+                          "createdAt": "2026-07-28T01:43:04.000Z",
+                          "updatedAt": "2026-07-28T01:43:04.000Z",
+                          "uid": "35240-84ef54ed-0b94-468b-80a8-0ec44d80811c"
+                        },
+                        {
+                          "name": "Fetch Content From a Deployment",
+                          "id": "277b2138-b7f7-4a1e-9eaa-0c605353567d",
+                          "protocolProfileBehavior": {
+                            "disableBodyPruning": true
+                          },
+                          "request": {
+                            "method": "DELETE",
+                            "header": [],
+                            "url": {
+                              "raw": "{{baseUrl}}/web/v1/deployments/:deployment_id/fetch",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "web",
+                                "v1",
+                                "deployments",
+                                ":deployment_id",
+                                "fetch"
+                              ],
+                              "variable": [
+                                {
+                                  "id": "95124a7c-a3ed-48b7-9da5-0db84154470b",
+                                  "key": "deployment_id",
+                                  "value": "<uuid>",
+                                  "description": "(Required) Deployment ID"
+                                }
+                              ]
+                            },
+                            "description": "Fetch content from a deployment by making a request to nginx-web with the deployment ID header. Supports any HTTP method."
+                          },
+                          "response": [
+                            {
+                              "id": "4d95020d-e099-47e8-9bf0-8bf8506c0861",
+                              "name": "Successful response from deployment",
+                              "originalRequest": {
+                                "method": "DELETE",
+                                "header": [
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/web/v1/deployments/:deployment_id/fetch",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "web",
+                                    "v1",
+                                    "deployments",
+                                    ":deployment_id",
+                                    "fetch"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "deployment_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "OK",
+                              "code": 200,
+                              "_postman_previewlanguage": "text",
+                              "header": [],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": null,
+                              "createdAt": "2026-07-28T01:43:04.000Z",
+                              "updatedAt": "2026-07-28T01:43:04.000Z",
+                              "uid": "35240-4d95020d-e099-47e8-9bf0-8bf8506c0861"
+                            },
+                            {
+                              "id": "0bfd63c3-35f9-4136-aa29-9657233d05e5",
+                              "name": "Forbidden",
+                              "originalRequest": {
+                                "method": "DELETE",
+                                "header": [
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/web/v1/deployments/:deployment_id/fetch",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "web",
+                                    "v1",
+                                    "deployments",
+                                    ":deployment_id",
+                                    "fetch"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "deployment_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "Forbidden",
+                              "code": 403,
+                              "_postman_previewlanguage": "text",
+                              "header": [],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": null,
+                              "createdAt": "2026-07-28T01:43:04.000Z",
+                              "updatedAt": "2026-07-28T01:43:04.000Z",
+                              "uid": "35240-0bfd63c3-35f9-4136-aa29-9657233d05e5"
+                            },
+                            {
+                              "id": "96e298d8-54cb-4357-85ee-818ee084a0ad",
+                              "name": "Deployment not found",
+                              "originalRequest": {
+                                "method": "DELETE",
+                                "header": [
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/web/v1/deployments/:deployment_id/fetch",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "web",
+                                    "v1",
+                                    "deployments",
+                                    ":deployment_id",
+                                    "fetch"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "deployment_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "Not Found",
+                              "code": 404,
+                              "_postman_previewlanguage": "text",
+                              "header": [],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": null,
+                              "createdAt": "2026-07-28T01:43:04.000Z",
+                              "updatedAt": "2026-07-28T01:43:04.000Z",
+                              "uid": "35240-96e298d8-54cb-4357-85ee-818ee084a0ad"
+                            },
+                            {
+                              "id": "fd4cf43f-8e5b-4e8f-8574-1db3995bde4e",
+                              "name": "Internal server error",
+                              "originalRequest": {
+                                "method": "DELETE",
+                                "header": [
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/web/v1/deployments/:deployment_id/fetch",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "web",
+                                    "v1",
+                                    "deployments",
+                                    ":deployment_id",
+                                    "fetch"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "deployment_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "Internal Server Error",
+                              "code": 500,
+                              "_postman_previewlanguage": "text",
+                              "header": [],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": null,
+                              "createdAt": "2026-07-28T01:43:04.000Z",
+                              "updatedAt": "2026-07-28T01:43:04.000Z",
+                              "uid": "35240-fd4cf43f-8e5b-4e8f-8574-1db3995bde4e"
+                            }
+                          ],
+                          "createdAt": "2026-07-28T01:43:04.000Z",
+                          "updatedAt": "2026-07-28T01:43:04.000Z",
+                          "uid": "35240-277b2138-b7f7-4a1e-9eaa-0c605353567d"
+                        },
+                        {
+                          "name": "Fetch Content From a Deployment",
+                          "id": "18cd4df4-fdcc-4513-923e-321047f44259",
+                          "protocolProfileBehavior": {
+                            "disableBodyPruning": true
+                          },
+                          "request": {
+                            "method": "OPTIONS",
+                            "header": [],
+                            "url": {
+                              "raw": "{{baseUrl}}/web/v1/deployments/:deployment_id/fetch",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "web",
+                                "v1",
+                                "deployments",
+                                ":deployment_id",
+                                "fetch"
+                              ],
+                              "variable": [
+                                {
+                                  "id": "fca17b1d-6023-477b-8285-edfc90e71fb3",
+                                  "key": "deployment_id",
+                                  "value": "<uuid>",
+                                  "description": "(Required) Deployment ID"
+                                }
+                              ]
+                            },
+                            "description": "Fetch content from a deployment by making a request to nginx-web with the deployment ID header. Supports any HTTP method."
+                          },
+                          "response": [
+                            {
+                              "id": "abb1a4c1-91d2-476a-959c-e024ff3b73e6",
+                              "name": "Successful response from deployment",
+                              "originalRequest": {
+                                "method": "OPTIONS",
+                                "header": [
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/web/v1/deployments/:deployment_id/fetch",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "web",
+                                    "v1",
+                                    "deployments",
+                                    ":deployment_id",
+                                    "fetch"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "deployment_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "OK",
+                              "code": 200,
+                              "_postman_previewlanguage": "text",
+                              "header": [],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": null,
+                              "createdAt": "2026-07-28T01:43:04.000Z",
+                              "updatedAt": "2026-07-28T01:43:04.000Z",
+                              "uid": "35240-abb1a4c1-91d2-476a-959c-e024ff3b73e6"
+                            },
+                            {
+                              "id": "b1f928ca-f7fe-4e1f-8227-6de0bdcea624",
+                              "name": "Forbidden",
+                              "originalRequest": {
+                                "method": "OPTIONS",
+                                "header": [
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/web/v1/deployments/:deployment_id/fetch",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "web",
+                                    "v1",
+                                    "deployments",
+                                    ":deployment_id",
+                                    "fetch"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "deployment_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "Forbidden",
+                              "code": 403,
+                              "_postman_previewlanguage": "text",
+                              "header": [],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": null,
+                              "createdAt": "2026-07-28T01:43:04.000Z",
+                              "updatedAt": "2026-07-28T01:43:04.000Z",
+                              "uid": "35240-b1f928ca-f7fe-4e1f-8227-6de0bdcea624"
+                            },
+                            {
+                              "id": "2aa41452-5392-42f5-9922-79181ae4244b",
+                              "name": "Deployment not found",
+                              "originalRequest": {
+                                "method": "OPTIONS",
+                                "header": [
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/web/v1/deployments/:deployment_id/fetch",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "web",
+                                    "v1",
+                                    "deployments",
+                                    ":deployment_id",
+                                    "fetch"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "deployment_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "Not Found",
+                              "code": 404,
+                              "_postman_previewlanguage": "text",
+                              "header": [],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": null,
+                              "createdAt": "2026-07-28T01:43:04.000Z",
+                              "updatedAt": "2026-07-28T01:43:04.000Z",
+                              "uid": "35240-2aa41452-5392-42f5-9922-79181ae4244b"
+                            },
+                            {
+                              "id": "2e83d305-dd81-467f-a3d3-94626e42dcfa",
+                              "name": "Internal server error",
+                              "originalRequest": {
+                                "method": "OPTIONS",
+                                "header": [
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/web/v1/deployments/:deployment_id/fetch",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "web",
+                                    "v1",
+                                    "deployments",
+                                    ":deployment_id",
+                                    "fetch"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "deployment_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "Internal Server Error",
+                              "code": 500,
+                              "_postman_previewlanguage": "text",
+                              "header": [],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": null,
+                              "createdAt": "2026-07-28T01:43:04.000Z",
+                              "updatedAt": "2026-07-28T01:43:04.000Z",
+                              "uid": "35240-2e83d305-dd81-467f-a3d3-94626e42dcfa"
+                            }
+                          ],
+                          "createdAt": "2026-07-28T01:43:04.000Z",
+                          "updatedAt": "2026-07-28T01:43:04.000Z",
+                          "uid": "35240-18cd4df4-fdcc-4513-923e-321047f44259"
+                        },
+                        {
+                          "name": "Fetch Content From a Deployment",
+                          "id": "30b5cdfe-b05f-4d13-9ac0-a6a5cf37ee7e",
+                          "protocolProfileBehavior": {
+                            "disableBodyPruning": true
+                          },
+                          "request": {
+                            "method": "HEAD",
+                            "header": [],
+                            "url": {
+                              "raw": "{{baseUrl}}/web/v1/deployments/:deployment_id/fetch",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "web",
+                                "v1",
+                                "deployments",
+                                ":deployment_id",
+                                "fetch"
+                              ],
+                              "variable": [
+                                {
+                                  "id": "a5389ed4-3186-4475-a93f-328a7a6dba61",
+                                  "key": "deployment_id",
+                                  "value": "<uuid>",
+                                  "description": "(Required) Deployment ID"
+                                }
+                              ]
+                            },
+                            "description": "Fetch content from a deployment by making a request to nginx-web with the deployment ID header. Supports any HTTP method."
+                          },
+                          "response": [
+                            {
+                              "id": "0d19dcc8-29ff-4425-bcbe-4916a5dc47e6",
+                              "name": "Successful response from deployment",
+                              "originalRequest": {
+                                "method": "HEAD",
+                                "header": [
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/web/v1/deployments/:deployment_id/fetch",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "web",
+                                    "v1",
+                                    "deployments",
+                                    ":deployment_id",
+                                    "fetch"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "deployment_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "OK",
+                              "code": 200,
+                              "_postman_previewlanguage": "text",
+                              "header": [],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": null,
+                              "createdAt": "2026-07-28T01:43:04.000Z",
+                              "updatedAt": "2026-07-28T01:43:04.000Z",
+                              "uid": "35240-0d19dcc8-29ff-4425-bcbe-4916a5dc47e6"
+                            },
+                            {
+                              "id": "b8170853-e154-4b7c-93ef-67723a04a8c3",
+                              "name": "Forbidden",
+                              "originalRequest": {
+                                "method": "HEAD",
+                                "header": [
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/web/v1/deployments/:deployment_id/fetch",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "web",
+                                    "v1",
+                                    "deployments",
+                                    ":deployment_id",
+                                    "fetch"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "deployment_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "Forbidden",
+                              "code": 403,
+                              "_postman_previewlanguage": "text",
+                              "header": [],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": null,
+                              "createdAt": "2026-07-28T01:43:04.000Z",
+                              "updatedAt": "2026-07-28T01:43:04.000Z",
+                              "uid": "35240-b8170853-e154-4b7c-93ef-67723a04a8c3"
+                            },
+                            {
+                              "id": "d155d387-3df3-443c-9ded-93cd75662dbd",
+                              "name": "Deployment not found",
+                              "originalRequest": {
+                                "method": "HEAD",
+                                "header": [
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/web/v1/deployments/:deployment_id/fetch",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "web",
+                                    "v1",
+                                    "deployments",
+                                    ":deployment_id",
+                                    "fetch"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "deployment_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "Not Found",
+                              "code": 404,
+                              "_postman_previewlanguage": "text",
+                              "header": [],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": null,
+                              "createdAt": "2026-07-28T01:43:04.000Z",
+                              "updatedAt": "2026-07-28T01:43:04.000Z",
+                              "uid": "35240-d155d387-3df3-443c-9ded-93cd75662dbd"
+                            },
+                            {
+                              "id": "009b454b-a715-4ca6-9e03-8ea0df1654eb",
+                              "name": "Internal server error",
+                              "originalRequest": {
+                                "method": "HEAD",
+                                "header": [
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/web/v1/deployments/:deployment_id/fetch",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "web",
+                                    "v1",
+                                    "deployments",
+                                    ":deployment_id",
+                                    "fetch"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "deployment_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "Internal Server Error",
+                              "code": 500,
+                              "_postman_previewlanguage": "text",
+                              "header": [],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": null,
+                              "createdAt": "2026-07-28T01:43:04.000Z",
+                              "updatedAt": "2026-07-28T01:43:04.000Z",
+                              "uid": "35240-009b454b-a715-4ca6-9e03-8ea0df1654eb"
+                            }
+                          ],
+                          "createdAt": "2026-07-28T01:43:04.000Z",
+                          "updatedAt": "2026-07-28T01:43:04.000Z",
+                          "uid": "35240-30b5cdfe-b05f-4d13-9ac0-a6a5cf37ee7e"
+                        },
+                        {
+                          "name": "Fetch Content From a Deployment",
+                          "id": "540f4350-9e38-4624-9649-6ae785d9684d",
+                          "protocolProfileBehavior": {
+                            "disableBodyPruning": true
+                          },
+                          "request": {
+                            "method": "PATCH",
+                            "header": [],
+                            "url": {
+                              "raw": "{{baseUrl}}/web/v1/deployments/:deployment_id/fetch",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "web",
+                                "v1",
+                                "deployments",
+                                ":deployment_id",
+                                "fetch"
+                              ],
+                              "variable": [
+                                {
+                                  "id": "6e067700-5bee-4a9b-bcbd-effe429ba9ca",
+                                  "key": "deployment_id",
+                                  "value": "<uuid>",
+                                  "description": "(Required) Deployment ID"
+                                }
+                              ]
+                            },
+                            "description": "Fetch content from a deployment by making a request to nginx-web with the deployment ID header. Supports any HTTP method."
+                          },
+                          "response": [
+                            {
+                              "id": "deb25fb7-3975-488d-adec-992fad42e66a",
+                              "name": "Successful response from deployment",
+                              "originalRequest": {
+                                "method": "PATCH",
+                                "header": [
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/web/v1/deployments/:deployment_id/fetch",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "web",
+                                    "v1",
+                                    "deployments",
+                                    ":deployment_id",
+                                    "fetch"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "deployment_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "OK",
+                              "code": 200,
+                              "_postman_previewlanguage": "text",
+                              "header": [],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": null,
+                              "createdAt": "2026-07-28T01:43:04.000Z",
+                              "updatedAt": "2026-07-28T01:43:04.000Z",
+                              "uid": "35240-deb25fb7-3975-488d-adec-992fad42e66a"
+                            },
+                            {
+                              "id": "926a5858-402a-4a57-b8b6-7878550efa1c",
+                              "name": "Forbidden",
+                              "originalRequest": {
+                                "method": "PATCH",
+                                "header": [
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/web/v1/deployments/:deployment_id/fetch",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "web",
+                                    "v1",
+                                    "deployments",
+                                    ":deployment_id",
+                                    "fetch"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "deployment_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "Forbidden",
+                              "code": 403,
+                              "_postman_previewlanguage": "text",
+                              "header": [],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": null,
+                              "createdAt": "2026-07-28T01:43:04.000Z",
+                              "updatedAt": "2026-07-28T01:43:04.000Z",
+                              "uid": "35240-926a5858-402a-4a57-b8b6-7878550efa1c"
+                            },
+                            {
+                              "id": "ccb775be-3864-4a29-9c36-acab41d695f0",
+                              "name": "Deployment not found",
+                              "originalRequest": {
+                                "method": "PATCH",
+                                "header": [
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/web/v1/deployments/:deployment_id/fetch",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "web",
+                                    "v1",
+                                    "deployments",
+                                    ":deployment_id",
+                                    "fetch"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "deployment_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "Not Found",
+                              "code": 404,
+                              "_postman_previewlanguage": "text",
+                              "header": [],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": null,
+                              "createdAt": "2026-07-28T01:43:04.000Z",
+                              "updatedAt": "2026-07-28T01:43:04.000Z",
+                              "uid": "35240-ccb775be-3864-4a29-9c36-acab41d695f0"
+                            },
+                            {
+                              "id": "617cc278-e627-46da-a901-5586f74db807",
+                              "name": "Internal server error",
+                              "originalRequest": {
+                                "method": "PATCH",
+                                "header": [
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/web/v1/deployments/:deployment_id/fetch",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "web",
+                                    "v1",
+                                    "deployments",
+                                    ":deployment_id",
+                                    "fetch"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "deployment_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "Internal Server Error",
+                              "code": 500,
+                              "_postman_previewlanguage": "text",
+                              "header": [],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": null,
+                              "createdAt": "2026-07-28T01:43:04.000Z",
+                              "updatedAt": "2026-07-28T01:43:04.000Z",
+                              "uid": "35240-617cc278-e627-46da-a901-5586f74db807"
+                            }
+                          ],
+                          "createdAt": "2026-07-28T01:43:04.000Z",
+                          "updatedAt": "2026-07-28T01:43:04.000Z",
+                          "uid": "35240-540f4350-9e38-4624-9649-6ae785d9684d"
+                        }
+                      ],
+                      "id": "ee3fbe6b-ac09-42ee-8905-e472d92ebfc1",
+                      "createdAt": "2026-07-28T01:43:04.000Z",
+                      "updatedAt": "2026-07-28T01:43:04.000Z",
+                      "uid": "35240-ee3fbe6b-ac09-42ee-8905-e472d92ebfc1"
+                    },
+                    {
+                      "name": "Get Information on Web Deploy",
+                      "id": "a26e1e7c-d009-498f-9bc0-89f717992162",
+                      "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                      },
+                      "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                          "raw": "{{baseUrl}}/web/v1/deployments/:deployment_id",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "web",
+                            "v1",
+                            "deployments",
+                            ":deployment_id"
+                          ],
+                          "variable": [
+                            {
+                              "id": "435c3e90-78e0-4536-8f2b-1c0b102c37ac",
+                              "key": "deployment_id"
+                            }
+                          ]
+                        },
+                        "description": "Get information about a web deploy by its ID."
+                      },
+                      "response": [],
+                      "createdAt": "2026-07-28T01:43:04.000Z",
+                      "updatedAt": "2026-07-28T01:43:04.000Z",
+                      "uid": "35240-a26e1e7c-d009-498f-9bc0-89f717992162"
+                    }
+                  ],
+                  "id": "3a255a06-c2b7-4033-bc17-0ee6acaabc34",
+                  "createdAt": "2026-07-28T01:43:04.000Z",
+                  "updatedAt": "2026-07-28T01:43:04.000Z",
+                  "uid": "35240-3a255a06-c2b7-4033-bc17-0ee6acaabc34"
+                },
+                {
+                  "name": "List Web Deploys",
+                  "id": "f530bc32-9b8f-44a4-9b3d-93a3afd9ede9",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/web/v1/deployments?limit=<long>&offset=<long>&search=<string>",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "web",
+                        "v1",
+                        "deployments"
+                      ],
+                      "query": [
+                        {
+                          "description": "(Required) Maximum number of deployments to return",
+                          "key": "limit",
+                          "value": "<long>"
+                        },
+                        {
+                          "description": "(Required) Offset for pagination",
+                          "key": "offset",
+                          "value": "<long>"
+                        },
+                        {
+                          "description": "(Required) Search by deployment ID or domain",
+                          "key": "search",
+                          "value": "<string>"
+                        }
+                      ]
+                    },
+                    "description": "List web deploys."
+                  },
+                  "response": [
+                    {
+                      "id": "d4085960-261e-4112-9b99-eb36f07e92a2",
+                      "name": "List of deployments",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/web/v1/deployments?limit=<long>&offset=<long>&search=<string>",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "web",
+                            "v1",
+                            "deployments"
+                          ],
+                          "query": [
+                            {
+                              "description": "(Required) Maximum number of deployments to return",
+                              "key": "limit",
+                              "value": "<long>"
+                            },
+                            {
+                              "description": "(Required) Offset for pagination",
+                              "key": "offset",
+                              "value": "<long>"
+                            },
+                            {
+                              "description": "(Required) Search by deployment ID or domain",
+                              "key": "search",
+                              "value": "<string>"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"entries\": [\n    {\n      \"deploymentId\": \"<uuid>\",\n      \"accountId\": \"<uuid>\",\n      \"provisionedAt\": \"<dateTime>\",\n      \"timeout\": \"<string>\",\n      \"state\": \"provisioning\",\n      \"domains\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"envVars\": {\n        \"aute0_\": \"<string>\",\n        \"enim_6d\": \"<string>\"\n      },\n      \"deployedAt\": \"<string,null-date-time>\"\n    },\n    {\n      \"deploymentId\": \"<uuid>\",\n      \"accountId\": \"<uuid>\",\n      \"provisionedAt\": \"<dateTime>\",\n      \"timeout\": \"<string>\",\n      \"state\": \"provisioning\",\n      \"domains\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"envVars\": {\n        \"pariatur_b\": \"<string>\",\n        \"tempor4e\": \"<string>\",\n        \"ametc20\": \"<string>\"\n      },\n      \"deployedAt\": \"<string,null-date-time>\"\n    }\n  ],\n  \"total\": \"<long>\",\n  \"offset\": \"<long>\"\n}",
+                      "createdAt": "2026-07-28T01:43:04.000Z",
+                      "updatedAt": "2026-07-28T01:43:04.000Z",
+                      "uid": "35240-d4085960-261e-4112-9b99-eb36f07e92a2"
+                    },
+                    {
+                      "id": "b8db7c0a-2e58-4e54-964c-bfad257e4686",
+                      "name": "Error: Internal",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/web/v1/deployments?limit=<long>&offset=<long>&search=<string>",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "web",
+                            "v1",
+                            "deployments"
+                          ],
+                          "query": [
+                            {
+                              "description": "(Required) Maximum number of deployments to return",
+                              "key": "limit",
+                              "value": "<long>"
+                            },
+                            {
+                              "description": "(Required) Offset for pagination",
+                              "key": "offset",
+                              "value": "<long>"
+                            },
+                            {
+                              "description": "(Required) Search by deployment ID or domain",
+                              "key": "search",
+                              "value": "<string>"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Internal Server Error",
+                      "code": 500,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"error\": \"<string>\",\n  \"message\": \"<string>\"\n}",
+                      "createdAt": "2026-07-28T01:43:04.000Z",
+                      "updatedAt": "2026-07-28T01:43:04.000Z",
+                      "uid": "35240-b8db7c0a-2e58-4e54-964c-bfad257e4686"
+                    }
+                  ],
+                  "createdAt": "2026-07-28T01:43:04.000Z",
+                  "updatedAt": "2026-07-28T01:43:04.000Z",
+                  "uid": "35240-f530bc32-9b8f-44a4-9b3d-93a3afd9ede9"
+                }
+              ],
+              "id": "973f97fe-9c2d-4aa3-b3db-cf161179a1a3",
+              "createdAt": "2026-07-28T01:43:04.000Z",
+              "updatedAt": "2026-07-28T01:43:04.000Z",
+              "uid": "35240-973f97fe-9c2d-4aa3-b3db-cf161179a1a3"
+            }
+          ],
+          "id": "fb45a13d-89bf-49a2-a646-1e016192c3ae",
+          "createdAt": "2026-07-28T01:43:04.000Z",
+          "updatedAt": "2026-07-28T01:43:04.000Z",
+          "uid": "35240-fb45a13d-89bf-49a2-a646-1e016192c3ae"
+        }
+      ],
+      "id": "b640e206-8825-41b4-b9a1-56cee0fc7d1a",
+      "createdAt": "2026-07-28T01:43:04.000Z",
+      "updatedAt": "2026-07-28T01:43:04.000Z",
+      "uid": "35240-b640e206-8825-41b4-b9a1-56cee0fc7d1a"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api.freestyle.sh"
+    }
+  ]
+}

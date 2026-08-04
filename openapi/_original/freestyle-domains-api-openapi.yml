@@ -1,0 +1,1113 @@
+openapi: 3.1.0
+info:
+  title: Freestyle Domains API
+  version: 0.1.0
+  description: Manage custom domains, domain verifications, DNS records, domain mappings, and wildcard SSL certificates for
+    Freestyle Web Deployments and VMs.
+  contact:
+    name: Ben
+    email: ben@freestyle.sh
+  license:
+    name: Closed Source
+servers:
+- url: https://api.freestyle.sh
+  description: Production
+tags:
+- name: Domains
+  description: "APIs for managing domains. This is only relevant when you want to start to deploy to custom domains. \nPlease\
+    \ read [this guide](https://github.com/freestyle-sh/sandbox_sdks/blob/main/docs/custom_domains.md) to understand how deployments\
+    \ work with custom domains."
+- name: DNS
+  description: APIs for managing DNS records.
+- name: Certs
+  description: APIs for managing SSL certificates.
+paths:
+  /dns/v1/records:
+    get:
+      tags:
+      - DNS
+      summary: List DNS Records
+      operationId: handle_list_records
+      parameters:
+      - name: domain
+        in: query
+        required: true
+        schema:
+          type: string
+        example: example.com
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListRecordsResponse'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - message
+                properties:
+                  message:
+                    type: string
+    post:
+      tags:
+      - DNS
+      summary: Create DNS Record
+      operationId: handle_create_record
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRecordParams'
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateRecordResponse'
+        '403':
+          description: 'Possible errors: DomainOwnershipError, RecordOwnershipError, DomainOwnershipVerificationFailed'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                - message
+                properties:
+                  error:
+                    type: string
+                    description: Error code in SCREAMING_SNAKE_CASE
+                  message:
+                    type: string
+                    description: Human-readable error message
+        '500':
+          description: 'Possible errors: ErrorCreatingRecord, ErrorDeletingRecord'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                - message
+                properties:
+                  error:
+                    type: string
+                    description: Error code in SCREAMING_SNAKE_CASE
+                  message:
+                    type: string
+                    description: Human-readable error message
+    delete:
+      tags:
+      - DNS
+      summary: Delete DNS Record
+      operationId: handle_delete_record
+      parameters:
+      - name: domain
+        in: query
+        required: true
+        schema:
+          type: string
+        example: example.com
+      - name: record
+        in: query
+        required: true
+        schema:
+          $ref: '#/components/schemas/DnsRecord'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteRecordResponse'
+        '403':
+          description: 'Possible errors: DomainOwnershipError, RecordOwnershipError, DomainOwnershipVerificationFailed'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                - message
+                properties:
+                  error:
+                    type: string
+                    description: Error code in SCREAMING_SNAKE_CASE
+                  message:
+                    type: string
+                    description: Human-readable error message
+        '500':
+          description: 'Possible errors: ErrorCreatingRecord, ErrorDeletingRecord'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                - message
+                properties:
+                  error:
+                    type: string
+                    description: Error code in SCREAMING_SNAKE_CASE
+                  message:
+                    type: string
+                    description: Human-readable error message
+  /domains/v1/certs/{domain}/wildcard:
+    post:
+      tags:
+      - Certs
+      - Domains
+      summary: Provision a Wildcard Certificate
+      description: 'Provisions a wildcard certificate for a verified domain
+
+
+
+        This speeds up deploys on all subdomains of the domain. In order to use it, you must add the following record to your
+        DNS config:
+
+
+        `_acme-challenge.yourdomain.com` NS `dns.freestyle.sh`'
+      operationId: handle_verify_wildcard
+      parameters:
+      - name: domain
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Domain verified
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - domain
+                properties:
+                  domain:
+                    type: string
+                    example: example.com
+        '400':
+          description: Failed to preverify domain
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - message
+                properties:
+                  message:
+                    type: string
+  /domains/v1/domains:
+    get:
+      tags:
+      - Domains
+      summary: List Domains for an Account
+      description: This lists the domains that an account has verified ownership of. This includes the *.style.dev domains
+        the account has claimed.
+      operationId: handle_list_domains
+      parameters:
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          format: int64
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          format: int64
+      - name: implicitlyOwned
+        in: query
+        required: false
+        schema:
+          type:
+          - boolean
+          - 'null'
+      responses:
+        '200':
+          description: List of domains
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  required:
+                  - domain
+                  - accountId
+                  - createdAt
+                  - id
+                  - verifiedDns
+                  - implicitlyOwned
+                  - deployToDomain
+                  - manageDns
+                  - deployToSubdomains
+                  properties:
+                    domain:
+                      type: string
+                    accountId:
+                      type: string
+                      format: uuid
+                    createdAt:
+                      type: string
+                      format: date-time
+                    id:
+                      type: string
+                      format: uuid
+                    verifiedDns:
+                      type: boolean
+                    implicitlyOwned:
+                      type: boolean
+                    deployToDomain:
+                      type: boolean
+                    manageDns:
+                      type: boolean
+                    deployToSubdomains:
+                      type: boolean
+        '400':
+          description: Failed to get domains
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - message
+                properties:
+                  message:
+                    type: string
+  /domains/v1/mappings:
+    get:
+      tags:
+      - Domains
+      summary: List Domain Mappings
+      description: List domain mappings for any query based on exact domain or domain ownership (the domain ownership that
+        gave the right to use the domain)
+      operationId: handle_list_domain_mappings
+      parameters:
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          format: int64
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          format: int64
+      - name: domainOwnership
+        in: query
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          format: uuid
+      - name: domain
+        in: query
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      responses:
+        '200':
+          description: List of domain mappings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FreestyleSandboxDomainMapping'
+        '401':
+          description: Unauthorized
+  /domains/v1/mappings/{domain}:
+    post:
+      tags:
+      - Domains
+      summary: Insert Domain Mapping
+      description: This will unmap any other deployment to this domain. Provide either deployment_id or vm_id (with optional
+        vm_port), but not both.
+      operationId: handle_insert_domain_mapping
+      parameters:
+      - name: domain
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateDomainMappingRequest'
+        required: true
+      responses:
+        '200':
+          description: Successfully mapped domain to deployment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateDomainMappingSuccess'
+        4XX:
+          description: Client error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Public_DomainMappingError'
+        5XX:
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Public_DomainMappingError'
+    delete:
+      tags:
+      - Domains
+      summary: Remove Domain Mapping
+      operationId: handle_delete_domain_mapping
+      parameters:
+      - name: domain
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successfully deleted domain mapping
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessfullyDeletedDomainMapping'
+        '400':
+          description: 'Possible errors: DomainAlreadyExists, InvalidRequest'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                - message
+                properties:
+                  error:
+                    type: string
+                    description: Error code in SCREAMING_SNAKE_CASE
+                  message:
+                    type: string
+                    description: Human-readable error message
+        '401':
+          description: 'Possible errors: FailedPermissionsCheck, DeploymentAccessDenied, VmAccessDeniedForMapping, DomainOwnershipNotVerified'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                - message
+                properties:
+                  error:
+                    type: string
+                    description: Error code in SCREAMING_SNAKE_CASE
+                  message:
+                    type: string
+                    description: Human-readable error message
+        '422':
+          description: 'Error: FailedToProvisionCertificateForMapping'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                - message
+                properties:
+                  error:
+                    type: string
+                    description: Error code in SCREAMING_SNAKE_CASE
+                  message:
+                    type: string
+                    description: Human-readable error message
+        '500':
+          description: 'Possible errors: FailedRemoveDomainMapping, FailedToInsertOwnership, FailedInsertDomainMapping'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                - message
+                properties:
+                  error:
+                    type: string
+                    description: Error code in SCREAMING_SNAKE_CASE
+                  message:
+                    type: string
+                    description: Human-readable error message
+        '502':
+          description: 'Error: FailedToCheckDomainMappingPermissions'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                - message
+                properties:
+                  error:
+                    type: string
+                    description: Error code in SCREAMING_SNAKE_CASE
+                  message:
+                    type: string
+                    description: Human-readable error message
+  /domains/v1/verifications:
+    get:
+      tags:
+      - Domains
+      summary: List Domain Verification Requests for an Account
+      description: Lists domain verification requests for the current account.
+      operationId: handle_list_domain_verification_requests
+      responses:
+        '200':
+          description: List of verification codes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  required:
+                  - verificationCode
+                  - domain
+                  - createdAt
+                  properties:
+                    verificationCode:
+                      type: string
+                    domain:
+                      type: string
+                    createdAt:
+                      type: string
+                      format: date-time
+        '400':
+          description: Failed to get verification codes
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - message
+                properties:
+                  message:
+                    type: string
+    put:
+      tags:
+      - Domains
+      summary: Verify a Domain Verification Request
+      description: This checks a pre-existing verification request for a domain. To create a verification request, call the
+        [create domain verification](/#tag/domains/POST/domains/v1/verifications) endpoint. This endpoint will check if the
+        domain has a TXT record with the verification code. If it does, the domain will be verified.
+      operationId: handle_verify_domain
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FreestyleVerifyDomainRequest'
+        required: true
+      responses:
+        '200':
+          description: Domain verified
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerifyDomainSuccess'
+        '400':
+          description: 'Possible errors: InvalidDomain, FailedToCreateVerificationCode, FailedToDeleteVerification, VerificationFailed'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                - message
+                properties:
+                  error:
+                    type: string
+                    description: Error code in SCREAMING_SNAKE_CASE
+                  message:
+                    type: string
+                    description: Human-readable error message
+        '401':
+          description: 'Error: PermissionDenied'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                - message
+                properties:
+                  error:
+                    type: string
+                    description: Error code in SCREAMING_SNAKE_CASE
+                  message:
+                    type: string
+                    description: Human-readable error message
+        '403':
+          description: 'Error: LimitExceeded'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                - message
+                properties:
+                  error:
+                    type: string
+                    description: Error code in SCREAMING_SNAKE_CASE
+                  message:
+                    type: string
+                    description: Human-readable error message
+        '404':
+          description: 'Error: VerificationNotFound'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                - message
+                properties:
+                  error:
+                    type: string
+                    description: Error code in SCREAMING_SNAKE_CASE
+                  message:
+                    type: string
+                    description: Human-readable error message
+        '422':
+          description: 'Error: FailedToProvisionCertificate'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                - message
+                properties:
+                  error:
+                    type: string
+                    description: Error code in SCREAMING_SNAKE_CASE
+                  message:
+                    type: string
+                    description: Human-readable error message
+        '500':
+          description: 'Possible errors: FailedToVerifyDomain, FailedToListVerifications, FailedToListDomains, FailedToInsertDomainMapping,
+            InternalError'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                - message
+                properties:
+                  error:
+                    type: string
+                    description: Error code in SCREAMING_SNAKE_CASE
+                  message:
+                    type: string
+                    description: Human-readable error message
+        '502':
+          description: 'Error: FailedToCheckPermissions'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                - message
+                properties:
+                  error:
+                    type: string
+                    description: Error code in SCREAMING_SNAKE_CASE
+                  message:
+                    type: string
+                    description: Human-readable error message
+    post:
+      tags:
+      - Domains
+      summary: Create a Domain Verification Request
+      description: This creates a Freestyle Domain Verification Request. It returns a `verificationCode` for your domain.
+        You need to place this code in a TXT record at `_freestyle_custom_hostname.thedomain.com`, then call the [verify domain](/#tag/domains/PUT/domains/v1/verifications)
+        endpoint with the domain to verify it.
+      operationId: handle_create_domain_verification
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FreestyleDomainVerificationRequest'
+        required: true
+      responses:
+        '200':
+          description: Verification code created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DomainVerificationRequest'
+        '400':
+          description: Failed to create verification code
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - message
+                properties:
+                  message:
+                    type: string
+    delete:
+      tags:
+      - Domains
+      summary: Delete a Domain Verification Request
+      description: This deletes a Freestyle Domain Verification Request. This does not remove the domain from the account
+        if it has already been verified, however the verification code will no longer be valid.
+      operationId: handle_delete_domain_verification
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FreestyleDeleteDomainVerificationRequest'
+        required: true
+      responses:
+        '200':
+          description: Verification code created
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - verificationCode
+                - domain
+                properties:
+                  verificationCode:
+                    type: string
+                  domain:
+                    type: string
+                    example: example.com
+        '400':
+          description: Failed to create verification code
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - message
+                properties:
+                  message:
+                    type: string
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    DnsRecordData:
+      type: object
+      required:
+      - kind
+      - name
+      - value
+      properties:
+        kind:
+          $ref: '#/components/schemas/DnsRecordKind'
+        name:
+          type: string
+        value:
+          type: string
+        ttl:
+          type:
+          - string
+          - 'null'
+        priority:
+          type:
+          - integer
+          - 'null'
+          format: int32
+          minimum: 0
+    FreestyleDomainVerificationRequest:
+      type: object
+      required:
+      - domain
+      properties:
+        domain:
+          type: string
+          description: The domain to create a verification code for
+          example: example.com
+    DeleteRecordResponse:
+      type: object
+      required:
+      - message
+      properties:
+        message:
+          type: string
+    Error_DomainMappingError:
+      type: object
+      description: 'The structure of an error - should rarely be interacted with directly.
+
+
+        Create your own error types, implement [`ServiceError`] for them, and they will automatically
+
+        convert to [`Error`] with `?` or `.into()`.'
+      required:
+      - error
+      properties:
+        error:
+          oneOf:
+          - type: object
+            required:
+            - FailedToCheckDomainMappingPermissions
+            properties:
+              FailedToCheckDomainMappingPermissions:
+                type: object
+                required:
+                - message
+                properties:
+                  message:
+                    type: string
+          - type: object
+            required:
+            - FailedPermissionsCheck
+            properties:
+              FailedPermissionsCheck:
+                type: object
+                required:
+                - domain
+                properties:
+                  domain:
+                    type: string
+          - type: object
+            required:
+            - FailedRemoveDomainMapping
+            properties:
+              FailedRemoveDomainMapping:
+                type: object
+                required:
+                - message
+                properties:
+                  message:
+                    type: string
+          - type: object
+            required:
+            - FailedToInsertOwnership
+            properties:
+              FailedToInsertOwnership:
+                type: object
+                required:
+                - message
+                properties:
+                  message:
+                    type: string
+          - type: object
+            required:
+            - DomainAlreadyExists
+            properties:
+              DomainAlreadyExists:
+                type: object
+                required:
+                - domain
+                properties:
+                  domain:
+                    type: string
+          - type: object
+            required:
+            - InvalidRequest
+            properties:
+              InvalidRequest:
+                type: object
+                required:
+                - message
+                properties:
+                  message:
+                    type: string
+          - type: object
+            required:
+            - FailedInsertDomainMapping
+            properties:
+              FailedInsertDomainMapping:
+                type: object
+                required:
+                - message
+                properties:
+                  message:
+                    type: string
+          - type: object
+            required:
+            - FailedToProvisionCertificateForMapping
+            properties:
+              FailedToProvisionCertificateForMapping:
+                type: object
+                required:
+                - message
+                properties:
+                  message:
+                    type: string
+          - type: object
+            required:
+            - DeploymentAccessDenied
+            properties:
+              DeploymentAccessDenied:
+                type: object
+                required:
+                - deployment_id
+                properties:
+                  deployment_id:
+                    type: string
+          - type: object
+            required:
+            - VmAccessDeniedForMapping
+            properties:
+              VmAccessDeniedForMapping:
+                type: object
+                required:
+                - vm_id
+                properties:
+                  vm_id:
+                    type: string
+          - type: object
+            required:
+            - DomainOwnershipNotVerified
+            properties:
+              DomainOwnershipNotVerified:
+                type: object
+                required:
+                - domain
+                properties:
+                  domain:
+                    type: string
+        headers:
+          type:
+          - object
+          - 'null'
+          additionalProperties:
+            type: string
+          propertyNames:
+            type: string
+        context:
+          type:
+          - object
+          - 'null'
+          additionalProperties: {}
+          propertyNames:
+            type: string
+    FreestyleSandboxDomainMapping:
+      type: object
+      required:
+      - id
+      - domain
+      - ownershipId
+      - createdAt
+      properties:
+        id:
+          type: string
+          format: uuid
+        domain:
+          type: string
+        deploymentId:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/DeploymentId'
+        vmId:
+          type:
+          - string
+          - 'null'
+        vmPort:
+          type:
+          - integer
+          - 'null'
+          format: int32
+        ownershipId:
+          type: string
+          format: uuid
+        createdAt:
+          type: string
+          format: date-time
+        unmappedAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+    CreateRecordResponse:
+      type: object
+      required:
+      - record
+      properties:
+        record:
+          $ref: '#/components/schemas/DnsRecord'
+    CreateDomainMappingRequest:
+      type: object
+      properties:
+        deploymentId:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/DeploymentId'
+        vmId:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/VmId'
+        vmPort:
+          type:
+          - integer
+          - 'null'
+          format: int32
+    Public_DomainMappingError:
+      $ref: '#/components/schemas/Error_DomainMappingError'
+      description: 'Public API error wrapper. Mark public APIs with `Public<T>` to ensure private error
+
+        details aren''t exposed.'
+    DomainVerificationRequest:
+      type: object
+      required:
+      - id
+      - domain
+      - accountId
+      - verificationCode
+      - createdAt
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 1234-5678-9012-3456
+        domain:
+          type: string
+          example: example.com
+        accountId:
+          type: string
+          format: uuid
+          example: 1234-5678-9012-3456
+        verificationCode:
+          type: string
+          example: freestyle-verification-v1-1234-5678-9012-3456
+        createdAt:
+          type: string
+          format: date-time
+          example: '1234567890'
+    SuccessfullyDeletedDomainMapping:
+      type: object
+    CreateDomainMappingSuccess:
+      $ref: '#/components/schemas/FreestyleSandboxDomainMapping'
+    DnsRecord:
+      type: object
+      required:
+      - kind
+      - name
+      - value
+      - ttl
+      - managed
+      properties:
+        kind:
+          $ref: '#/components/schemas/DnsRecordKind'
+        name:
+          type: string
+        value:
+          type: string
+        ttl:
+          type: string
+        priority:
+          type:
+          - integer
+          - 'null'
+          format: int32
+          minimum: 0
+        managed:
+          type: boolean
+    FreestyleDeleteDomainVerificationRequest:
+      type: object
+      required:
+      - domain
+      - verificationCode
+      properties:
+        domain:
+          type: string
+          description: The domain to create a verification code for
+          example: example.com
+        verificationCode:
+          type: string
+          description: The verification code
+    VerifyDomainSuccess:
+      type: object
+      required:
+      - domain
+      properties:
+        domain:
+          type: string
+    DnsRecordKind:
+      type: string
+      enum:
+      - A
+      - AAAA
+      - CNAME
+      - TXT
+      - NS
+    VmId:
+      type: string
+      description: "VM ID \u2014 always 20 alphanumeric lowercase characters.\nNew IDs are fully random. Legacy short IDs\
+        \ are right-padded with '0' on parse."
+    CreateRecordParams:
+      type: object
+      required:
+      - domain
+      - record
+      properties:
+        domain:
+          type: string
+        record:
+          $ref: '#/components/schemas/DnsRecordData'
+    FreestyleVerifyDomainRequest:
+      oneOf:
+      - type: object
+        required:
+        - domain
+        properties:
+          domain:
+            type: string
+            example: example.com
+      - type: object
+        required:
+        - id
+        properties:
+          id:
+            type: string
+            format: uuid
+            example: 1234-5678-9012-3456
+      description: Verify a domain verification request, can either be done for a domain, or for a specific request
+    DeploymentId:
+      type: string
+      format: uuid
+    ListRecordsResponse:
+      type: object
+      required:
+      - records
+      properties:
+        records:
+          type: array
+          items:
+            $ref: '#/components/schemas/DnsRecord'
+security:
+- bearerAuth: []

@@ -1,0 +1,258 @@
+{
+  "info": {
+    "_postman_id": "8d7ab0ab-c124-4501-b722-29713be74e26",
+    "name": "Freestyle Cron Auth Observability API",
+    "description": "Schedule recurring serverless runs \u2014 create/update/delete cron schedules and inspect executions, success rate, and metrics timeline.\n\nContact Support:\n Name: Ben\n Email: ben@freestyle.sh",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "createdAt": "2026-07-28T01:43:00.000Z",
+    "updatedAt": "2026-07-28T01:43:00.000Z",
+    "lastUpdatedBy": "35240",
+    "uid": "35240-8d7ab0ab-c124-4501-b722-29713be74e26"
+  },
+  "item": [
+    {
+      "name": "observability",
+      "item": [
+        {
+          "name": "v1",
+          "item": [
+            {
+              "name": "logs",
+              "item": [
+                {
+                  "name": "Logs",
+                  "id": "afb1c252-7cce-4aa3-990c-90c863110acb",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/observability/v1/logs?deploymentId=<string,null>&requestId=<null>&buildId=<null>&instanceId=<null>&domain=<string,null>&vmId=<null>&runId=<string,null>&vmService=<string,null>&pageToken=<string,null>&pageSize=<integer,null>&startTime=<string,null>&endTime=<string,null>&search=<string,null>&resourceType=<string,null>",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "observability",
+                        "v1",
+                        "logs"
+                      ],
+                      "query": [
+                        {
+                          "key": "deploymentId",
+                          "value": "<string,null>"
+                        },
+                        {
+                          "key": "requestId",
+                          "value": "<null>"
+                        },
+                        {
+                          "key": "buildId",
+                          "value": "<null>"
+                        },
+                        {
+                          "key": "instanceId",
+                          "value": "<null>"
+                        },
+                        {
+                          "key": "domain",
+                          "value": "<string,null>"
+                        },
+                        {
+                          "key": "vmId",
+                          "value": "<null>"
+                        },
+                        {
+                          "key": "runId",
+                          "value": "<string,null>"
+                        },
+                        {
+                          "key": "vmService",
+                          "value": "<string,null>"
+                        },
+                        {
+                          "key": "pageToken",
+                          "value": "<string,null>"
+                        },
+                        {
+                          "key": "pageSize",
+                          "value": "<integer,null>"
+                        },
+                        {
+                          "description": "Start time in RFC3339 format (e.g., \"2024-01-01T00:00:00Z\"). Defaults to 24 hours ago if not specified.",
+                          "key": "startTime",
+                          "value": "<string,null>"
+                        },
+                        {
+                          "description": "End time in RFC3339 format (e.g., \"2024-01-02T00:00:00Z\"). Defaults to now if not specified.",
+                          "key": "endTime",
+                          "value": "<string,null>"
+                        },
+                        {
+                          "description": "Full-text search filter \u2014 case-insensitive substring match on log message body.",
+                          "key": "search",
+                          "value": "<string,null>"
+                        },
+                        {
+                          "description": "Filter logs by resource type: \"deployment\" or \"vm\". Only applies to account-wide queries.",
+                          "key": "resourceType",
+                          "value": "<string,null>"
+                        }
+                      ]
+                    },
+                    "description": "Get logs for a deployment, domain, VM, or background request"
+                  },
+                  "response": [
+                    {
+                      "id": "6afbfcd0-c9b2-49f6-b16b-ef9cc293a200",
+                      "name": "New Response",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/observability/v1/logs?deploymentId=<string,null>&requestId=<null>&buildId=<null>&instanceId=<null>&domain=<string,null>&vmId=<null>&runId=<string,null>&vmService=<string,null>&pageToken=<string,null>&pageSize=<integer,null>&startTime=<string,null>&endTime=<string,null>&search=<string,null>&resourceType=<string,null>",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "observability",
+                            "v1",
+                            "logs"
+                          ],
+                          "query": [
+                            {
+                              "key": "deploymentId",
+                              "value": "<string,null>"
+                            },
+                            {
+                              "key": "requestId",
+                              "value": "<null>"
+                            },
+                            {
+                              "key": "buildId",
+                              "value": "<null>"
+                            },
+                            {
+                              "key": "instanceId",
+                              "value": "<null>"
+                            },
+                            {
+                              "key": "domain",
+                              "value": "<string,null>"
+                            },
+                            {
+                              "key": "vmId",
+                              "value": "<null>"
+                            },
+                            {
+                              "key": "runId",
+                              "value": "<string,null>"
+                            },
+                            {
+                              "key": "vmService",
+                              "value": "<string,null>"
+                            },
+                            {
+                              "key": "pageToken",
+                              "value": "<string,null>"
+                            },
+                            {
+                              "key": "pageSize",
+                              "value": "<integer,null>"
+                            },
+                            {
+                              "description": "Start time in RFC3339 format (e.g., \"2024-01-01T00:00:00Z\"). Defaults to 24 hours ago if not specified.",
+                              "key": "startTime",
+                              "value": "<string,null>"
+                            },
+                            {
+                              "description": "End time in RFC3339 format (e.g., \"2024-01-02T00:00:00Z\"). Defaults to now if not specified.",
+                              "key": "endTime",
+                              "value": "<string,null>"
+                            },
+                            {
+                              "description": "Full-text search filter \u2014 case-insensitive substring match on log message body.",
+                              "key": "search",
+                              "value": "<string,null>"
+                            },
+                            {
+                              "description": "Filter logs by resource type: \"deployment\" or \"vm\". Only applies to account-wide queries.",
+                              "key": "resourceType",
+                              "value": "<string,null>"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"logs\": [\n    {\n      \"message\": \"<string>\",\n      \"timestamp\": \"<string>\",\n      \"source\": \"<string,null>\",\n      \"resourceType\": \"<string,null>\",\n      \"origin\": \"<string,null>\",\n      \"resourceId\": \"<string,null>\",\n      \"instanceId\": \"<null>\",\n      \"level\": \"<string,null>\",\n      \"vmService\": \"<string,null>\",\n      \"buildId\": \"<null>\"\n    },\n    {\n      \"message\": \"<string>\",\n      \"timestamp\": \"<string>\",\n      \"source\": \"<string,null>\",\n      \"resourceType\": \"<string,null>\",\n      \"origin\": \"<string,null>\",\n      \"resourceId\": \"<string,null>\",\n      \"instanceId\": \"<null>\",\n      \"level\": \"<string,null>\",\n      \"vmService\": \"<string,null>\",\n      \"buildId\": \"<null>\"\n    }\n  ],\n  \"nextPageToken\": \"<string,null>\"\n}",
+                      "createdAt": "2026-07-28T01:43:01.000Z",
+                      "updatedAt": "2026-07-28T01:43:01.000Z",
+                      "uid": "35240-6afbfcd0-c9b2-49f6-b16b-ef9cc293a200"
+                    }
+                  ],
+                  "createdAt": "2026-07-28T01:43:01.000Z",
+                  "updatedAt": "2026-07-28T01:43:01.000Z",
+                  "uid": "35240-afb1c252-7cce-4aa3-990c-90c863110acb"
+                }
+              ],
+              "id": "6c8cae23-de04-4a9e-a995-f6ad14ed5711",
+              "createdAt": "2026-07-28T01:43:01.000Z",
+              "updatedAt": "2026-07-28T01:43:01.000Z",
+              "uid": "35240-6c8cae23-de04-4a9e-a995-f6ad14ed5711"
+            }
+          ],
+          "id": "c7648898-d79c-49ee-a909-0fd5d4007404",
+          "createdAt": "2026-07-28T01:43:01.000Z",
+          "updatedAt": "2026-07-28T01:43:01.000Z",
+          "uid": "35240-c7648898-d79c-49ee-a909-0fd5d4007404"
+        }
+      ],
+      "id": "2b144a8c-f940-4e88-ac44-6f7f266eeecb",
+      "createdAt": "2026-07-28T01:43:01.000Z",
+      "updatedAt": "2026-07-28T01:43:01.000Z",
+      "uid": "35240-2b144a8c-f940-4e88-ac44-6f7f266eeecb"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api.freestyle.sh"
+    }
+  ]
+}

@@ -1,0 +1,335 @@
+{
+  "info": {
+    "_postman_id": "ff634c9c-da0d-468b-8448-e04b10896348",
+    "name": "Freestyle Cron Auth API",
+    "description": "Schedule recurring serverless runs \u2014 create/update/delete cron schedules and inspect executions, success rate, and metrics timeline.\n\nContact Support:\n Name: Ben\n Email: ben@freestyle.sh",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "createdAt": "2026-07-28T01:42:43.000Z",
+    "updatedAt": "2026-07-28T01:42:44.000Z",
+    "lastUpdatedBy": "35240",
+    "uid": "35240-ff634c9c-da0d-468b-8448-e04b10896348"
+  },
+  "item": [
+    {
+      "name": "auth",
+      "item": [
+        {
+          "name": "v1",
+          "item": [
+            {
+              "name": "background-requests",
+              "item": [
+                {
+                  "name": "{request_id}",
+                  "item": [
+                    {
+                      "name": "Get Background Request Result",
+                      "id": "3483a941-e80b-4208-9850-150d09428675",
+                      "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                      },
+                      "request": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/auth/v1/background-requests/:request_id",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "auth",
+                            "v1",
+                            "background-requests",
+                            ":request_id"
+                          ],
+                          "variable": [
+                            {
+                              "id": "e8fd68c8-f8ac-4f6f-ac9b-58ad28dedb98",
+                              "key": "request_id",
+                              "value": "<string>",
+                              "description": "(Required) Background request ID"
+                            }
+                          ]
+                        },
+                        "description": "Replay the stored response for a backgrounded request when it finishes."
+                      },
+                      "response": [
+                        {
+                          "id": "6e6882de-9c02-47a3-ad41-f49056b12739",
+                          "name": "Completed request response replayed",
+                          "originalRequest": {
+                            "method": "GET",
+                            "header": [
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "url": {
+                              "raw": "{{baseUrl}}/auth/v1/background-requests/:request_id",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "auth",
+                                "v1",
+                                "background-requests",
+                                ":request_id"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "request_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "OK",
+                          "code": 200,
+                          "_postman_previewlanguage": "text",
+                          "header": [],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": null,
+                          "createdAt": "2026-07-28T01:42:44.000Z",
+                          "updatedAt": "2026-07-28T01:42:44.000Z",
+                          "uid": "35240-6e6882de-9c02-47a3-ad41-f49056b12739"
+                        },
+                        {
+                          "id": "4aa1eade-1695-4b85-bb0a-7cff47e7db48",
+                          "name": "Background request still running",
+                          "originalRequest": {
+                            "method": "GET",
+                            "header": [
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "url": {
+                              "raw": "{{baseUrl}}/auth/v1/background-requests/:request_id",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "auth",
+                                "v1",
+                                "background-requests",
+                                ":request_id"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "request_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Accepted",
+                          "code": 202,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"requestId\": \"<string>\",\n  \"status\": \"<string>\"\n}",
+                          "createdAt": "2026-07-28T01:42:44.000Z",
+                          "updatedAt": "2026-07-28T01:42:44.000Z",
+                          "uid": "35240-4aa1eade-1695-4b85-bb0a-7cff47e7db48"
+                        },
+                        {
+                          "id": "efddd02b-58b3-4e65-abae-cb869506b5c5",
+                          "name": "Background request not found or expired",
+                          "originalRequest": {
+                            "method": "GET",
+                            "header": [
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "url": {
+                              "raw": "{{baseUrl}}/auth/v1/background-requests/:request_id",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "auth",
+                                "v1",
+                                "background-requests",
+                                ":request_id"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "request_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Not Found",
+                          "code": 404,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"message\": \"<string>\"\n}",
+                          "createdAt": "2026-07-28T01:42:44.000Z",
+                          "updatedAt": "2026-07-28T01:42:44.000Z",
+                          "uid": "35240-efddd02b-58b3-4e65-abae-cb869506b5c5"
+                        }
+                      ],
+                      "createdAt": "2026-07-28T01:42:44.000Z",
+                      "updatedAt": "2026-07-28T01:42:44.000Z",
+                      "uid": "35240-3483a941-e80b-4208-9850-150d09428675"
+                    }
+                  ],
+                  "id": "da86f1f1-ea9b-4ee3-9e2e-d579b5f641b2",
+                  "createdAt": "2026-07-28T01:42:44.000Z",
+                  "updatedAt": "2026-07-28T01:42:44.000Z",
+                  "uid": "35240-da86f1f1-ea9b-4ee3-9e2e-d579b5f641b2"
+                }
+              ],
+              "id": "e0776ff9-49ef-49ef-a9e2-2cf89ceeb228",
+              "createdAt": "2026-07-28T01:42:44.000Z",
+              "updatedAt": "2026-07-28T01:42:44.000Z",
+              "uid": "35240-e0776ff9-49ef-49ef-a9e2-2cf89ceeb228"
+            },
+            {
+              "name": "whoami",
+              "item": [
+                {
+                  "name": "Get Current User",
+                  "id": "7f961fac-8542-41e7-a05a-8e356564831d",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/auth/v1/whoami",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "auth",
+                        "v1",
+                        "whoami"
+                      ]
+                    },
+                    "description": "Returns information about the currently authenticated user or identity."
+                  },
+                  "response": [
+                    {
+                      "id": "7ee52992-e303-4013-95fe-c115f21cc826",
+                      "name": "Current authenticated user information",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/auth/v1/whoami",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "auth",
+                            "v1",
+                            "whoami"
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"accountId\": \"<uuid>\",\n  \"identityId\": \"<string,null-uuid>\"\n}",
+                      "createdAt": "2026-07-28T01:42:44.000Z",
+                      "updatedAt": "2026-07-28T01:42:44.000Z",
+                      "uid": "35240-7ee52992-e303-4013-95fe-c115f21cc826"
+                    }
+                  ],
+                  "createdAt": "2026-07-28T01:42:44.000Z",
+                  "updatedAt": "2026-07-28T01:42:44.000Z",
+                  "uid": "35240-7f961fac-8542-41e7-a05a-8e356564831d"
+                }
+              ],
+              "id": "6b1e8003-24c4-4763-83a8-ca907a0748e1",
+              "createdAt": "2026-07-28T01:42:44.000Z",
+              "updatedAt": "2026-07-28T01:42:44.000Z",
+              "uid": "35240-6b1e8003-24c4-4763-83a8-ca907a0748e1"
+            }
+          ],
+          "id": "5ed48814-7050-4979-aade-af6e23f918e5",
+          "createdAt": "2026-07-28T01:42:44.000Z",
+          "updatedAt": "2026-07-28T01:42:44.000Z",
+          "uid": "35240-5ed48814-7050-4979-aade-af6e23f918e5"
+        }
+      ],
+      "id": "11c35a6d-e9d4-45c1-95a4-ff77f9d1f01c",
+      "createdAt": "2026-07-28T01:42:44.000Z",
+      "updatedAt": "2026-07-28T01:42:44.000Z",
+      "uid": "35240-11c35a6d-e9d4-45c1-95a4-ff77f9d1f01c"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api.freestyle.sh"
+    }
+  ]
+}

@@ -1,0 +1,1900 @@
+{
+  "info": {
+    "_postman_id": "8d8a28cf-7768-4e49-84a1-b9e6b6306926",
+    "name": "Freestyle Cron Auth Identity API",
+    "description": "Schedule recurring serverless runs \u2014 create/update/delete cron schedules and inspect executions, success rate, and metrics timeline.\n\nContact Support:\n Name: Ben\n Email: ben@freestyle.sh",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "createdAt": "2026-07-28T01:42:59.000Z",
+    "updatedAt": "2026-07-28T01:42:59.000Z",
+    "lastUpdatedBy": "35240",
+    "uid": "35240-8d8a28cf-7768-4e49-84a1-b9e6b6306926"
+  },
+  "item": [
+    {
+      "name": "identity",
+      "item": [
+        {
+          "name": "v1",
+          "item": [
+            {
+              "name": "identities",
+              "item": [
+                {
+                  "name": "{identity}",
+                  "item": [
+                    {
+                      "name": "permissions",
+                      "item": [
+                        {
+                          "name": "git",
+                          "item": [
+                            {
+                              "name": "{repo}",
+                              "item": [
+                                {
+                                  "name": "Get the Git Permission of an Identity on a Repository",
+                                  "id": "f53f2b8e-1ddd-4f08-8f56-be7551516db5",
+                                  "protocolProfileBehavior": {
+                                    "disableBodyPruning": true
+                                  },
+                                  "request": {
+                                    "method": "GET",
+                                    "header": [
+                                      {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                      }
+                                    ],
+                                    "url": {
+                                      "raw": "{{baseUrl}}/identity/v1/identities/:identity/permissions/git/:repo",
+                                      "host": [
+                                        "{{baseUrl}}"
+                                      ],
+                                      "path": [
+                                        "identity",
+                                        "v1",
+                                        "identities",
+                                        ":identity",
+                                        "permissions",
+                                        "git",
+                                        ":repo"
+                                      ],
+                                      "variable": [
+                                        {
+                                          "id": "48de9f53-b003-4045-92ee-249b4198693d",
+                                          "key": "identity",
+                                          "value": "<uuid>",
+                                          "description": "(Required) The git identity ID"
+                                        },
+                                        {
+                                          "id": "5503d21c-34a7-4c9f-858c-0ce388312063",
+                                          "key": "repo",
+                                          "value": "<uuid>",
+                                          "description": "(Required) The git repository ID"
+                                        }
+                                      ]
+                                    },
+                                    "description": "Get the permission of an identity on a repository. This will return the access level of the identity on the repository."
+                                  },
+                                  "response": [
+                                    {
+                                      "id": "fccb127f-1fc9-4efb-8f60-16afd07c6c0c",
+                                      "name": "Permission info",
+                                      "originalRequest": {
+                                        "method": "GET",
+                                        "header": [
+                                          {
+                                            "key": "Accept",
+                                            "value": "application/json"
+                                          },
+                                          {
+                                            "description": "Added as a part of security scheme: bearer",
+                                            "key": "Authorization",
+                                            "value": "Bearer <token>"
+                                          }
+                                        ],
+                                        "url": {
+                                          "raw": "{{baseUrl}}/identity/v1/identities/:identity/permissions/git/:repo",
+                                          "host": [
+                                            "{{baseUrl}}"
+                                          ],
+                                          "path": [
+                                            "identity",
+                                            "v1",
+                                            "identities",
+                                            ":identity",
+                                            "permissions",
+                                            "git",
+                                            ":repo"
+                                          ],
+                                          "variable": [
+                                            {
+                                              "key": "identity"
+                                            },
+                                            {
+                                              "key": "repo"
+                                            }
+                                          ]
+                                        }
+                                      },
+                                      "status": "OK",
+                                      "code": 200,
+                                      "_postman_previewlanguage": "json",
+                                      "header": [
+                                        {
+                                          "key": "Content-Type",
+                                          "value": "application/json"
+                                        }
+                                      ],
+                                      "cookie": [],
+                                      "responseTime": null,
+                                      "body": "{\n  \"identity\": \"<uuid>\",\n  \"repo\": \"<uuid>\",\n  \"accessLevel\": \"<null>\"\n}",
+                                      "createdAt": "2026-07-28T01:43:00.000Z",
+                                      "updatedAt": "2026-07-28T01:43:00.000Z",
+                                      "uid": "35240-fccb127f-1fc9-4efb-8f60-16afd07c6c0c"
+                                    }
+                                  ],
+                                  "createdAt": "2026-07-28T01:43:00.000Z",
+                                  "updatedAt": "2026-07-28T01:43:00.000Z",
+                                  "uid": "35240-f53f2b8e-1ddd-4f08-8f56-be7551516db5"
+                                },
+                                {
+                                  "name": "Update a Git Repository Permission for an Identity",
+                                  "id": "f0c19e5b-7b79-4943-881c-62a0a1de172f",
+                                  "protocolProfileBehavior": {
+                                    "disableBodyPruning": true
+                                  },
+                                  "request": {
+                                    "method": "PUT",
+                                    "header": [
+                                      {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                      },
+                                      {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                      }
+                                    ],
+                                    "body": {
+                                      "mode": "raw",
+                                      "raw": "{\n  \"permission\": \"write\"\n}",
+                                      "options": {
+                                        "raw": {
+                                          "headerFamily": "json",
+                                          "language": "json"
+                                        }
+                                      }
+                                    },
+                                    "url": {
+                                      "raw": "{{baseUrl}}/identity/v1/identities/:identity/permissions/git/:repo",
+                                      "host": [
+                                        "{{baseUrl}}"
+                                      ],
+                                      "path": [
+                                        "identity",
+                                        "v1",
+                                        "identities",
+                                        ":identity",
+                                        "permissions",
+                                        "git",
+                                        ":repo"
+                                      ],
+                                      "variable": [
+                                        {
+                                          "id": "b418d58a-e626-46f3-b1b2-e7d997545a1b",
+                                          "key": "identity",
+                                          "value": "<uuid>",
+                                          "description": "(Required) The git identity ID"
+                                        },
+                                        {
+                                          "id": "5a169c8d-f4c9-4cc2-aa21-5b898f57b789",
+                                          "key": "repo",
+                                          "value": "<uuid>",
+                                          "description": "(Required) The git repository ID"
+                                        }
+                                      ]
+                                    },
+                                    "description": "Update a permission for an identity on a repository"
+                                  },
+                                  "response": [
+                                    {
+                                      "id": "6d75c88c-37bd-4c18-a512-83afe611b772",
+                                      "name": "Permission updated successfully",
+                                      "originalRequest": {
+                                        "method": "PUT",
+                                        "header": [
+                                          {
+                                            "key": "Content-Type",
+                                            "value": "application/json"
+                                          },
+                                          {
+                                            "key": "Accept",
+                                            "value": "application/json"
+                                          },
+                                          {
+                                            "description": "Added as a part of security scheme: bearer",
+                                            "key": "Authorization",
+                                            "value": "Bearer <token>"
+                                          }
+                                        ],
+                                        "body": {
+                                          "mode": "raw",
+                                          "raw": "{\n  \"permission\": \"write\"\n}",
+                                          "options": {
+                                            "raw": {
+                                              "headerFamily": "json",
+                                              "language": "json"
+                                            }
+                                          }
+                                        },
+                                        "url": {
+                                          "raw": "{{baseUrl}}/identity/v1/identities/:identity/permissions/git/:repo",
+                                          "host": [
+                                            "{{baseUrl}}"
+                                          ],
+                                          "path": [
+                                            "identity",
+                                            "v1",
+                                            "identities",
+                                            ":identity",
+                                            "permissions",
+                                            "git",
+                                            ":repo"
+                                          ],
+                                          "variable": [
+                                            {
+                                              "key": "identity"
+                                            },
+                                            {
+                                              "key": "repo"
+                                            }
+                                          ]
+                                        }
+                                      },
+                                      "status": "OK",
+                                      "code": 200,
+                                      "_postman_previewlanguage": "json",
+                                      "header": [
+                                        {
+                                          "key": "Content-Type",
+                                          "value": "application/json"
+                                        }
+                                      ],
+                                      "cookie": [],
+                                      "responseTime": null,
+                                      "body": "{}",
+                                      "createdAt": "2026-07-28T01:43:00.000Z",
+                                      "updatedAt": "2026-07-28T01:43:00.000Z",
+                                      "uid": "35240-6d75c88c-37bd-4c18-a512-83afe611b772"
+                                    }
+                                  ],
+                                  "createdAt": "2026-07-28T01:43:00.000Z",
+                                  "updatedAt": "2026-07-28T01:43:00.000Z",
+                                  "uid": "35240-f0c19e5b-7b79-4943-881c-62a0a1de172f"
+                                },
+                                {
+                                  "name": "Grant a Git Repository Permission to an Identity",
+                                  "id": "63ff9824-7cce-48f6-a392-2b4c5cc17421",
+                                  "protocolProfileBehavior": {
+                                    "disableBodyPruning": true
+                                  },
+                                  "request": {
+                                    "method": "POST",
+                                    "header": [
+                                      {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                      },
+                                      {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                      }
+                                    ],
+                                    "body": {
+                                      "mode": "raw",
+                                      "raw": "{\n  \"permission\": \"write\"\n}",
+                                      "options": {
+                                        "raw": {
+                                          "headerFamily": "json",
+                                          "language": "json"
+                                        }
+                                      }
+                                    },
+                                    "url": {
+                                      "raw": "{{baseUrl}}/identity/v1/identities/:identity/permissions/git/:repo",
+                                      "host": [
+                                        "{{baseUrl}}"
+                                      ],
+                                      "path": [
+                                        "identity",
+                                        "v1",
+                                        "identities",
+                                        ":identity",
+                                        "permissions",
+                                        "git",
+                                        ":repo"
+                                      ],
+                                      "variable": [
+                                        {
+                                          "id": "1220afd0-9567-4c46-a246-fb511e036a89",
+                                          "key": "identity",
+                                          "value": "<uuid>",
+                                          "description": "(Required) The git identity ID"
+                                        },
+                                        {
+                                          "id": "48e93420-9513-4d60-bd6a-c26b58518553",
+                                          "key": "repo",
+                                          "value": "<uuid>",
+                                          "description": "(Required) The git repository ID"
+                                        }
+                                      ]
+                                    },
+                                    "description": "Grant a permission to an identity on a repository"
+                                  },
+                                  "response": [
+                                    {
+                                      "id": "4f334506-212d-4b87-8480-45504ad33450",
+                                      "name": "Permission granted successfully",
+                                      "originalRequest": {
+                                        "method": "POST",
+                                        "header": [
+                                          {
+                                            "key": "Content-Type",
+                                            "value": "application/json"
+                                          },
+                                          {
+                                            "key": "Accept",
+                                            "value": "application/json"
+                                          },
+                                          {
+                                            "description": "Added as a part of security scheme: bearer",
+                                            "key": "Authorization",
+                                            "value": "Bearer <token>"
+                                          }
+                                        ],
+                                        "body": {
+                                          "mode": "raw",
+                                          "raw": "{\n  \"permission\": \"write\"\n}",
+                                          "options": {
+                                            "raw": {
+                                              "headerFamily": "json",
+                                              "language": "json"
+                                            }
+                                          }
+                                        },
+                                        "url": {
+                                          "raw": "{{baseUrl}}/identity/v1/identities/:identity/permissions/git/:repo",
+                                          "host": [
+                                            "{{baseUrl}}"
+                                          ],
+                                          "path": [
+                                            "identity",
+                                            "v1",
+                                            "identities",
+                                            ":identity",
+                                            "permissions",
+                                            "git",
+                                            ":repo"
+                                          ],
+                                          "variable": [
+                                            {
+                                              "key": "identity"
+                                            },
+                                            {
+                                              "key": "repo"
+                                            }
+                                          ]
+                                        }
+                                      },
+                                      "status": "OK",
+                                      "code": 200,
+                                      "_postman_previewlanguage": "json",
+                                      "header": [
+                                        {
+                                          "key": "Content-Type",
+                                          "value": "application/json"
+                                        }
+                                      ],
+                                      "cookie": [],
+                                      "responseTime": null,
+                                      "body": "{}",
+                                      "createdAt": "2026-07-28T01:43:00.000Z",
+                                      "updatedAt": "2026-07-28T01:43:00.000Z",
+                                      "uid": "35240-4f334506-212d-4b87-8480-45504ad33450"
+                                    }
+                                  ],
+                                  "createdAt": "2026-07-28T01:43:00.000Z",
+                                  "updatedAt": "2026-07-28T01:43:00.000Z",
+                                  "uid": "35240-63ff9824-7cce-48f6-a392-2b4c5cc17421"
+                                },
+                                {
+                                  "name": "Revoke Git Repository Permission From an Identity",
+                                  "id": "29625313-bd7e-483b-b0d1-0078c793fe05",
+                                  "protocolProfileBehavior": {
+                                    "disableBodyPruning": true
+                                  },
+                                  "request": {
+                                    "method": "DELETE",
+                                    "header": [
+                                      {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                      }
+                                    ],
+                                    "url": {
+                                      "raw": "{{baseUrl}}/identity/v1/identities/:identity/permissions/git/:repo",
+                                      "host": [
+                                        "{{baseUrl}}"
+                                      ],
+                                      "path": [
+                                        "identity",
+                                        "v1",
+                                        "identities",
+                                        ":identity",
+                                        "permissions",
+                                        "git",
+                                        ":repo"
+                                      ],
+                                      "variable": [
+                                        {
+                                          "id": "8292cab9-1780-463a-a29c-8c0f5ffbdab4",
+                                          "key": "identity",
+                                          "value": "<uuid>",
+                                          "description": "(Required) The git identity ID"
+                                        },
+                                        {
+                                          "id": "f3ad9e24-5253-4c8b-b69a-81ed337e6311",
+                                          "key": "repo",
+                                          "value": "<uuid>",
+                                          "description": "(Required) The git repository ID"
+                                        }
+                                      ]
+                                    },
+                                    "description": "Revoke a permission to an identity on a repository"
+                                  },
+                                  "response": [
+                                    {
+                                      "id": "73dae171-5cd6-4524-a355-6da973582b1a",
+                                      "name": "Permission revoked successfully",
+                                      "originalRequest": {
+                                        "method": "DELETE",
+                                        "header": [
+                                          {
+                                            "key": "Accept",
+                                            "value": "application/json"
+                                          },
+                                          {
+                                            "description": "Added as a part of security scheme: bearer",
+                                            "key": "Authorization",
+                                            "value": "Bearer <token>"
+                                          }
+                                        ],
+                                        "url": {
+                                          "raw": "{{baseUrl}}/identity/v1/identities/:identity/permissions/git/:repo",
+                                          "host": [
+                                            "{{baseUrl}}"
+                                          ],
+                                          "path": [
+                                            "identity",
+                                            "v1",
+                                            "identities",
+                                            ":identity",
+                                            "permissions",
+                                            "git",
+                                            ":repo"
+                                          ],
+                                          "variable": [
+                                            {
+                                              "key": "identity"
+                                            },
+                                            {
+                                              "key": "repo"
+                                            }
+                                          ]
+                                        }
+                                      },
+                                      "status": "OK",
+                                      "code": 200,
+                                      "_postman_previewlanguage": "json",
+                                      "header": [
+                                        {
+                                          "key": "Content-Type",
+                                          "value": "application/json"
+                                        }
+                                      ],
+                                      "cookie": [],
+                                      "responseTime": null,
+                                      "body": "{}",
+                                      "createdAt": "2026-07-28T01:43:00.000Z",
+                                      "updatedAt": "2026-07-28T01:43:00.000Z",
+                                      "uid": "35240-73dae171-5cd6-4524-a355-6da973582b1a"
+                                    }
+                                  ],
+                                  "createdAt": "2026-07-28T01:43:00.000Z",
+                                  "updatedAt": "2026-07-28T01:43:00.000Z",
+                                  "uid": "35240-29625313-bd7e-483b-b0d1-0078c793fe05"
+                                }
+                              ],
+                              "id": "1a11ed0e-9e0a-4e2b-ad02-e34d91721ebf",
+                              "createdAt": "2026-07-28T01:43:00.000Z",
+                              "updatedAt": "2026-07-28T01:43:00.000Z",
+                              "uid": "35240-1a11ed0e-9e0a-4e2b-ad02-e34d91721ebf"
+                            },
+                            {
+                              "name": "List Repository Permissions for an Identity",
+                              "id": "65829427-9e60-45d4-a03f-f0104bd6e1bf",
+                              "protocolProfileBehavior": {
+                                "disableBodyPruning": true
+                              },
+                              "request": {
+                                "method": "GET",
+                                "header": [
+                                  {
+                                    "key": "Accept",
+                                    "value": "application/json"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/identity/v1/identities/:identity/permissions/git?limit=<long>&offset=<long>",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "identity",
+                                    "v1",
+                                    "identities",
+                                    ":identity",
+                                    "permissions",
+                                    "git"
+                                  ],
+                                  "query": [
+                                    {
+                                      "description": "Maximum number of repositories to return",
+                                      "key": "limit",
+                                      "value": "<long>"
+                                    },
+                                    {
+                                      "description": "Offset for the list of repositories",
+                                      "key": "offset",
+                                      "value": "<long>"
+                                    }
+                                  ],
+                                  "variable": [
+                                    {
+                                      "id": "78638a3e-7429-47bb-9155-b5ed2cc56a17",
+                                      "key": "identity",
+                                      "value": "<uuid>",
+                                      "description": "(Required) "
+                                    }
+                                  ]
+                                },
+                                "description": "List repository permissions for an identity. This will return a list of repositories that the identity has access to."
+                              },
+                              "response": [
+                                {
+                                  "id": "9b591519-628d-41bb-a0c3-f01ce4f38ae0",
+                                  "name": "Permission list",
+                                  "originalRequest": {
+                                    "method": "GET",
+                                    "header": [
+                                      {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                      },
+                                      {
+                                        "description": "Added as a part of security scheme: bearer",
+                                        "key": "Authorization",
+                                        "value": "Bearer <token>"
+                                      }
+                                    ],
+                                    "url": {
+                                      "raw": "{{baseUrl}}/identity/v1/identities/:identity/permissions/git?limit=<long>&offset=<long>",
+                                      "host": [
+                                        "{{baseUrl}}"
+                                      ],
+                                      "path": [
+                                        "identity",
+                                        "v1",
+                                        "identities",
+                                        ":identity",
+                                        "permissions",
+                                        "git"
+                                      ],
+                                      "query": [
+                                        {
+                                          "description": "Maximum number of repositories to return",
+                                          "key": "limit",
+                                          "value": "<long>"
+                                        },
+                                        {
+                                          "description": "Offset for the list of repositories",
+                                          "key": "offset",
+                                          "value": "<long>"
+                                        }
+                                      ],
+                                      "variable": [
+                                        {
+                                          "key": "identity"
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  "status": "OK",
+                                  "code": 200,
+                                  "_postman_previewlanguage": "json",
+                                  "header": [
+                                    {
+                                      "key": "Content-Type",
+                                      "value": "application/json"
+                                    }
+                                  ],
+                                  "cookie": [],
+                                  "responseTime": null,
+                                  "body": "{\n  \"repositories\": [\n    {\n      \"id\": \"<uuid>\",\n      \"accountId\": \"<uuid>\",\n      \"permissions\": \"read\",\n      \"visibility\": \"public\",\n      \"name\": \"<string,null>\"\n    },\n    {\n      \"id\": \"<uuid>\",\n      \"accountId\": \"<uuid>\",\n      \"permissions\": \"write\",\n      \"visibility\": \"private\",\n      \"name\": \"<string,null>\"\n    }\n  ]\n}",
+                                  "createdAt": "2026-07-28T01:43:00.000Z",
+                                  "updatedAt": "2026-07-28T01:43:00.000Z",
+                                  "uid": "35240-9b591519-628d-41bb-a0c3-f01ce4f38ae0"
+                                }
+                              ],
+                              "createdAt": "2026-07-28T01:43:00.000Z",
+                              "updatedAt": "2026-07-28T01:43:00.000Z",
+                              "uid": "35240-65829427-9e60-45d4-a03f-f0104bd6e1bf"
+                            }
+                          ],
+                          "id": "f402a4cc-0227-4d0a-acbc-8ec00a20168f",
+                          "createdAt": "2026-07-28T01:43:00.000Z",
+                          "updatedAt": "2026-07-28T01:43:00.000Z",
+                          "uid": "35240-f402a4cc-0227-4d0a-acbc-8ec00a20168f"
+                        },
+                        {
+                          "name": "vm",
+                          "item": [
+                            {
+                              "name": "{vm_id}",
+                              "item": [
+                                {
+                                  "name": "Get VM Permission Details",
+                                  "id": "538f91cb-d8b7-43b0-bbcd-9e7286aa7f77",
+                                  "protocolProfileBehavior": {
+                                    "disableBodyPruning": true
+                                  },
+                                  "request": {
+                                    "method": "GET",
+                                    "header": [
+                                      {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                      }
+                                    ],
+                                    "url": {
+                                      "raw": "{{baseUrl}}/identity/v1/identities/:identity/permissions/vm/:vm_id",
+                                      "host": [
+                                        "{{baseUrl}}"
+                                      ],
+                                      "path": [
+                                        "identity",
+                                        "v1",
+                                        "identities",
+                                        ":identity",
+                                        "permissions",
+                                        "vm",
+                                        ":vm_id"
+                                      ],
+                                      "variable": [
+                                        {
+                                          "id": "46afe673-d7f9-48ba-8f46-888f4c124204",
+                                          "key": "identity",
+                                          "value": "<uuid>",
+                                          "description": "(Required) The git identity ID"
+                                        },
+                                        {
+                                          "id": "7b13d146-0710-4cba-b15c-e7c305bdcbc6",
+                                          "key": "vm_id",
+                                          "value": "<string>",
+                                          "description": "(Required) The VM ID"
+                                        }
+                                      ]
+                                    },
+                                    "description": "Get the details of a VM permission for a specific identity and VM"
+                                  },
+                                  "response": [
+                                    {
+                                      "id": "3d407836-1161-4b78-875e-04c8b47f6888",
+                                      "name": "VM permission details",
+                                      "originalRequest": {
+                                        "method": "GET",
+                                        "header": [
+                                          {
+                                            "key": "Accept",
+                                            "value": "application/json"
+                                          },
+                                          {
+                                            "description": "Added as a part of security scheme: bearer",
+                                            "key": "Authorization",
+                                            "value": "Bearer <token>"
+                                          }
+                                        ],
+                                        "url": {
+                                          "raw": "{{baseUrl}}/identity/v1/identities/:identity/permissions/vm/:vm_id",
+                                          "host": [
+                                            "{{baseUrl}}"
+                                          ],
+                                          "path": [
+                                            "identity",
+                                            "v1",
+                                            "identities",
+                                            ":identity",
+                                            "permissions",
+                                            "vm",
+                                            ":vm_id"
+                                          ],
+                                          "variable": [
+                                            {
+                                              "key": "identity"
+                                            },
+                                            {
+                                              "key": "vm_id"
+                                            }
+                                          ]
+                                        }
+                                      },
+                                      "status": "OK",
+                                      "code": 200,
+                                      "_postman_previewlanguage": "json",
+                                      "header": [
+                                        {
+                                          "key": "Content-Type",
+                                          "value": "application/json"
+                                        }
+                                      ],
+                                      "cookie": [],
+                                      "responseTime": null,
+                                      "body": "{\n  \"id\": \"<uuid>\",\n  \"vmId\": \"<string>\",\n  \"identityId\": \"<uuid>\",\n  \"grantedAt\": \"<dateTime>\",\n  \"grantedBy\": \"<uuid>\",\n  \"allowedUsers\": [\n    \"<string>\",\n    \"<string>\"\n  ]\n}",
+                                      "createdAt": "2026-07-28T01:43:00.000Z",
+                                      "updatedAt": "2026-07-28T01:43:00.000Z",
+                                      "uid": "35240-3d407836-1161-4b78-875e-04c8b47f6888"
+                                    }
+                                  ],
+                                  "createdAt": "2026-07-28T01:43:00.000Z",
+                                  "updatedAt": "2026-07-28T01:43:00.000Z",
+                                  "uid": "35240-538f91cb-d8b7-43b0-bbcd-9e7286aa7f77"
+                                },
+                                {
+                                  "name": "Update Allowed Users for VM Permission",
+                                  "id": "6f927073-5543-4613-8bb6-dda9a4bf066e",
+                                  "protocolProfileBehavior": {
+                                    "disableBodyPruning": true
+                                  },
+                                  "request": {
+                                    "method": "PUT",
+                                    "header": [
+                                      {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                      },
+                                      {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                      }
+                                    ],
+                                    "body": {
+                                      "mode": "raw",
+                                      "raw": "{\n  \"allowedUsers\": [\n    \"<string>\",\n    \"<string>\"\n  ]\n}",
+                                      "options": {
+                                        "raw": {
+                                          "headerFamily": "json",
+                                          "language": "json"
+                                        }
+                                      }
+                                    },
+                                    "url": {
+                                      "raw": "{{baseUrl}}/identity/v1/identities/:identity/permissions/vm/:vm_id",
+                                      "host": [
+                                        "{{baseUrl}}"
+                                      ],
+                                      "path": [
+                                        "identity",
+                                        "v1",
+                                        "identities",
+                                        ":identity",
+                                        "permissions",
+                                        "vm",
+                                        ":vm_id"
+                                      ],
+                                      "variable": [
+                                        {
+                                          "id": "91648978-2a7b-42fa-9174-93ce72922af6",
+                                          "key": "identity",
+                                          "value": "<uuid>",
+                                          "description": "(Required) The git identity ID"
+                                        },
+                                        {
+                                          "id": "066ee96e-0fc5-4fdd-b51a-066be70c6209",
+                                          "key": "vm_id",
+                                          "value": "<string>",
+                                          "description": "(Required) The VM ID"
+                                        }
+                                      ]
+                                    },
+                                    "description": "Update the list of allowed users for a VM permission. Set to null to allow all users, or provide a list to restrict access."
+                                  },
+                                  "response": [
+                                    {
+                                      "id": "9aee02b3-ad8f-44e4-88ac-dd4541d6b707",
+                                      "name": "Allowed users updated successfully",
+                                      "originalRequest": {
+                                        "method": "PUT",
+                                        "header": [
+                                          {
+                                            "key": "Content-Type",
+                                            "value": "application/json"
+                                          },
+                                          {
+                                            "key": "Accept",
+                                            "value": "application/json"
+                                          },
+                                          {
+                                            "description": "Added as a part of security scheme: bearer",
+                                            "key": "Authorization",
+                                            "value": "Bearer <token>"
+                                          }
+                                        ],
+                                        "body": {
+                                          "mode": "raw",
+                                          "raw": "{\n  \"allowedUsers\": [\n    \"<string>\",\n    \"<string>\"\n  ]\n}",
+                                          "options": {
+                                            "raw": {
+                                              "headerFamily": "json",
+                                              "language": "json"
+                                            }
+                                          }
+                                        },
+                                        "url": {
+                                          "raw": "{{baseUrl}}/identity/v1/identities/:identity/permissions/vm/:vm_id",
+                                          "host": [
+                                            "{{baseUrl}}"
+                                          ],
+                                          "path": [
+                                            "identity",
+                                            "v1",
+                                            "identities",
+                                            ":identity",
+                                            "permissions",
+                                            "vm",
+                                            ":vm_id"
+                                          ],
+                                          "variable": [
+                                            {
+                                              "key": "identity"
+                                            },
+                                            {
+                                              "key": "vm_id"
+                                            }
+                                          ]
+                                        }
+                                      },
+                                      "status": "OK",
+                                      "code": 200,
+                                      "_postman_previewlanguage": "json",
+                                      "header": [
+                                        {
+                                          "key": "Content-Type",
+                                          "value": "application/json"
+                                        }
+                                      ],
+                                      "cookie": [],
+                                      "responseTime": null,
+                                      "body": "{\n  \"id\": \"<uuid>\",\n  \"vmId\": \"<string>\",\n  \"identityId\": \"<uuid>\",\n  \"grantedAt\": \"<dateTime>\",\n  \"grantedBy\": \"<uuid>\",\n  \"allowedUsers\": [\n    \"<string>\",\n    \"<string>\"\n  ]\n}",
+                                      "createdAt": "2026-07-28T01:43:00.000Z",
+                                      "updatedAt": "2026-07-28T01:43:00.000Z",
+                                      "uid": "35240-9aee02b3-ad8f-44e4-88ac-dd4541d6b707"
+                                    }
+                                  ],
+                                  "createdAt": "2026-07-28T01:43:00.000Z",
+                                  "updatedAt": "2026-07-28T01:43:00.000Z",
+                                  "uid": "35240-6f927073-5543-4613-8bb6-dda9a4bf066e"
+                                },
+                                {
+                                  "name": "Grant VM Permission to an Identity for a VM",
+                                  "id": "184cf360-7d18-43df-a5f7-2ebc8e6fdcce",
+                                  "protocolProfileBehavior": {
+                                    "disableBodyPruning": true
+                                  },
+                                  "request": {
+                                    "method": "POST",
+                                    "header": [
+                                      {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                      },
+                                      {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                      }
+                                    ],
+                                    "body": {
+                                      "mode": "raw",
+                                      "raw": "{\n  \"allowedUsers\": [\n    \"<string>\",\n    \"<string>\"\n  ]\n}",
+                                      "options": {
+                                        "raw": {
+                                          "headerFamily": "json",
+                                          "language": "json"
+                                        }
+                                      }
+                                    },
+                                    "url": {
+                                      "raw": "{{baseUrl}}/identity/v1/identities/:identity/permissions/vm/:vm_id",
+                                      "host": [
+                                        "{{baseUrl}}"
+                                      ],
+                                      "path": [
+                                        "identity",
+                                        "v1",
+                                        "identities",
+                                        ":identity",
+                                        "permissions",
+                                        "vm",
+                                        ":vm_id"
+                                      ],
+                                      "variable": [
+                                        {
+                                          "id": "480bc485-b2e7-4e45-b050-0c2787e54e9d",
+                                          "key": "identity",
+                                          "value": "<uuid>",
+                                          "description": "(Required) The git identity ID"
+                                        },
+                                        {
+                                          "id": "6ce20068-86fa-49a7-a1fb-231deab6121e",
+                                          "key": "vm_id",
+                                          "value": "<string>",
+                                          "description": "(Required) The VM ID"
+                                        }
+                                      ]
+                                    },
+                                    "description": "Grant VM access permission to an identity for a specific VM. Optionally restrict access to specific Linux users."
+                                  },
+                                  "response": [
+                                    {
+                                      "id": "0a104832-9fdd-43ec-a08a-042f9a53a479",
+                                      "name": "VM permission granted successfully",
+                                      "originalRequest": {
+                                        "method": "POST",
+                                        "header": [
+                                          {
+                                            "key": "Content-Type",
+                                            "value": "application/json"
+                                          },
+                                          {
+                                            "key": "Accept",
+                                            "value": "application/json"
+                                          },
+                                          {
+                                            "description": "Added as a part of security scheme: bearer",
+                                            "key": "Authorization",
+                                            "value": "Bearer <token>"
+                                          }
+                                        ],
+                                        "body": {
+                                          "mode": "raw",
+                                          "raw": "{\n  \"allowedUsers\": [\n    \"<string>\",\n    \"<string>\"\n  ]\n}",
+                                          "options": {
+                                            "raw": {
+                                              "headerFamily": "json",
+                                              "language": "json"
+                                            }
+                                          }
+                                        },
+                                        "url": {
+                                          "raw": "{{baseUrl}}/identity/v1/identities/:identity/permissions/vm/:vm_id",
+                                          "host": [
+                                            "{{baseUrl}}"
+                                          ],
+                                          "path": [
+                                            "identity",
+                                            "v1",
+                                            "identities",
+                                            ":identity",
+                                            "permissions",
+                                            "vm",
+                                            ":vm_id"
+                                          ],
+                                          "variable": [
+                                            {
+                                              "key": "identity"
+                                            },
+                                            {
+                                              "key": "vm_id"
+                                            }
+                                          ]
+                                        }
+                                      },
+                                      "status": "OK",
+                                      "code": 200,
+                                      "_postman_previewlanguage": "json",
+                                      "header": [
+                                        {
+                                          "key": "Content-Type",
+                                          "value": "application/json"
+                                        }
+                                      ],
+                                      "cookie": [],
+                                      "responseTime": null,
+                                      "body": "{\n  \"id\": \"<uuid>\",\n  \"vmId\": \"<string>\",\n  \"identityId\": \"<uuid>\",\n  \"grantedAt\": \"<dateTime>\",\n  \"grantedBy\": \"<uuid>\",\n  \"allowedUsers\": [\n    \"<string>\",\n    \"<string>\"\n  ]\n}",
+                                      "createdAt": "2026-07-28T01:43:00.000Z",
+                                      "updatedAt": "2026-07-28T01:43:00.000Z",
+                                      "uid": "35240-0a104832-9fdd-43ec-a08a-042f9a53a479"
+                                    }
+                                  ],
+                                  "createdAt": "2026-07-28T01:43:00.000Z",
+                                  "updatedAt": "2026-07-28T01:43:00.000Z",
+                                  "uid": "35240-184cf360-7d18-43df-a5f7-2ebc8e6fdcce"
+                                },
+                                {
+                                  "name": "Revoke VM Permission From an Identity for a VM",
+                                  "id": "05948ab7-e423-4658-be9d-8a4cc148aa10",
+                                  "protocolProfileBehavior": {
+                                    "disableBodyPruning": true
+                                  },
+                                  "request": {
+                                    "method": "DELETE",
+                                    "header": [
+                                      {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                      }
+                                    ],
+                                    "url": {
+                                      "raw": "{{baseUrl}}/identity/v1/identities/:identity/permissions/vm/:vm_id",
+                                      "host": [
+                                        "{{baseUrl}}"
+                                      ],
+                                      "path": [
+                                        "identity",
+                                        "v1",
+                                        "identities",
+                                        ":identity",
+                                        "permissions",
+                                        "vm",
+                                        ":vm_id"
+                                      ],
+                                      "variable": [
+                                        {
+                                          "id": "56046ca7-28a1-4818-8c63-321b2d65729b",
+                                          "key": "identity",
+                                          "value": "<uuid>",
+                                          "description": "(Required) The git identity ID"
+                                        },
+                                        {
+                                          "id": "a53d6dad-ac6c-489d-b3bf-898a594aa902",
+                                          "key": "vm_id",
+                                          "value": "<string>",
+                                          "description": "(Required) The VM ID"
+                                        }
+                                      ]
+                                    },
+                                    "description": "Revoke VM permission from an identity for a specific VM"
+                                  },
+                                  "response": [
+                                    {
+                                      "id": "31bf8e8b-6de5-45ec-a982-33b776045c52",
+                                      "name": "VM permission revoked successfully",
+                                      "originalRequest": {
+                                        "method": "DELETE",
+                                        "header": [
+                                          {
+                                            "key": "Accept",
+                                            "value": "application/json"
+                                          },
+                                          {
+                                            "description": "Added as a part of security scheme: bearer",
+                                            "key": "Authorization",
+                                            "value": "Bearer <token>"
+                                          }
+                                        ],
+                                        "url": {
+                                          "raw": "{{baseUrl}}/identity/v1/identities/:identity/permissions/vm/:vm_id",
+                                          "host": [
+                                            "{{baseUrl}}"
+                                          ],
+                                          "path": [
+                                            "identity",
+                                            "v1",
+                                            "identities",
+                                            ":identity",
+                                            "permissions",
+                                            "vm",
+                                            ":vm_id"
+                                          ],
+                                          "variable": [
+                                            {
+                                              "key": "identity"
+                                            },
+                                            {
+                                              "key": "vm_id"
+                                            }
+                                          ]
+                                        }
+                                      },
+                                      "status": "OK",
+                                      "code": 200,
+                                      "_postman_previewlanguage": "json",
+                                      "header": [
+                                        {
+                                          "key": "Content-Type",
+                                          "value": "application/json"
+                                        }
+                                      ],
+                                      "cookie": [],
+                                      "responseTime": null,
+                                      "body": "{}",
+                                      "createdAt": "2026-07-28T01:43:00.000Z",
+                                      "updatedAt": "2026-07-28T01:43:00.000Z",
+                                      "uid": "35240-31bf8e8b-6de5-45ec-a982-33b776045c52"
+                                    }
+                                  ],
+                                  "createdAt": "2026-07-28T01:43:00.000Z",
+                                  "updatedAt": "2026-07-28T01:43:00.000Z",
+                                  "uid": "35240-05948ab7-e423-4658-be9d-8a4cc148aa10"
+                                }
+                              ],
+                              "id": "2d200870-ad0a-4734-b0fb-2789641f8965",
+                              "createdAt": "2026-07-28T01:43:00.000Z",
+                              "updatedAt": "2026-07-28T01:43:00.000Z",
+                              "uid": "35240-2d200870-ad0a-4734-b0fb-2789641f8965"
+                            },
+                            {
+                              "name": "List VM Permissions for an Identity",
+                              "id": "82c79d37-5941-41a8-8616-6b447ec98587",
+                              "protocolProfileBehavior": {
+                                "disableBodyPruning": true
+                              },
+                              "request": {
+                                "method": "GET",
+                                "header": [
+                                  {
+                                    "key": "Accept",
+                                    "value": "application/json"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/identity/v1/identities/:identity/permissions/vm?limit=<integer,null-int64>&offset=<integer,null-int64>",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "identity",
+                                    "v1",
+                                    "identities",
+                                    ":identity",
+                                    "permissions",
+                                    "vm"
+                                  ],
+                                  "query": [
+                                    {
+                                      "key": "limit",
+                                      "value": "<integer,null-int64>"
+                                    },
+                                    {
+                                      "key": "offset",
+                                      "value": "<integer,null-int64>"
+                                    }
+                                  ],
+                                  "variable": [
+                                    {
+                                      "id": "0ee6fe8e-1164-4e4e-b18b-e1e05f1847c1",
+                                      "key": "identity",
+                                      "value": "<uuid>",
+                                      "description": "(Required) "
+                                    }
+                                  ]
+                                },
+                                "description": "List all VM permissions granted to a specific Git identity"
+                              },
+                              "response": [
+                                {
+                                  "id": "413f0928-e3fc-44f9-8713-a94bbf079034",
+                                  "name": "List of VM permissions",
+                                  "originalRequest": {
+                                    "method": "GET",
+                                    "header": [
+                                      {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                      },
+                                      {
+                                        "description": "Added as a part of security scheme: bearer",
+                                        "key": "Authorization",
+                                        "value": "Bearer <token>"
+                                      }
+                                    ],
+                                    "url": {
+                                      "raw": "{{baseUrl}}/identity/v1/identities/:identity/permissions/vm?limit=<integer,null-int64>&offset=<integer,null-int64>",
+                                      "host": [
+                                        "{{baseUrl}}"
+                                      ],
+                                      "path": [
+                                        "identity",
+                                        "v1",
+                                        "identities",
+                                        ":identity",
+                                        "permissions",
+                                        "vm"
+                                      ],
+                                      "query": [
+                                        {
+                                          "key": "limit",
+                                          "value": "<integer,null-int64>"
+                                        },
+                                        {
+                                          "key": "offset",
+                                          "value": "<integer,null-int64>"
+                                        }
+                                      ],
+                                      "variable": [
+                                        {
+                                          "key": "identity"
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  "status": "OK",
+                                  "code": 200,
+                                  "_postman_previewlanguage": "json",
+                                  "header": [
+                                    {
+                                      "key": "Content-Type",
+                                      "value": "application/json"
+                                    }
+                                  ],
+                                  "cookie": [],
+                                  "responseTime": null,
+                                  "body": "{\n  \"permissions\": [\n    {\n      \"id\": \"<uuid>\",\n      \"vmId\": \"<string>\",\n      \"identityId\": \"<uuid>\",\n      \"grantedAt\": \"<dateTime>\",\n      \"grantedBy\": \"<uuid>\",\n      \"allowedUsers\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    },\n    {\n      \"id\": \"<uuid>\",\n      \"vmId\": \"<string>\",\n      \"identityId\": \"<uuid>\",\n      \"grantedAt\": \"<dateTime>\",\n      \"grantedBy\": \"<uuid>\",\n      \"allowedUsers\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  ],\n  \"offset\": \"<long>\",\n  \"total\": \"<long>\"\n}",
+                                  "createdAt": "2026-07-28T01:43:00.000Z",
+                                  "updatedAt": "2026-07-28T01:43:00.000Z",
+                                  "uid": "35240-413f0928-e3fc-44f9-8713-a94bbf079034"
+                                }
+                              ],
+                              "createdAt": "2026-07-28T01:43:00.000Z",
+                              "updatedAt": "2026-07-28T01:43:00.000Z",
+                              "uid": "35240-82c79d37-5941-41a8-8616-6b447ec98587"
+                            }
+                          ],
+                          "id": "6d32d40c-e28a-4cc9-964c-abca174a011e",
+                          "createdAt": "2026-07-28T01:43:00.000Z",
+                          "updatedAt": "2026-07-28T01:43:00.000Z",
+                          "uid": "35240-6d32d40c-e28a-4cc9-964c-abca174a011e"
+                        }
+                      ],
+                      "id": "7ebe46f0-50f1-4b48-b575-9a912d603a2f",
+                      "createdAt": "2026-07-28T01:43:00.000Z",
+                      "updatedAt": "2026-07-28T01:43:00.000Z",
+                      "uid": "35240-7ebe46f0-50f1-4b48-b575-9a912d603a2f"
+                    },
+                    {
+                      "name": "tokens",
+                      "item": [
+                        {
+                          "name": "{token}",
+                          "item": [
+                            {
+                              "name": "Revoke an Access Token for an Identity",
+                              "id": "1d4cae30-447e-47f7-ba77-a4652aa4cf2f",
+                              "protocolProfileBehavior": {
+                                "disableBodyPruning": true
+                              },
+                              "request": {
+                                "method": "DELETE",
+                                "header": [
+                                  {
+                                    "key": "Accept",
+                                    "value": "application/json"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/identity/v1/identities/:identity/tokens/:token",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "identity",
+                                    "v1",
+                                    "identities",
+                                    ":identity",
+                                    "tokens",
+                                    ":token"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "id": "8002d697-879c-4705-986a-d5f6df3ed856",
+                                      "key": "identity",
+                                      "value": "<uuid>",
+                                      "description": "(Required) "
+                                    },
+                                    {
+                                      "id": "2bcd6a19-6520-42fd-beb4-2c31c86a8bb0",
+                                      "key": "token",
+                                      "value": "<uuid>",
+                                      "description": "(Required) "
+                                    }
+                                  ]
+                                },
+                                "description": "Revoke an access token for an identity"
+                              },
+                              "response": [
+                                {
+                                  "id": "115140a2-aff7-40b1-8c44-e2945cd0bc2b",
+                                  "name": "Token revoked",
+                                  "originalRequest": {
+                                    "method": "DELETE",
+                                    "header": [
+                                      {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                      },
+                                      {
+                                        "description": "Added as a part of security scheme: bearer",
+                                        "key": "Authorization",
+                                        "value": "Bearer <token>"
+                                      }
+                                    ],
+                                    "url": {
+                                      "raw": "{{baseUrl}}/identity/v1/identities/:identity/tokens/:token",
+                                      "host": [
+                                        "{{baseUrl}}"
+                                      ],
+                                      "path": [
+                                        "identity",
+                                        "v1",
+                                        "identities",
+                                        ":identity",
+                                        "tokens",
+                                        ":token"
+                                      ],
+                                      "variable": [
+                                        {
+                                          "key": "identity"
+                                        },
+                                        {
+                                          "key": "token"
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  "status": "OK",
+                                  "code": 200,
+                                  "_postman_previewlanguage": "json",
+                                  "header": [
+                                    {
+                                      "key": "Content-Type",
+                                      "value": "application/json"
+                                    }
+                                  ],
+                                  "cookie": [],
+                                  "responseTime": null,
+                                  "body": "{}",
+                                  "createdAt": "2026-07-28T01:43:00.000Z",
+                                  "updatedAt": "2026-07-28T01:43:00.000Z",
+                                  "uid": "35240-115140a2-aff7-40b1-8c44-e2945cd0bc2b"
+                                }
+                              ],
+                              "createdAt": "2026-07-28T01:43:00.000Z",
+                              "updatedAt": "2026-07-28T01:43:00.000Z",
+                              "uid": "35240-1d4cae30-447e-47f7-ba77-a4652aa4cf2f"
+                            }
+                          ],
+                          "id": "00aeeb54-7407-414a-bbc2-37d96d507dc9",
+                          "createdAt": "2026-07-28T01:43:00.000Z",
+                          "updatedAt": "2026-07-28T01:43:00.000Z",
+                          "uid": "35240-00aeeb54-7407-414a-bbc2-37d96d507dc9"
+                        },
+                        {
+                          "name": "List Access Tokens for an Identity",
+                          "id": "6829e625-329e-4bec-9b20-399bcaa33deb",
+                          "protocolProfileBehavior": {
+                            "disableBodyPruning": true
+                          },
+                          "request": {
+                            "method": "GET",
+                            "header": [
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              }
+                            ],
+                            "url": {
+                              "raw": "{{baseUrl}}/identity/v1/identities/:identity/tokens",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "identity",
+                                "v1",
+                                "identities",
+                                ":identity",
+                                "tokens"
+                              ],
+                              "variable": [
+                                {
+                                  "id": "1bd1194b-9311-40e3-a5c5-0f4fdd320490",
+                                  "key": "identity",
+                                  "value": "<uuid>",
+                                  "description": "(Required) "
+                                }
+                              ]
+                            },
+                            "description": "List access tokens for an identity"
+                          },
+                          "response": [
+                            {
+                              "id": "fdcb44dd-012f-4b6f-9029-bb416abb70ba",
+                              "name": "Token list",
+                              "originalRequest": {
+                                "method": "GET",
+                                "header": [
+                                  {
+                                    "key": "Accept",
+                                    "value": "application/json"
+                                  },
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/identity/v1/identities/:identity/tokens",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "identity",
+                                    "v1",
+                                    "identities",
+                                    ":identity",
+                                    "tokens"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "identity"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "OK",
+                              "code": 200,
+                              "_postman_previewlanguage": "json",
+                              "header": [
+                                {
+                                  "key": "Content-Type",
+                                  "value": "application/json"
+                                }
+                              ],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": "{\n  \"tokens\": [\n    {\n      \"id\": \"<uuid>\"\n    },\n    {\n      \"id\": \"<uuid>\"\n    }\n  ]\n}",
+                              "createdAt": "2026-07-28T01:43:00.000Z",
+                              "updatedAt": "2026-07-28T01:43:00.000Z",
+                              "uid": "35240-fdcb44dd-012f-4b6f-9029-bb416abb70ba"
+                            }
+                          ],
+                          "createdAt": "2026-07-28T01:43:00.000Z",
+                          "updatedAt": "2026-07-28T01:43:00.000Z",
+                          "uid": "35240-6829e625-329e-4bec-9b20-399bcaa33deb"
+                        },
+                        {
+                          "name": "Create an Access Token for an Identity",
+                          "id": "947c32b0-6746-4d40-8ef9-55e11909c42d",
+                          "protocolProfileBehavior": {
+                            "disableBodyPruning": true
+                          },
+                          "request": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              }
+                            ],
+                            "url": {
+                              "raw": "{{baseUrl}}/identity/v1/identities/:identity/tokens",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "identity",
+                                "v1",
+                                "identities",
+                                ":identity",
+                                "tokens"
+                              ],
+                              "variable": [
+                                {
+                                  "id": "17ac203c-b5b2-496d-933a-3f51abf599f5",
+                                  "key": "identity",
+                                  "value": "<uuid>",
+                                  "description": "(Required) "
+                                }
+                              ]
+                            },
+                            "description": "Create an access token for an identity"
+                          },
+                          "response": [
+                            {
+                              "id": "90f28c6d-b079-487b-8465-9e11ea87cb18",
+                              "name": "Token created successfully",
+                              "originalRequest": {
+                                "method": "POST",
+                                "header": [
+                                  {
+                                    "key": "Accept",
+                                    "value": "application/json"
+                                  },
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/identity/v1/identities/:identity/tokens",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "identity",
+                                    "v1",
+                                    "identities",
+                                    ":identity",
+                                    "tokens"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "identity"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "OK",
+                              "code": 200,
+                              "_postman_previewlanguage": "json",
+                              "header": [
+                                {
+                                  "key": "Content-Type",
+                                  "value": "application/json"
+                                }
+                              ],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": "{\n  \"id\": \"<uuid>\",\n  \"token\": \"<string>\"\n}",
+                              "createdAt": "2026-07-28T01:43:00.000Z",
+                              "updatedAt": "2026-07-28T01:43:00.000Z",
+                              "uid": "35240-90f28c6d-b079-487b-8465-9e11ea87cb18"
+                            }
+                          ],
+                          "createdAt": "2026-07-28T01:43:00.000Z",
+                          "updatedAt": "2026-07-28T01:43:00.000Z",
+                          "uid": "35240-947c32b0-6746-4d40-8ef9-55e11909c42d"
+                        }
+                      ],
+                      "id": "1b665f2a-fc7b-4219-be54-dcf9ceebb622",
+                      "createdAt": "2026-07-28T01:43:00.000Z",
+                      "updatedAt": "2026-07-28T01:43:00.000Z",
+                      "uid": "35240-1b665f2a-fc7b-4219-be54-dcf9ceebb622"
+                    },
+                    {
+                      "name": "Delete an Identity",
+                      "id": "9392993e-d020-4586-aa20-43f68e994956",
+                      "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                      },
+                      "request": {
+                        "method": "DELETE",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/identity/v1/identities/:identity",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "identity",
+                            "v1",
+                            "identities",
+                            ":identity"
+                          ],
+                          "variable": [
+                            {
+                              "id": "6d54d373-27fe-455b-8f10-e8e4704f127a",
+                              "key": "identity",
+                              "value": "<uuid>",
+                              "description": "(Required) "
+                            }
+                          ]
+                        },
+                        "description": "Delete an identity. This will revoke all permissions granted to this identity."
+                      },
+                      "response": [
+                        {
+                          "id": "aff65a34-878e-4960-96c9-f228e7c41f4a",
+                          "name": "Identity deleted",
+                          "originalRequest": {
+                            "method": "DELETE",
+                            "header": [
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "url": {
+                              "raw": "{{baseUrl}}/identity/v1/identities/:identity",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "identity",
+                                "v1",
+                                "identities",
+                                ":identity"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "identity"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "OK",
+                          "code": 200,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{}",
+                          "createdAt": "2026-07-28T01:43:00.000Z",
+                          "updatedAt": "2026-07-28T01:43:00.000Z",
+                          "uid": "35240-aff65a34-878e-4960-96c9-f228e7c41f4a"
+                        }
+                      ],
+                      "createdAt": "2026-07-28T01:43:00.000Z",
+                      "updatedAt": "2026-07-28T01:43:00.000Z",
+                      "uid": "35240-9392993e-d020-4586-aa20-43f68e994956"
+                    }
+                  ],
+                  "id": "ed3ded73-2ba6-4a84-9e51-f81b37f835e7",
+                  "createdAt": "2026-07-28T01:43:00.000Z",
+                  "updatedAt": "2026-07-28T01:43:00.000Z",
+                  "uid": "35240-ed3ded73-2ba6-4a84-9e51-f81b37f835e7"
+                },
+                {
+                  "name": "List Identities",
+                  "id": "c4144203-9862-46ff-a6b0-ecb5e449071c",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/identity/v1/identities?limit=<integer,null-int64>&offset=<integer,null-int64>&includeManaged=<boolean,null>",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "identity",
+                        "v1",
+                        "identities"
+                      ],
+                      "query": [
+                        {
+                          "key": "limit",
+                          "value": "<integer,null-int64>"
+                        },
+                        {
+                          "key": "offset",
+                          "value": "<integer,null-int64>"
+                        },
+                        {
+                          "key": "includeManaged",
+                          "value": "<boolean,null>"
+                        }
+                      ]
+                    },
+                    "description": "List identities created by your account."
+                  },
+                  "response": [
+                    {
+                      "id": "1123972f-d625-42f0-8875-55bb479f3ab4",
+                      "name": "List of identities",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/identity/v1/identities?limit=<integer,null-int64>&offset=<integer,null-int64>&includeManaged=<boolean,null>",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "identity",
+                            "v1",
+                            "identities"
+                          ],
+                          "query": [
+                            {
+                              "key": "limit",
+                              "value": "<integer,null-int64>"
+                            },
+                            {
+                              "key": "offset",
+                              "value": "<integer,null-int64>"
+                            },
+                            {
+                              "key": "includeManaged",
+                              "value": "<boolean,null>"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"identities\": [\n    {\n      \"id\": \"<uuid>\",\n      \"managed\": \"<boolean>\"\n    },\n    {\n      \"id\": \"<uuid>\",\n      \"managed\": \"<boolean>\"\n    }\n  ],\n  \"offset\": \"<long>\",\n  \"total\": \"<long>\"\n}",
+                      "createdAt": "2026-07-28T01:43:00.000Z",
+                      "updatedAt": "2026-07-28T01:43:00.000Z",
+                      "uid": "35240-1123972f-d625-42f0-8875-55bb479f3ab4"
+                    }
+                  ],
+                  "createdAt": "2026-07-28T01:43:00.000Z",
+                  "updatedAt": "2026-07-28T01:43:00.000Z",
+                  "uid": "35240-c4144203-9862-46ff-a6b0-ecb5e449071c"
+                },
+                {
+                  "name": "Create an Identity",
+                  "id": "61ca229c-c226-46d8-9f03-47f6988579d7",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/identity/v1/identities",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "identity",
+                        "v1",
+                        "identities"
+                      ]
+                    },
+                    "description": "Create an identity. This identity will be used to authenticate with the Git server."
+                  },
+                  "response": [
+                    {
+                      "id": "bd6470cb-bf99-4d0a-a70b-0cbd8fe3bb1b",
+                      "name": "Identity created successfully",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/identity/v1/identities",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "identity",
+                            "v1",
+                            "identities"
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"id\": \"<uuid>\",\n  \"managed\": \"<boolean>\"\n}",
+                      "createdAt": "2026-07-28T01:43:00.000Z",
+                      "updatedAt": "2026-07-28T01:43:00.000Z",
+                      "uid": "35240-bd6470cb-bf99-4d0a-a70b-0cbd8fe3bb1b"
+                    }
+                  ],
+                  "createdAt": "2026-07-28T01:43:00.000Z",
+                  "updatedAt": "2026-07-28T01:43:00.000Z",
+                  "uid": "35240-61ca229c-c226-46d8-9f03-47f6988579d7"
+                }
+              ],
+              "id": "68c07fe9-fa09-4139-ba79-370c87e06502",
+              "createdAt": "2026-07-28T01:43:00.000Z",
+              "updatedAt": "2026-07-28T01:43:00.000Z",
+              "uid": "35240-68c07fe9-fa09-4139-ba79-370c87e06502"
+            }
+          ],
+          "id": "e9681749-c5e1-4a99-ae0a-3ae2c4dc51b2",
+          "createdAt": "2026-07-28T01:43:00.000Z",
+          "updatedAt": "2026-07-28T01:43:00.000Z",
+          "uid": "35240-e9681749-c5e1-4a99-ae0a-3ae2c4dc51b2"
+        }
+      ],
+      "id": "d3d5292f-86f2-4724-8972-fc95cd3f74fc",
+      "createdAt": "2026-07-28T01:43:00.000Z",
+      "updatedAt": "2026-07-28T01:43:00.000Z",
+      "uid": "35240-d3d5292f-86f2-4724-8972-fc95cd3f74fc"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api.freestyle.sh"
+    }
+  ]
+}
