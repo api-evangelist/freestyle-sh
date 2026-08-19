@@ -1,0 +1,254 @@
+{
+  "item": [
+    {
+      "id": "b5567651-b9d9-4136-aefb-58fe6948527f",
+      "name": "Observability",
+      "description": {
+        "content": "APIs for observability.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "fca5d180-0504-4268-8d4c-0d4bb455d754",
+          "name": "Logs",
+          "request": {
+            "name": "Logs",
+            "description": {
+              "content": "Get logs for a deployment, domain, VM, or background request",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "observability",
+                "v1",
+                "logs"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "deploymentId",
+                  "value": "<string,null>"
+                },
+                {
+                  "disabled": false,
+                  "key": "requestId",
+                  "value": "<null>"
+                },
+                {
+                  "disabled": false,
+                  "key": "buildId",
+                  "value": "<null>"
+                },
+                {
+                  "disabled": false,
+                  "key": "instanceId",
+                  "value": "<null>"
+                },
+                {
+                  "disabled": false,
+                  "key": "domain",
+                  "value": "<string,null>"
+                },
+                {
+                  "disabled": false,
+                  "key": "vmId",
+                  "value": "<null>"
+                },
+                {
+                  "disabled": false,
+                  "key": "runId",
+                  "value": "<string,null>"
+                },
+                {
+                  "disabled": false,
+                  "key": "vmService",
+                  "value": "<string,null>"
+                },
+                {
+                  "disabled": false,
+                  "key": "pageToken",
+                  "value": "<string,null>"
+                },
+                {
+                  "disabled": false,
+                  "key": "pageSize",
+                  "value": "<integer,null-int32>"
+                },
+                {
+                  "disabled": false,
+                  "key": "startTime",
+                  "value": "<string,null>",
+                  "description": "Start time in RFC3339 format (e.g., \"2024-01-01T00:00:00Z\"). Defaults to 24 hours ago if not specified."
+                },
+                {
+                  "disabled": false,
+                  "key": "endTime",
+                  "value": "<string,null>",
+                  "description": "End time in RFC3339 format (e.g., \"2024-01-02T00:00:00Z\"). Defaults to now if not specified."
+                },
+                {
+                  "disabled": false,
+                  "key": "search",
+                  "value": "<string,null>",
+                  "description": "Full-text search filter — case-insensitive substring match on log message body."
+                },
+                {
+                  "disabled": false,
+                  "key": "resourceType",
+                  "value": "<string,null>",
+                  "description": "Filter logs by resource type: \"deployment\" or \"vm\". Only applies to account-wide queries."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "4850fafc-cc49-41a7-89bf-49b3b40ad6c9",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "observability",
+                    "v1",
+                    "logs"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "deploymentId",
+                      "value": "<string,null>"
+                    },
+                    {
+                      "key": "requestId",
+                      "value": "<null>"
+                    },
+                    {
+                      "key": "buildId",
+                      "value": "<null>"
+                    },
+                    {
+                      "key": "instanceId",
+                      "value": "<null>"
+                    },
+                    {
+                      "key": "domain",
+                      "value": "<string,null>"
+                    },
+                    {
+                      "key": "vmId",
+                      "value": "<null>"
+                    },
+                    {
+                      "key": "runId",
+                      "value": "<string,null>"
+                    },
+                    {
+                      "key": "vmService",
+                      "value": "<string,null>"
+                    },
+                    {
+                      "key": "pageToken",
+                      "value": "<string,null>"
+                    },
+                    {
+                      "key": "pageSize",
+                      "value": "<integer,null-int32>"
+                    },
+                    {
+                      "key": "startTime",
+                      "value": "<string,null>"
+                    },
+                    {
+                      "key": "endTime",
+                      "value": "<string,null>"
+                    },
+                    {
+                      "key": "search",
+                      "value": "<string,null>"
+                    },
+                    {
+                      "key": "resourceType",
+                      "value": "<string,null>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"logs\": [\n    {\n      \"message\": \"string\",\n      \"timestamp\": \"string\",\n      \"source\": \"string\",\n      \"resourceType\": \"string\",\n      \"origin\": \"string\",\n      \"resourceId\": \"string\",\n      \"instanceId\": null,\n      \"level\": \"string\",\n      \"vmService\": \"string\",\n      \"buildId\": null\n    },\n    {\n      \"message\": \"string\",\n      \"timestamp\": \"string\",\n      \"source\": \"string\",\n      \"resourceType\": \"string\",\n      \"origin\": \"string\",\n      \"resourceId\": \"string\",\n      \"instanceId\": null,\n      \"level\": \"string\",\n      \"vmService\": \"string\",\n      \"buildId\": null\n    }\n  ],\n  \"nextPageToken\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.freestyle.sh",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "83340f12-3698-460f-97d4-ccaf8c66add8",
+    "name": "Freestyle Cron Auth Observability API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Schedule recurring serverless runs — create/update/delete cron schedules and inspect executions, success rate, and metrics timeline.\n\nContact Support:\n Name: Ben\n Email: ben@freestyle.sh",
+      "type": "text/plain"
+    }
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Freestyle Cron Auth Certs API",
+    "version": "0.1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Certs",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Provision a Wildcard Certificate",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.freestyle.sh/domains/v1/certs/:domain/wildcard",
+            "params": [
+              {
+                "name": "domain",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Provisions a wildcard certificate for a verified domain\n\n\nThis speeds up deploys on all subdomains of the domain. In order to use it, you must add the following record to your DNS config:\n\n`_acme-challenge.yourdomain.com` NS `dns.freestyle.sh`"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

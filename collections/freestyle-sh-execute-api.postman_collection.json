@@ -1,0 +1,876 @@
+{
+  "item": [
+    {
+      "id": "0a920749-e697-4b80-a835-28237e0cd5bb",
+      "name": "Execute",
+      "description": {
+        "content": "APIs for running code. Send the code using the [execute](#tag/execute/POST/execute/v1/execute) endpoint, and you'll get the output back. Works with any TypeScript or JavaScript code + handles any node modules and environment variables you want.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "64eb9b18-9665-432e-bc49-f1f1684ba1b3",
+          "name": "List Execute Runs",
+          "request": {
+            "name": "List Execute Runs",
+            "description": {
+              "content": "List execute runs.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "execute",
+                "v1",
+                "deployments"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "<integer,null>"
+                },
+                {
+                  "disabled": false,
+                  "key": "offset",
+                  "value": "<integer,null>"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "6c52f0c5-9a8a-4a67-9352-77891b93e7c1",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "execute",
+                    "v1",
+                    "deployments"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "limit",
+                      "value": "<integer,null>"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "<integer,null>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"entries\": [\n    {\n      \"deployment\": \"209153f7-4f46-d2b4-a603-8ea7c43c98a4\",\n      \"accountId\": \"9213524e-cff8-1962-17fd-b7a585f2f9e9\",\n      \"provisionedAt\": \"1966-10-19T19:30:36.958Z\",\n      \"state\": \"running\",\n      \"envVars\": {\n        \"key_0\": \"string\",\n        \"key_1\": \"string\",\n        \"key_2\": \"string\"\n      },\n      \"startedAt\": \"2004-07-28T09:19:17.856Z\",\n      \"duration\": \"string\"\n    },\n    {\n      \"deployment\": \"b2399f7a-602c-6306-f420-1b801d6735d2\",\n      \"accountId\": \"f0b06e60-24f8-870d-faed-816820f2c512\",\n      \"provisionedAt\": \"1991-05-27T10:22:31.183Z\",\n      \"state\": \"complete\",\n      \"envVars\": {\n        \"key_0\": \"string\"\n      },\n      \"startedAt\": \"1982-12-24T00:49:58.716Z\",\n      \"duration\": \"string\"\n    }\n  ],\n  \"total\": 5043,\n  \"offset\": 2495\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "c4662bab-6524-4646-a779-3c9f112bb358",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "execute",
+                    "v1",
+                    "deployments"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "limit",
+                      "value": "<integer,null>"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "<integer,null>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "fb297371-70a4-4cb9-95c0-078ad972b7a0",
+          "name": "Get Information on Execute Run",
+          "request": {
+            "name": "Get Information on Execute Run",
+            "description": {
+              "content": "Get information on execute run",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "execute",
+                "v1",
+                "deployments",
+                ":deployment"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "deployment",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "58c0039b-c785-419d-b3bf-7d7936f8dbb2",
+              "name": "Success",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "execute",
+                    "v1",
+                    "deployments",
+                    ":deployment"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "deployment",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"metadata\": {\n    \"deployment\": \"7dad1319-ac96-31c5-4701-5c50dbdb4192\",\n    \"accountId\": \"89185240-2088-a9eb-bddd-15c28be28766\",\n    \"provisionedAt\": \"1958-09-29T07:48:34.660Z\",\n    \"state\": \"starting\",\n    \"envVars\": {\n      \"key_0\": \"string\",\n      \"key_1\": \"string\"\n    },\n    \"startedAt\": \"1975-04-28T03:13:39.669Z\",\n    \"duration\": \"string\"\n  },\n  \"code\": null\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "20453d48-9909-40ab-87d4-19364432d61c",
+              "name": "Unauthorized access",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "execute",
+                    "v1",
+                    "deployments",
+                    ":deployment"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "deployment",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "1c3d1b83-75d6-48ca-9f6d-fe2ff8e5bd4b",
+              "name": "Not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "execute",
+                    "v1",
+                    "deployments",
+                    ":deployment"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "deployment",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "2a09ff54-f1e5-4475-a0f8-229719ef2417",
+              "name": "Internal server error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "execute",
+                    "v1",
+                    "deployments",
+                    ":deployment"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "deployment",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "ee9b932e-08cb-4c3e-a7ba-df2945ac2558",
+          "name": "Get Saved Output for an Execute Run",
+          "request": {
+            "name": "Get Saved Output for an Execute Run",
+            "description": {
+              "content": "Get saved output for execute run",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "execute",
+                "v1",
+                "deployments",
+                ":deployment",
+                "output"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "deployment",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "6cf7bbbd-1994-4890-a554-b21ae0379771",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "execute",
+                    "v1",
+                    "deployments",
+                    ":deployment",
+                    "output"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "deployment",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"status\": \"string\",\n  \"logs\": [\n    {\n      \"message\": \"I'm a log!\",\n      \"type\": \"log\"\n    },\n    {\n      \"message\": \"I'm a log!\",\n      \"type\": \"log\"\n    }\n  ],\n  \"result\": \"\",\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "e811df6a-9eff-45d8-949c-de29abaed68f",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "execute",
+                    "v1",
+                    "deployments",
+                    ":deployment",
+                    "output"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "deployment",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "6cf77899-b98a-42d4-aacb-f4cff4898069",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "execute",
+                    "v1",
+                    "deployments",
+                    ":deployment",
+                    "output"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "deployment",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "904fb00c-fa97-47cb-9b89-abee18619746",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "execute",
+                    "v1",
+                    "deployments",
+                    ":deployment",
+                    "output"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "deployment",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "248f507f-4a35-4fce-b8b8-60de3fa3e954",
+          "name": "Execute Code",
+          "request": {
+            "name": "Execute Code",
+            "description": {
+              "content": "Send a TypeScript or JavaScript module, get the result",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "execute",
+                "v3",
+                "script"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"script\": \"<string>\",\n  \"executionId\": \"<string,null-uuid>\",\n  \"config\": {\n    \"envVars\": {},\n    \"nodeModules\": {},\n    \"inferNodeModules\": false,\n    \"timeout\": null,\n    \"peerDependencyResolution\": true,\n    \"networkPermissions\": null,\n    \"customHeaders\": {},\n    \"proxy\": null,\n    \"egress\": \"<null>\",\n    \"zeroRetention\": null\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "b32c1caa-e8d1-4e9a-a262-529dcb52b6bc",
+              "name": "Script executed successfully",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "execute",
+                    "v3",
+                    "script"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"script\": \"export default () => {\\n  // get the value of the factorials of the numbers from 1 to 10 combined\\n  const a = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];\\n\\n  function factorial(n) {\\n    if (n === 0) {\\n      return 1;\\n    }\\n    return n * factorial(n - 1);\\n  }\\n\\n  const b = a.map(factorial);\\n\\n  return b.reduce((a, b) => a + b);\\n};\\n\",\n  \"executionId\": \"<string,null-uuid>\",\n  \"config\": {\n    \"envVars\": {\n      \"RESEND_API_KEY\": \"re_123456789\"\n    },\n    \"nodeModules\": {\n      \"resend\": \"4.0.1\"\n    },\n    \"inferNodeModules\": false,\n    \"tags\": [\n      \"email\"\n    ],\n    \"timeout\": null,\n    \"peerDependencyResolution\": true,\n    \"networkPermissions\": null,\n    \"customHeaders\": {},\n    \"proxy\": \"https://aproxyyouown.com\",\n    \"egress\": null,\n    \"zeroRetention\": false\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"result\": \"\",\n  \"logs\": [\n    {\n      \"message\": \"string\",\n      \"type\": \"log\",\n      \"callstack\": \"string\"\n    },\n    {\n      \"message\": \"string\",\n      \"type\": \"log\",\n      \"callstack\": \"string\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "99ce3698-aba2-4783-ace8-9ed9baf6e039",
+              "name": "Error: ExecuteLimitExceeded",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "execute",
+                    "v3",
+                    "script"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"script\": \"export default () => {\\n  // get the value of the factorials of the numbers from 1 to 10 combined\\n  const a = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];\\n\\n  function factorial(n) {\\n    if (n === 0) {\\n      return 1;\\n    }\\n    return n * factorial(n - 1);\\n  }\\n\\n  const b = a.map(factorial);\\n\\n  return b.reduce((a, b) => a + b);\\n};\\n\",\n  \"executionId\": \"<string,null-uuid>\",\n  \"config\": {\n    \"envVars\": {\n      \"RESEND_API_KEY\": \"re_123456789\"\n    },\n    \"nodeModules\": {\n      \"resend\": \"4.0.1\"\n    },\n    \"inferNodeModules\": false,\n    \"tags\": [\n      \"email\"\n    ],\n    \"timeout\": null,\n    \"peerDependencyResolution\": true,\n    \"networkPermissions\": null,\n    \"customHeaders\": {},\n    \"proxy\": \"https://aproxyyouown.com\",\n    \"egress\": null,\n    \"zeroRetention\": false\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"message\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.freestyle.sh",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "d3c27a46-7cee-4a46-91d1-4019218ba5d8",
+    "name": "Freestyle Cron Auth Execute API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Schedule recurring serverless runs — create/update/delete cron schedules and inspect executions, success rate, and metrics timeline.\n\nContact Support:\n Name: Ben\n Email: ben@freestyle.sh",
+      "type": "text/plain"
+    }
+  }
+}

@@ -1,0 +1,198 @@
+{
+  "item": [
+    {
+      "id": "6b76be23-7407-4d33-bca8-cb216dd4448b",
+      "name": "Certs",
+      "description": {
+        "content": "APIs for managing SSL certificates.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "c0a2b7ac-fea3-4df6-aa04-d8313d2e4f42",
+          "name": "Provision a Wildcard Certificate",
+          "request": {
+            "name": "Provision a Wildcard Certificate",
+            "description": {
+              "content": "Provisions a wildcard certificate for a verified domain\n\n\nThis speeds up deploys on all subdomains of the domain. In order to use it, you must add the following record to your DNS config:\n\n`_acme-challenge.yourdomain.com` NS `dns.freestyle.sh`",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "domains",
+                "v1",
+                "certs",
+                ":domain",
+                "wildcard"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "domain",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "01426e1e-affb-41c2-8530-6a1e26cd0d7e",
+              "name": "Domain verified",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "domains",
+                    "v1",
+                    "certs",
+                    ":domain",
+                    "wildcard"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "domain",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"domain\": \"example.com\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "63abba5a-6c33-4e2c-a295-6fc80385b9d5",
+              "name": "Failed to preverify domain",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "domains",
+                    "v1",
+                    "certs",
+                    ":domain",
+                    "wildcard"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "domain",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.freestyle.sh",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "e0410d91-5d32-4878-ae32-93e4a7090a7a",
+    "name": "Freestyle Cron Auth Certs API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Schedule recurring serverless runs — create/update/delete cron schedules and inspect executions, success rate, and metrics timeline.\n\nContact Support:\n Name: Ben\n Email: ben@freestyle.sh",
+      "type": "text/plain"
+    }
+  }
+}

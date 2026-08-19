@@ -1,0 +1,80 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Freestyle Cron Auth DNS API",
+    "version": "0.1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "DNS",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List DNS Records",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/dns/v1/records",
+            "params": [
+              {
+                "name": "domain",
+                "value": "example.com",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "List DNS Records"
+        },
+        {
+          "info": {
+            "name": "Create DNS Record",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.freestyle.sh/dns/v1/records",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create DNS Record"
+        },
+        {
+          "info": {
+            "name": "Delete DNS Record",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.freestyle.sh/dns/v1/records",
+            "params": [
+              {
+                "name": "domain",
+                "value": "example.com",
+                "type": "query"
+              },
+              {
+                "name": "record",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Delete DNS Record"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

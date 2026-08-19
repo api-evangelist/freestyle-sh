@@ -1,0 +1,54 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Freestyle Cron Auth API",
+    "version": "0.1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Auth",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get Background Request Result",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/auth/v1/background-requests/:request_id",
+            "params": [
+              {
+                "name": "request_id",
+                "value": "",
+                "type": "path",
+                "description": "Background request ID"
+              }
+            ]
+          },
+          "docs": "Replay the stored response for a backgrounded request when it finishes."
+        },
+        {
+          "info": {
+            "name": "Get Current User",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.freestyle.sh/auth/v1/whoami"
+          },
+          "docs": "Returns information about the currently authenticated user or identity."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
