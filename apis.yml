@@ -6,6 +6,8 @@ apis:
   description: The Auth API from Freestyle — 2 operation(s) for auth.
   humanURL: https://docs.freestyle.sh/v2/vms/about
   tags:
+  - Authentication
+  tags_raw:
   - Auth
   properties:
   - type: OpenAPI
@@ -581,6 +583,8 @@ apis:
     APIs for managing lightweight virtual machines (VMs) to run your code in isolated environments.
   humanURL: https://docs.freestyle.sh/v2/vms/about
   tags:
+  - vm
+  tags_raw:
   - VM
   properties:
   - type: OpenAPI
@@ -707,6 +711,20 @@ apis:
     url: https://docs.freestyle.sh/v2/serverless/deployments/guides/static
 name: Freestyle
 tags:
+  - Artificial Intelligence
+  - Agents
+  - Sandboxes
+  - VMs
+  - MicroVMs
+  - Git
+  - Code Execution
+  - JavaScript
+  - TypeScript
+  - Serverless
+  - Hosting
+  - Developer Tools
+  - Infrastructure
+tags_raw:
   - AI
   - Agents
   - Sandboxes
