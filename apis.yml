@@ -583,7 +583,7 @@ apis:
     APIs for managing lightweight virtual machines (VMs) to run your code in isolated environments.
   humanURL: https://docs.freestyle.sh/v2/vms/about
   tags:
-  - VM
+  - vm
   tags_raw:
   - VM
   properties:
