@@ -1,26 +1,23 @@
 {
   "provider": "freestyle-sh",
   "sources": [
-    "freestyle-sh-auth-api-openapi.yml",
-    "freestyle-sh-certs-api-openapi.yml",
-    "freestyle-sh-cron-api-openapi.yml",
-    "freestyle-sh-dns-api-openapi.yml",
-    "freestyle-sh-domains-api-openapi.yml",
-    "freestyle-sh-execute-api-openapi.yml",
-    "freestyle-sh-git-api-openapi.yml",
-    "freestyle-sh-identity-api-openapi.yml",
-    "freestyle-sh-observability-api-openapi.yml",
-    "freestyle-sh-vm-api-openapi.yml",
-    "freestyle-sh-web-api-openapi.yml"
+    "_original/freestyle-cron-api-openapi.yml",
+    "_original/freestyle-domains-api-openapi.yml",
+    "_original/freestyle-execute-api-openapi.yml",
+    "_original/freestyle-git-api-openapi.yml",
+    "_original/freestyle-identity-api-openapi.yml",
+    "_original/freestyle-observability-api-openapi.yml",
+    "_original/freestyle-vm-api-openapi.yml",
+    "_original/freestyle-web-api-openapi.yml"
   ],
   "outputs": [
-    "freestyle-sh-auth-api-openapi.yml",
-    "freestyle-sh-certs-api-openapi.yml",
     "freestyle-sh-cron-api-openapi.yml",
+    "freestyle-sh-certs-api-openapi.yml",
     "freestyle-sh-dns-api-openapi.yml",
     "freestyle-sh-domains-api-openapi.yml",
     "freestyle-sh-execute-api-openapi.yml",
     "freestyle-sh-git-api-openapi.yml",
+    "freestyle-sh-auth-api-openapi.yml",
     "freestyle-sh-identity-api-openapi.yml",
     "freestyle-sh-observability-api-openapi.yml",
     "freestyle-sh-vm-api-openapi.yml",
@@ -29,6 +26,31 @@
   "archived": [],
   "errors": [],
   "warnings": [],
-  "notes": [],
-  "skipped": []
+  "notes": [
+    "sourced from openapi/_original/ (8 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "freestyle-cron-api-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "freestyle-cron-api-openapi.yml: declared missing tag: Cron",
+    "freestyle-domains-api-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "freestyle-execute-api-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "freestyle-git-api-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "freestyle-identity-api-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "freestyle-identity-api-openapi.yml: declared missing tag: Auth",
+    "freestyle-observability-api-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "freestyle-vm-api-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "freestyle-web-api-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "apis.yml register: already-registered"
+  ],
+  "skipped": [
+    "freestyle-sh-auth-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "freestyle-sh-certs-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "freestyle-sh-cron-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "freestyle-sh-dns-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "freestyle-sh-domains-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "freestyle-sh-execute-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "freestyle-sh-git-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "freestyle-sh-identity-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "freestyle-sh-observability-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "freestyle-sh-vm-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "freestyle-sh-web-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
 }

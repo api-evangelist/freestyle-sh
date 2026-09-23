@@ -1,8 +1,8 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Freestyle Cron Auth Web API
+  title: Freestyle Deployments Web API
   version: 0.1.0
-  description: Schedule recurring serverless runs — create/update/delete cron schedules and inspect executions, success rate, and metrics timeline.
+  description: Deploy and manage hosted Node.js / static websites — push code, list and inspect deployments, fetch and update deployment files (HTTP-style fetch verbs).
   contact:
     name: Ben
     email: ben@freestyle.sh
@@ -15,7 +15,7 @@ security:
 - bearerAuth: []
 tags:
 - name: Web
-  description: APIs for deploying websites. We handle node modules caching, scaling, certificates and the whole end to end process. Send the code using the [deploy](#tag/web/POST/web/v1/deploy) endpoint, and you'll get a full hosted website back. Works with any TypeScript or JavaScript codebase.
+  description: APIs for deploying websites. We handle node modules caching, scaling, certificates and the whole end to end process. Send the code using the deploy endpoint, and you'll get a full hosted website back. Works with any TypeScript or JavaScript codebase.
 paths:
   /web/v1/deployment:
     post:
@@ -342,227 +342,9 @@ paths:
           description: Internal server error
 components:
   schemas:
-    FreestyleDeployWebSuccessResponseV2:
-      oneOf:
-      - type: object
-        required:
-        - deploymentId
-        - projectId
-        properties:
-          deploymentId:
-            $ref: '#/components/schemas/DeploymentId'
-          projectId:
-            $ref: '#/components/schemas/DeploymentId'
-          domains:
-            type:
-            - array
-            - 'null'
-            items:
-              type: string
-          entrypoint:
-            type:
-            - string
-            - 'null'
-            description: 'The entrypoint file for the website. If not specified we try to automatically detect it.
-
-              For static-only deployments (static: true), this will be None.'
-      - type: object
-        required:
-        - deploymentId
-        properties:
-          deploymentId:
-            $ref: '#/components/schemas/DeploymentId'
-    DeploymentBuildOptions:
-      oneOf:
-      - type: boolean
-      - $ref: '#/components/schemas/CustomBuildOptions'
-    EgressConfig:
-      type: object
-      properties:
-        allow:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/EgressAllowRules'
-            description: Allow rules for egress traffic
-        deny:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/EgressDenyRules'
-            description: Deny rules for egress traffic (evaluated after allow)
-    FreestyleFile:
-      type: object
-      required:
-      - content
-      properties:
-        content:
-          type: string
-          description: The content of the file
-        encoding:
-          type: string
-          description: The encoding of the file. Either **utf-8** or **base64**
-        executable:
-          type: boolean
-          description: Whether the file should be marked executable after being written
-    HeaderKeyValue:
-      type: object
-      description: Key-value pair for headers
-      required:
-      - key
-      - value
-      properties:
-        key:
-          type: string
-          description: Header name
-        value:
-          type: string
-          description: Header value
-    EgressIpConfig:
-      type: object
-      properties:
-        transform:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/EgressTransform'
-          description: Transformations to apply to requests to this IP
-    DeploymentSource:
-      oneOf:
-      - type: object
-        title: Files
-        required:
-        - files
-        - kind
-        properties:
-          files:
-            type: object
-            additionalProperties:
-              $ref: '#/components/schemas/FreestyleFile'
-            propertyNames:
-              type: string
-          kind:
-            type: string
-            enum:
-            - files
-      - type: object
-        title: Tar
-        required:
-        - url
-        - kind
-        properties:
-          url:
-            type: string
-          kind:
-            type: string
-            enum:
-            - tar
-      - type: object
-        title: Git
-        description: '`dir` is the Directory to deploy from. If not provided, the root of the repository will be used.'
-        required:
-        - url
-        - kind
-        properties:
-          url:
-            type: string
-          branch:
-            type:
-            - string
-            - 'null'
-            example: main
-          dir:
-            type:
-            - string
-            - 'null'
-            example: dist
-          kind:
-            type: string
-            enum:
-            - git
-    DeploymentLogEntry:
-      type: object
-      required:
-      - deploymentId
-      - accountId
-      - provisionedAt
-      - timeout
-      - state
-      - domains
-      - envVars
-      properties:
-        deploymentId:
-          $ref: '#/components/schemas/DeploymentId'
-        accountId:
-          type: string
-          format: uuid
-        provisionedAt:
-          type: string
-          format: date-time
-        timeout:
-          type: string
-        state:
-          $ref: '#/components/schemas/DeploymentState'
-        deployedAt:
-          type:
-          - string
-          - 'null'
-          format: date-time
-        domains:
-          type: array
-          items:
-            type: string
-        envVars:
-          type: object
-          additionalProperties:
-            type: string
-          propertyNames:
-            type: string
-    NetworkPermissionData:
-      type: object
-      required:
-      - query
-      properties:
-        query:
-          type: string
-        behavior:
-          $ref: '#/components/schemas/Behavior'
-    HeaderConfig:
-      type: object
-      description: Header configuration for setting custom headers on matching paths
-      required:
-      - source
-      - headers
-      properties:
-        source:
-          type: string
-          description: Source pattern (regex pattern)
-        headers:
-          type: array
-          items:
-            $ref: '#/components/schemas/HeaderKeyValue'
-          description: Headers to set (array of key-value pairs)
-    FreestyleNetworkPermission:
-      oneOf:
-      - allOf:
-        - $ref: '#/components/schemas/NetworkPermissionData'
-        - type: object
-          required:
-          - action
-          properties:
-            action:
-              type: string
-              enum:
-              - allow
-      - allOf:
-        - $ref: '#/components/schemas/NetworkPermissionData'
-        - type: object
-          required:
-          - action
-          properties:
-            action:
-              type: string
-              enum:
-              - deny
+    DeploymentId:
+      type: string
+      format: uuid
     EgressDomainConfig:
       type: object
       properties:
@@ -573,193 +355,6 @@ components:
           items:
             $ref: '#/components/schemas/EgressTransform'
           description: Transformations to apply to requests to this domain
-    EgressTransform:
-      type: object
-      properties:
-        headers:
-          type:
-          - object
-          - 'null'
-          description: Headers to set on outgoing requests
-          additionalProperties:
-            type: string
-          propertyNames:
-            type: string
-    RedirectConfig:
-      type: object
-      description: Redirect configuration for permanent or temporary redirects (Vercel-compatible)
-      required:
-      - source
-      - destination
-      properties:
-        source:
-          type: string
-          description: Source pattern (can be exact path or regex)
-        destination:
-          type: string
-          description: Destination path or URL
-        statusCode:
-          type:
-          - integer
-          - 'null'
-          format: int32
-          description: 'HTTP status code for redirect (301, 302, 307, 308). Takes precedence over `permanent`.
-
-            If neither `status_code` nor `permanent` is provided, defaults to 308.'
-          minimum: 0
-        permanent:
-          type:
-          - boolean
-          - 'null'
-          description: 'If true, uses 308 (permanent redirect). If false, uses 307 (temporary redirect).
-
-            Ignored if `status_code` is explicitly set. Vercel-compatible alternative to `status_code`.'
-    EgressAllowRules:
-      type: object
-      properties:
-        domains:
-          type:
-          - object
-          - 'null'
-          description: 'Whitelist of domains. Empty object means no domains allowed.
-
-            "*" means allow all domains.
-
-            Domain name maps to a list of transformations (currently just headers).'
-          additionalProperties:
-            type: array
-            items:
-              $ref: '#/components/schemas/EgressDomainConfig'
-          propertyNames:
-            type: string
-        ips:
-          type:
-          - object
-          - 'null'
-          description: 'Whitelist of IPs. Empty object means no IPs allowed.
-
-            CIDR notation supported (e.g., "173.194.0.0/16").
-
-            IPs are allowed on any port/protocol.'
-          additionalProperties:
-            type: array
-            items:
-              $ref: '#/components/schemas/EgressIpConfig'
-          propertyNames:
-            type: string
-    DynamicConfig:
-      type: object
-      description: Dynamic route configuration for paths that should be handled by the worker
-      required:
-      - source
-      properties:
-        source:
-          type: string
-          description: Source pattern (regex or glob pattern like "/api/.*" or "/api/**")
-        methods:
-          type:
-          - array
-          - 'null'
-          items:
-            type: string
-          description: HTTP methods this route applies to (if None, applies to all methods)
-    RewriteConfig:
-      type: object
-      description: Rewrite configuration for URL rewrites (internal, not visible to client)
-      required:
-      - source
-      - destination
-      properties:
-        source:
-          type: string
-          description: Source pattern (regex pattern)
-        destination:
-          type: string
-          description: Destination path with optional capture group substitution ($1, $2, etc.)
-    CustomBuildOptions:
-      type: object
-      required:
-      - command
-      properties:
-        command:
-          type: string
-        outDir:
-          type:
-          - string
-          - 'null'
-        envVars:
-          type:
-          - object
-          - 'null'
-          additionalProperties:
-            type: string
-          propertyNames:
-            type: string
-    ListDeploymentsResponse:
-      type: object
-      required:
-      - entries
-      - total
-      - offset
-      properties:
-        entries:
-          type: array
-          items:
-            $ref: '#/components/schemas/DeploymentLogEntry'
-        total:
-          type: integer
-          format: int64
-          minimum: 0
-        offset:
-          type: integer
-          format: int64
-          minimum: 0
-    DeploymentState:
-      type: string
-      enum:
-      - provisioning
-      - deployed
-      - failed
-    FreestyleDeployWebPayloadV2:
-      type: object
-      required:
-      - source
-      - config
-      properties:
-        source:
-          $ref: '#/components/schemas/DeploymentSource'
-        config:
-          $ref: '#/components/schemas/FreestyleDeployWebConfiguration'
-    DeploymentId:
-      type: string
-      format: uuid
-    Behavior:
-      type: string
-      default: exact
-      enum:
-      - regex
-      - exact
-    FreestyleDeployWebExperimentalConfiguration:
-      type: object
-      properties:
-        nextjsOptimization:
-          type: boolean
-    EgressDenyRules:
-      type: object
-      properties:
-        ips:
-          type:
-          - object
-          - 'null'
-          description: 'Blacklist of IPs. These override allow rules.
-
-            CIDR notation supported.'
-          additionalProperties:
-            type: array
-            items:
-              $ref: '#/components/schemas/EgressIpConfig'
-          propertyNames:
-            type: string
     FreestyleDeployWebConfiguration:
       type: object
       properties:
@@ -895,6 +490,411 @@ components:
           - type: 'null'
           - $ref: '#/components/schemas/FreestyleDeployWebExperimentalConfiguration'
             description: Experimental feature flags. Avoid relying on these for long-term API stability.
+    RewriteConfig:
+      type: object
+      description: Rewrite configuration for URL rewrites (internal, not visible to client)
+      required:
+      - source
+      - destination
+      properties:
+        source:
+          type: string
+          description: Source pattern (regex pattern)
+        destination:
+          type: string
+          description: Destination path with optional capture group substitution ($1, $2, etc.)
+    RedirectConfig:
+      type: object
+      description: Redirect configuration for permanent or temporary redirects (Vercel-compatible)
+      required:
+      - source
+      - destination
+      properties:
+        source:
+          type: string
+          description: Source pattern (can be exact path or regex)
+        destination:
+          type: string
+          description: Destination path or URL
+        statusCode:
+          type:
+          - integer
+          - 'null'
+          format: int32
+          description: 'HTTP status code for redirect (301, 302, 307, 308). Takes precedence over `permanent`.
+
+            If neither `status_code` nor `permanent` is provided, defaults to 308.'
+          minimum: 0
+        permanent:
+          type:
+          - boolean
+          - 'null'
+          description: 'If true, uses 308 (permanent redirect). If false, uses 307 (temporary redirect).
+
+            Ignored if `status_code` is explicitly set. Vercel-compatible alternative to `status_code`.'
+    CustomBuildOptions:
+      type: object
+      required:
+      - command
+      properties:
+        command:
+          type: string
+        outDir:
+          type:
+          - string
+          - 'null'
+        envVars:
+          type:
+          - object
+          - 'null'
+          additionalProperties:
+            type: string
+          propertyNames:
+            type: string
+    DeploymentSource:
+      oneOf:
+      - type: object
+        title: Files
+        required:
+        - files
+        - kind
+        properties:
+          files:
+            type: object
+            additionalProperties:
+              $ref: '#/components/schemas/FreestyleFile'
+            propertyNames:
+              type: string
+          kind:
+            type: string
+            enum:
+            - files
+      - type: object
+        title: Tar
+        required:
+        - url
+        - kind
+        properties:
+          url:
+            type: string
+          kind:
+            type: string
+            enum:
+            - tar
+      - type: object
+        title: Git
+        description: '`dir` is the Directory to deploy from. If not provided, the root of the repository will be used.'
+        required:
+        - url
+        - kind
+        properties:
+          url:
+            type: string
+          branch:
+            type:
+            - string
+            - 'null'
+            example: main
+          dir:
+            type:
+            - string
+            - 'null'
+            example: dist
+          kind:
+            type: string
+            enum:
+            - git
+    FreestyleDeployWebPayloadV2:
+      type: object
+      required:
+      - source
+      - config
+      properties:
+        source:
+          $ref: '#/components/schemas/DeploymentSource'
+        config:
+          $ref: '#/components/schemas/FreestyleDeployWebConfiguration'
+    EgressDenyRules:
+      type: object
+      properties:
+        ips:
+          type:
+          - object
+          - 'null'
+          description: 'Blacklist of IPs. These override allow rules.
+
+            CIDR notation supported.'
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/EgressIpConfig'
+          propertyNames:
+            type: string
+    EgressTransform:
+      type: object
+      properties:
+        headers:
+          type:
+          - object
+          - 'null'
+          description: Headers to set on outgoing requests
+          additionalProperties:
+            type: string
+          propertyNames:
+            type: string
+    NetworkPermissionData:
+      type: object
+      required:
+      - query
+      properties:
+        query:
+          type: string
+        behavior:
+          $ref: '#/components/schemas/Behavior'
+    DeploymentState:
+      type: string
+      enum:
+      - provisioning
+      - deployed
+      - failed
+    EgressAllowRules:
+      type: object
+      properties:
+        domains:
+          type:
+          - object
+          - 'null'
+          description: 'Whitelist of domains. Empty object means no domains allowed.
+
+            "*" means allow all domains.
+
+            Domain name maps to a list of transformations (currently just headers).'
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/EgressDomainConfig'
+          propertyNames:
+            type: string
+        ips:
+          type:
+          - object
+          - 'null'
+          description: 'Whitelist of IPs. Empty object means no IPs allowed.
+
+            CIDR notation supported (e.g., "173.194.0.0/16").
+
+            IPs are allowed on any port/protocol.'
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/EgressIpConfig'
+          propertyNames:
+            type: string
+    FreestyleDeployWebExperimentalConfiguration:
+      type: object
+      properties:
+        nextjsOptimization:
+          type: boolean
+    DeploymentLogEntry:
+      type: object
+      required:
+      - deploymentId
+      - accountId
+      - provisionedAt
+      - timeout
+      - state
+      - domains
+      - envVars
+      properties:
+        deploymentId:
+          $ref: '#/components/schemas/DeploymentId'
+        accountId:
+          type: string
+          format: uuid
+        provisionedAt:
+          type: string
+          format: date-time
+        timeout:
+          type: string
+        state:
+          $ref: '#/components/schemas/DeploymentState'
+        deployedAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        domains:
+          type: array
+          items:
+            type: string
+        envVars:
+          type: object
+          additionalProperties:
+            type: string
+          propertyNames:
+            type: string
+    FreestyleNetworkPermission:
+      oneOf:
+      - allOf:
+        - $ref: '#/components/schemas/NetworkPermissionData'
+        - type: object
+          required:
+          - action
+          properties:
+            action:
+              type: string
+              enum:
+              - allow
+      - allOf:
+        - $ref: '#/components/schemas/NetworkPermissionData'
+        - type: object
+          required:
+          - action
+          properties:
+            action:
+              type: string
+              enum:
+              - deny
+    ListDeploymentsResponse:
+      type: object
+      required:
+      - entries
+      - total
+      - offset
+      properties:
+        entries:
+          type: array
+          items:
+            $ref: '#/components/schemas/DeploymentLogEntry'
+        total:
+          type: integer
+          format: int64
+          minimum: 0
+        offset:
+          type: integer
+          format: int64
+          minimum: 0
+    FreestyleFile:
+      type: object
+      required:
+      - content
+      properties:
+        content:
+          type: string
+          description: The content of the file
+        encoding:
+          type: string
+          description: The encoding of the file. Either **utf-8** or **base64**
+        executable:
+          type: boolean
+          description: Whether the file should be marked executable after being written
+    DynamicConfig:
+      type: object
+      description: Dynamic route configuration for paths that should be handled by the worker
+      required:
+      - source
+      properties:
+        source:
+          type: string
+          description: Source pattern (regex or glob pattern like "/api/.*" or "/api/**")
+        methods:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+          description: HTTP methods this route applies to (if None, applies to all methods)
+    Behavior:
+      type: string
+      default: exact
+      enum:
+      - regex
+      - exact
+    HeaderConfig:
+      type: object
+      description: Header configuration for setting custom headers on matching paths
+      required:
+      - source
+      - headers
+      properties:
+        source:
+          type: string
+          description: Source pattern (regex pattern)
+        headers:
+          type: array
+          items:
+            $ref: '#/components/schemas/HeaderKeyValue'
+          description: Headers to set (array of key-value pairs)
+    DeploymentBuildOptions:
+      oneOf:
+      - type: boolean
+      - $ref: '#/components/schemas/CustomBuildOptions'
+    EgressConfig:
+      type: object
+      properties:
+        allow:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/EgressAllowRules'
+            description: Allow rules for egress traffic
+        deny:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/EgressDenyRules'
+            description: Deny rules for egress traffic (evaluated after allow)
+    EgressIpConfig:
+      type: object
+      properties:
+        transform:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/EgressTransform'
+          description: Transformations to apply to requests to this IP
+    HeaderKeyValue:
+      type: object
+      description: Key-value pair for headers
+      required:
+      - key
+      - value
+      properties:
+        key:
+          type: string
+          description: Header name
+        value:
+          type: string
+          description: Header value
+    FreestyleDeployWebSuccessResponseV2:
+      oneOf:
+      - type: object
+        required:
+        - deploymentId
+        - projectId
+        properties:
+          deploymentId:
+            $ref: '#/components/schemas/DeploymentId'
+          projectId:
+            $ref: '#/components/schemas/DeploymentId'
+          domains:
+            type:
+            - array
+            - 'null'
+            items:
+              type: string
+          entrypoint:
+            type:
+            - string
+            - 'null'
+            description: 'The entrypoint file for the website. If not specified we try to automatically detect it.
+
+              For static-only deployments (static: true), this will be None.'
+      - type: object
+        required:
+        - deploymentId
+        properties:
+          deploymentId:
+            $ref: '#/components/schemas/DeploymentId'
   securitySchemes:
     bearerAuth:
       type: http

@@ -1,8 +1,8 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Freestyle Cron Auth Observability API
+  title: Freestyle Observability API
   version: 0.1.0
-  description: Schedule recurring serverless runs — create/update/delete cron schedules and inspect executions, success rate, and metrics timeline.
+  description: Query structured logs across Freestyle services for VMs, runs, deployments, and identity events.
   contact:
     name: Ben
     email: ben@freestyle.sh
@@ -137,36 +137,6 @@ paths:
                 $ref: '#/components/schemas/FreestyleGetLogsResponse'
 components:
   schemas:
-    BuildId:
-      type: string
-      description: Branded build ID in the format `bld-<20 lowercase alphanumeric chars>`.
-    VmInstanceId:
-      type: string
-    VmId:
-      type: string
-      description: 'VM ID — always 20 alphanumeric lowercase characters.
-
-        New IDs are fully random. Legacy short IDs are right-padded with ''0'' on parse.'
-    RequestId:
-      type: string
-      description: 'Branded request identifier — `ri-<20 lowercase alphanumeric chars>` for newly
-
-        minted IDs. The wrapped string is otherwise opaque, so legacy UUID-formatted
-
-        IDs (from in-flight requests during rollout) round-trip unchanged.'
-    FreestyleGetLogsResponse:
-      type: object
-      required:
-      - logs
-      properties:
-        logs:
-          type: array
-          items:
-            $ref: '#/components/schemas/FreestyleLogResponseObject'
-        nextPageToken:
-          type:
-          - string
-          - 'null'
     FreestyleLogResponseObject:
       type: object
       required:
@@ -209,6 +179,36 @@ components:
           oneOf:
           - type: 'null'
           - $ref: '#/components/schemas/BuildId'
+    VmId:
+      type: string
+      description: 'VM ID — always 20 alphanumeric lowercase characters.
+
+        New IDs are fully random. Legacy short IDs are right-padded with ''0'' on parse.'
+    BuildId:
+      type: string
+      description: Branded build ID in the format `bld-<20 lowercase alphanumeric chars>`.
+    RequestId:
+      type: string
+      description: 'Branded request identifier — `ri-<20 lowercase alphanumeric chars>` for newly
+
+        minted IDs. The wrapped string is otherwise opaque, so legacy UUID-formatted
+
+        IDs (from in-flight requests during rollout) round-trip unchanged.'
+    FreestyleGetLogsResponse:
+      type: object
+      required:
+      - logs
+      properties:
+        logs:
+          type: array
+          items:
+            $ref: '#/components/schemas/FreestyleLogResponseObject'
+        nextPageToken:
+          type:
+          - string
+          - 'null'
+    VmInstanceId:
+      type: string
   securitySchemes:
     bearerAuth:
       type: http

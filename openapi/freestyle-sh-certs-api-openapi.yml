@@ -1,8 +1,8 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Freestyle Cron Auth Certs API
+  title: Freestyle Domains Certs API
   version: 0.1.0
-  description: Schedule recurring serverless runs — create/update/delete cron schedules and inspect executions, success rate, and metrics timeline.
+  description: Manage custom domains, domain verifications, DNS records, domain mappings, and wildcard SSL certificates for Freestyle Web Deployments and VMs.
   contact:
     name: Ben
     email: ben@freestyle.sh
@@ -23,7 +23,6 @@ paths:
       - Certs
       summary: Provision a Wildcard Certificate
       description: 'Provisions a wildcard certificate for a verified domain
-
 
 
         This speeds up deploys on all subdomains of the domain. In order to use it, you must add the following record to your DNS config:
