@@ -61,13 +61,6 @@ paths:
                 $ref: '#/components/schemas/WhoAmIResponse'
 components:
   schemas:
-    BackgroundRequestErrorResponse:
-      type: object
-      required:
-      - message
-      properties:
-        message:
-          type: string
     WhoAmIResponse:
       type: object
       required:
@@ -81,6 +74,13 @@ components:
           - string
           - 'null'
           format: uuid
+    RequestId:
+      type: string
+      description: 'Branded request identifier — `ri-<20 lowercase alphanumeric chars>` for newly
+
+        minted IDs. The wrapped string is otherwise opaque, so legacy UUID-formatted
+
+        IDs (from in-flight requests during rollout) round-trip unchanged.'
     BackgroundRequestPendingResponse:
       type: object
       required:
@@ -91,13 +91,13 @@ components:
           $ref: '#/components/schemas/RequestId'
         status:
           type: string
-    RequestId:
-      type: string
-      description: 'Branded request identifier — `ri-<20 lowercase alphanumeric chars>` for newly
-
-        minted IDs. The wrapped string is otherwise opaque, so legacy UUID-formatted
-
-        IDs (from in-flight requests during rollout) round-trip unchanged.'
+    BackgroundRequestErrorResponse:
+      type: object
+      required:
+      - message
+      properties:
+        message:
+          type: string
   securitySchemes:
     bearerAuth:
       type: http

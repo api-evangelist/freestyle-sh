@@ -156,21 +156,6 @@ paths:
                     description: Human-readable error message
 components:
   schemas:
-    CreateRecordResponse:
-      type: object
-      required:
-      - record
-      properties:
-        record:
-          $ref: '#/components/schemas/DnsRecord'
-    DnsRecordKind:
-      type: string
-      enum:
-      - A
-      - AAAA
-      - CNAME
-      - TXT
-      - NS
     CreateRecordParams:
       type: object
       required:
@@ -204,15 +189,6 @@ components:
           - 'null'
           format: int32
           minimum: 0
-    ListRecordsResponse:
-      type: object
-      required:
-      - records
-      properties:
-        records:
-          type: array
-          items:
-            $ref: '#/components/schemas/DnsRecord'
     DeleteRecordResponse:
       type: object
       required:
@@ -245,6 +221,30 @@ components:
           minimum: 0
         managed:
           type: boolean
+    CreateRecordResponse:
+      type: object
+      required:
+      - record
+      properties:
+        record:
+          $ref: '#/components/schemas/DnsRecord'
+    ListRecordsResponse:
+      type: object
+      required:
+      - records
+      properties:
+        records:
+          type: array
+          items:
+            $ref: '#/components/schemas/DnsRecord'
+    DnsRecordKind:
+      type: string
+      enum:
+      - A
+      - AAAA
+      - CNAME
+      - TXT
+      - NS
   securitySchemes:
     bearerAuth:
       type: http

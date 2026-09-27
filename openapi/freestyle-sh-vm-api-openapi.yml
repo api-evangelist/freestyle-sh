@@ -1817,16 +1817,6 @@ paths:
       x-summary-source: derived
 components:
   schemas:
-    OptimizeVmResponse:
-      type: object
-      required:
-      - id
-      - message
-      properties:
-        id:
-          type: string
-        message:
-          type: string
     VmPersistence:
       oneOf:
       - type: object
@@ -1876,223 +1866,13 @@ components:
             type: string
             enum:
             - persistent
-    ForkVmRequest:
+    UpdateSnapshotRequest:
       type: object
-      properties:
-        count:
-          type:
-          - integer
-          - 'null'
-          format: int32
-          minimum: 0
-    SnapshotVmResponse:
-      type: object
-      required:
-      - snapshotId
-      - sourceVmId
-      properties:
-        snapshotId:
-          $ref: '#/components/schemas/SnapshotId'
-          description: The ID of the snapshot
-        sourceVmId:
-          $ref: '#/components/schemas/VmId'
-          description: The ID of the source VM
-        sourceVmInstanceId:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/VmInstanceId'
-            description: The instance ID of the source VM
-    VMState:
-      type: string
-      enum:
-      - building
-      - starting
-      - running
-      - suspending
-      - suspended
-      - stopped
-      - lost
-    SnapshotPersistence:
-      oneOf:
-      - type: object
-        description: 'When storage quota is reached, the least recently used snapshots will be
-
-          deleted. Higher priority = less likely to be evicted. Range 0-10, default 5.'
-        required:
-        - type
-        properties:
-          priority:
-            type:
-            - integer
-            - 'null'
-            format: int32
-            default: 5
-            maximum: 10
-            minimum: 0
-          type:
-            type: string
-            enum:
-            - sticky
-      - type: object
-        description: The snapshot will be stored until manually deleted.
-        required:
-        - type
-        properties:
-          type:
-            type: string
-            enum:
-            - persistent
-    SystemdListServicesResponse:
-      type: object
-      required:
-      - services
-      properties:
-        services:
-          type: array
-          items:
-            $ref: '#/components/schemas/SystemdServiceListItem'
-    WaitVmResponse:
-      type: object
-      required:
-      - id
-      - exitStatus
-      properties:
-        id:
-          $ref: '#/components/schemas/VmId'
-        exitStatus:
-          type: string
-    SystemdUnitSpecPatch:
-      type: object
-      required:
-      - name
       properties:
         name:
-          type: string
-          description: Unique slug; becomes unit name "<name>.service".
-        mode:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/SystemdUnitMode'
-            description: '"oneshot" (run and exit) or "service" (long-running/healing).'
-        exec:
-          type:
-          - array
-          - 'null'
-          items:
-            type: string
-          description: Executable to run (can specify multiple commands that run sequentially).
-        env:
-          type:
-          - object
-          - 'null'
-          description: Environment variables.
-          additionalProperties:
-            type: string
-          propertyNames:
-            type: string
-        user:
           type:
           - string
           - 'null'
-          description: Linux user to run the service as.
-        group:
-          type:
-          - string
-          - 'null'
-          description: Linux group to run the service in.
-        workdir:
-          type:
-          - string
-          - 'null'
-          description: Working directory.
-        after:
-          type:
-          - array
-          - 'null'
-          items:
-            type: string
-          description: 'Establishes an ordering dependency. The current unit will start only
-
-            after the units listed in After= have started. This is useful for
-
-            ensuring that certain services are up and running before the current
-
-            service begins its operation.'
-        requires:
-          type:
-          - array
-          - 'null'
-          items:
-            type: string
-          description: 'Establishes a strong dependency. If the required unit fails to
-
-            start or stops unexpectedly, the current unit will also be stopped. This
-
-            ensures that a service critical to the functioning of the current unit
-
-            is running and stable. Units listed in Requires= are activated along
-
-            with the current unit. If the required unit is not active, systemd will
-
-            attempt to start it. This directive signifies a tight coupling between
-
-            services, where the current service cannot function without the required
-
-            service.'
-        onFailure:
-          type:
-          - array
-          - 'null'
-          items:
-            type: string
-          description: 'Units to activate when this unit enters a failed state. This is useful
-
-            for triggering recovery actions, notifications, or cleanup services when
-
-            the current service fails.'
-        wantedBy:
-          type:
-          - array
-          - 'null'
-          items:
-            type: string
-          description: 'Target used when enabling (default: multi-user.target).'
-        enable:
-          type:
-          - boolean
-          - 'null'
-          description: 'Whether to enable this service (calls `systemctl enable <service>`).
-
-            When enabled, the service will start automatically at boot.'
-        timeoutSec:
-          type:
-          - integer
-          - 'null'
-          format: int64
-          description: Overall start/stop timeout.
-          minimum: 0
-        deleteAfterSuccess:
-          type:
-          - boolean
-          - 'null'
-          description: 'For oneshot: remove unit on success.'
-        readySignal:
-          type:
-          - boolean
-          - 'null'
-          description: Use sd_notify; maps to Type=notify.
-        watchdogSec:
-          type:
-          - integer
-          - 'null'
-          format: int64
-          description: Enable systemd watchdog (seconds).
-          minimum: 0
-        restartPolicy:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/SystemdRestartPolicy'
-            description: Restart semantics (service mode).
     PortConfig:
       type: object
       required:
@@ -2107,910 +1887,6 @@ components:
           type: integer
           format: int32
           minimum: 0
-    BuildPhase:
-      type: object
-      description: 'One phase the build passed through. Append-only — rows are never
-
-        updated. The implicit `finished_at` of any phase is the next phase
-
-        row''s `started_at`, or `builds.finished_at` for the last phase.'
-      required:
-      - phaseId
-      - buildId
-      - name
-      - startedAt
-      properties:
-        phaseId:
-          $ref: '#/components/schemas/BuildPhaseId'
-        buildId:
-          $ref: '#/components/schemas/BuildId'
-        name:
-          type: string
-        snapshotId:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/SnapshotId'
-            description: 'Snapshot this phase is about, when applicable: the cached snapshot a
-
-              "(cached)" phase references, or the snapshot a build phase produces.
-
-              `None` for phases that don''t map to a single snapshot (e.g. variant
-
-              resize prep that hasn''t been pre-allocated yet).'
-        startedAt:
-          type: string
-          format: date-time
-    ResizeVmRequest:
-      type: object
-      properties:
-        rootfsSizeGb:
-          type:
-          - integer
-          - 'null'
-          format: int64
-          minimum: 0
-        memSizeGb:
-          type:
-          - integer
-          - 'null'
-          format: int32
-          minimum: 0
-        vcpuCount:
-          type:
-          - integer
-          - 'null'
-          format: int32
-          minimum: 0
-    GetVmResponse:
-      type: object
-      required:
-      - id
-      - state
-      properties:
-        id:
-          $ref: '#/components/schemas/VmId'
-        name:
-          type:
-          - string
-          - 'null'
-        vmInstanceId:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/VmInstanceId'
-            description: Unique ID for the current VM run (new ID generated on each start/resume)
-        lastNetworkActivity:
-          type:
-          - string
-          - 'null'
-          format: date-time
-        state:
-          $ref: '#/components/schemas/VMState'
-        cpuTimeSeconds:
-          type:
-          - number
-          - 'null'
-          format: double
-        buildId:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/BuildId'
-            description: Build that produced this VM, if it was created via a build saga.
-    SnapshotLayerId:
-      type: string
-      description: Branded snapshot layer ID — always a 16-character alphanumeric lowercase string prefixed with "sl-".
-    TerminalLogsResponse:
-      type: object
-      required:
-      - output
-      properties:
-        output:
-          type: string
-    BuildPhaseId:
-      type: string
-      description: Branded build phase ID in the format `bph-<20 lowercase alphanumeric chars>`.
-    KillVmResponse:
-      type: object
-      required:
-      - id
-      properties:
-        id:
-          $ref: '#/components/schemas/VmId'
-    FreestyleFile:
-      type: object
-      required:
-      - content
-      properties:
-        content:
-          type: string
-          description: The content of the file
-        encoding:
-          type: string
-          description: The encoding of the file. Either **utf-8** or **base64**
-        executable:
-          type: boolean
-          description: Whether the file should be marked executable after being written
-    StartVmRequest:
-      type: object
-      properties:
-        idleTimeoutSeconds:
-          type:
-          - integer
-          - 'null'
-          format: int64
-        readySignalTimeoutSeconds:
-          type:
-          - integer
-          - 'null'
-          format: int64
-        waitForReadySignal:
-          type:
-          - boolean
-          - 'null'
-        activityThresholdBytes:
-          type:
-          - integer
-          - 'null'
-          format: int64
-          minimum: 0
-    ListBuildPhasesResponse:
-      type: object
-      description: 'Ordered timeline of phases for a single build.
-
-
-        Phases are append-only; consumers wanting the "current phase" pick the
-
-        last entry. Empty for a build whose top-level saga short-circuited
-
-        (e.g. fully-cached chain) before any phase was recorded.'
-      required:
-      - phases
-      properties:
-        phases:
-          type: array
-          items:
-            $ref: '#/components/schemas/BuildPhase'
-    SystemdDeleteServiceResponse:
-      type: object
-      required:
-      - success
-      - message
-      properties:
-        success:
-          type: boolean
-        message:
-          type: string
-    UpdateSnapshotResponses:
-      oneOf:
-      - type: object
-        required:
-        - snapshot_id
-        properties:
-          snapshot_id:
-            $ref: '#/components/schemas/SnapshotId'
-          name:
-            type:
-            - string
-            - 'null'
-    ExecAwaitVmResponse:
-      type: object
-      properties:
-        stdout:
-          type:
-          - string
-          - 'null'
-        stderr:
-          type:
-          - string
-          - 'null'
-        statusCode:
-          type:
-          - integer
-          - 'null'
-          format: int32
-    VmId:
-      type: string
-      description: 'VM ID — always 20 alphanumeric lowercase characters.
-
-        New IDs are fully random. Legacy short IDs are right-padded with ''0'' on parse.'
-    BuildId:
-      type: string
-      description: Branded build ID in the format `bld-<20 lowercase alphanumeric chars>`.
-    GitOptions:
-      type: object
-      required:
-      - config
-      properties:
-        config:
-          $ref: '#/components/schemas/GitConfig'
-        repos:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/GitRepositorySpec'
-    SnapshotId:
-      type: string
-      description: 'Branded snapshot ID in the format `sc-<20 lowercase alphanumeric chars>`.
-
-        Unlike `VmShortId`, this is a plain `String` wrapper with no fixed-size array or padding.'
-    ListVmsResponse:
-      type: object
-      required:
-      - vms
-      - totalCount
-      - runningCount
-      - startingCount
-      - suspendedCount
-      - stoppedCount
-      properties:
-        vms:
-          type: array
-          items:
-            $ref: '#/components/schemas/VmInfo'
-        totalCount:
-          type: integer
-          minimum: 0
-        buildingCount:
-          type: integer
-          minimum: 0
-        runningCount:
-          type: integer
-          minimum: 0
-        startingCount:
-          type: integer
-          minimum: 0
-        suspendingCount:
-          type: integer
-          minimum: 0
-        suspendedCount:
-          type: integer
-          minimum: 0
-        stoppedCount:
-          type: integer
-          minimum: 0
-        lostCount:
-          type: integer
-          minimum: 0
-        userId:
-          type:
-          - string
-          - 'null'
-    CreateSnapshotRequest:
-      type: object
-      properties:
-        name:
-          type:
-          - string
-          - 'null'
-        spec:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/SnapshotSpec'
-            description: 'Recursive snapshot spec. When set, `template` must be omitted.
-
-              `spec.snapshot` materializes into a chain of cached snapshots before
-
-              the outermost layer is built.'
-        template:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/VmTemplate'
-            description: 'Legacy single-layer snapshot template. Subsumed by the recursive
-
-              `spec` chain, which supports multiple cacheable layers.
-
-
-              **Deprecated: use `spec` instead.**'
-        persistence:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/SnapshotPersistence'
-            description: Defaults to persistent. If set to sticky we will intelligently clean it up as your account reaches its limits.
-        dockerCredentials:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/DockerCredentials'
-            description: 'Optional Docker registry credentials required when using a private image
-
-              in `spec.baseImage`.'
-    ExecAwaitRequest:
-      type: object
-      required:
-      - command
-      properties:
-        command:
-          type: string
-        terminal:
-          type:
-          - string
-          - 'null'
-        timeoutMs:
-          type:
-          - integer
-          - 'null'
-          format: int64
-          minimum: 0
-    UpdateSnapshotRequest:
-      type: object
-      properties:
-        name:
-          type:
-          - string
-          - 'null'
-    VmMetricsInfo:
-      type: object
-      required:
-      - wallTimeSeconds
-      - billingDay
-      - isActiveToday
-      properties:
-        wallTimeSeconds:
-          type: integer
-          format: int64
-          minimum: 0
-        billingDay:
-          type: string
-        isActiveToday:
-          type: boolean
-    GitUser:
-      type: object
-      properties:
-        name:
-          type:
-          - string
-          - 'null'
-        email:
-          type:
-          - string
-          - 'null'
-        signingkey:
-          type:
-          - string
-          - 'null'
-    ForkedVmResponse:
-      type: object
-      required:
-      - id
-      - domains
-      properties:
-        id:
-          type: string
-        domains:
-          type: array
-          items:
-            type: string
-        consoleUrl:
-          type:
-          - string
-          - 'null'
-    BatchServiceRequest:
-      type: object
-      required:
-      - services
-      properties:
-        services:
-          type: array
-          items:
-            $ref: '#/components/schemas/ServiceIdItem'
-    GitRepositorySpec:
-      type: object
-      required:
-      - repo
-      - path
-      properties:
-        repo:
-          type: string
-          description: url or id of the git repository
-        path:
-          type: string
-          description: path to place the repo on
-        rev:
-          type:
-          - string
-          - 'null'
-          description: optional rev (branch, tag, commit)
-    LinuxGroupSpec:
-      type: object
-      required:
-      - name
-      properties:
-        name:
-          type: string
-          description: Unique group name
-        gid:
-          type:
-          - integer
-          - 'null'
-          format: int32
-          description: Optional fixed GID; if None, allocate
-          minimum: 0
-        system:
-          type:
-          - boolean
-          - 'null'
-          description: System group (allocator uses system range)
-          default: false
-    ServiceIdItem:
-      type: object
-      required:
-      - id
-      properties:
-        id:
-          type: string
-    RequestId:
-      type: string
-      description: 'Branded request identifier — `ri-<20 lowercase alphanumeric chars>` for newly
-
-        minted IDs. The wrapped string is otherwise opaque, so legacy UUID-formatted
-
-        IDs (from in-flight requests during rollout) round-trip unchanged.'
-    StartedVmResponse:
-      type: object
-      required:
-      - id
-      - domains
-      properties:
-        id:
-          type: string
-        domains:
-          type: array
-          items:
-            type: string
-        console_url:
-          type:
-          - string
-          - 'null'
-    LogEntry:
-      type: object
-      required:
-      - line
-      properties:
-        line:
-          type: string
-        timestamp:
-          type:
-          - string
-          - 'null'
-    DeleteSnapshotResponses:
-      oneOf:
-      - type: object
-        required:
-        - snapshot_id
-        properties:
-          snapshot_id:
-            $ref: '#/components/schemas/SnapshotId'
-    TerminalLogsArrayResponse:
-      type: object
-      required:
-      - logs
-      properties:
-        logs:
-          type: array
-          items:
-            $ref: '#/components/schemas/LogEntry'
-    SystemdConfig:
-      type: object
-      properties:
-        services:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/SystemdUnitSpec'
-        patchedServices:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/SystemdUnitSpecPatch'
-    StopVmResponse:
-      type: object
-      required:
-      - vmId
-      - vmInstanceId
-      properties:
-        vmId:
-          $ref: '#/components/schemas/VmId'
-        vmInstanceId:
-          $ref: '#/components/schemas/VmInstanceId'
-    BuildState:
-      type: string
-      description: Lifecycle state of a build row.
-      enum:
-      - pending
-      - running
-      - succeeded
-      - failed
-    DockerCredentials:
-      type: object
-      required:
-      - registry
-      - username
-      - password
-      properties:
-        registry:
-          type: string
-          description: Docker registry URL (e.g., "ghcr.io", "docker.io")
-        username:
-          type: string
-          description: Username for the registry
-        password:
-          type: string
-          description: Password or token for the registry
-    SystemdServiceStatus:
-      type: object
-      required:
-      - name
-      - activeState
-      - subState
-      - loadState
-      - description
-      properties:
-        name:
-          type: string
-        activeState:
-          type: string
-        subState:
-          type: string
-        loadState:
-          type: string
-        description:
-          type: string
-    WriteFileRequest:
-      type: object
-      required:
-      - content
-      properties:
-        content:
-          type: string
-        encoding:
-          $ref: '#/components/schemas/FileEncoding'
-    ResizeVmResponse:
-      type: object
-    GitConfig:
-      type: object
-      properties:
-        user:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/GitUser'
-    CreateVmResponse:
-      type: object
-      required:
-      - id
-      - domains
-      properties:
-        id:
-          type: string
-        domains:
-          type: array
-          items:
-            type: string
-        consoleUrl:
-          type:
-          - string
-          - 'null'
-          description: '**Deprecated:** this field is scheduled for removal and is no longer
-
-            populated. The default `{vm_id}.style.dev` hostname still resolves via
-
-            firecracker''s host registry; consumers should construct it themselves
-
-            if needed.'
-          deprecated: true
-        snapshotId:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/SnapshotId'
-            description: Debugging tool, if you believe its base is incorrect you can go off it.
-    TerminalSession:
-      type: object
-      required:
-      - name
-      - status
-      properties:
-        name:
-          type: string
-        status:
-          type: string
-        created:
-          type:
-          - string
-          - 'null'
-    SnapshotStateTag:
-      type: string
-      description: "Lifecycle state of a snapshot row.\n\n  `Building`  — saga in flight, late-bound fields NULL.\n  `Ready`     — saga finalized cleanly; usable as a base.\n  `Failed`    — bytes complete but VM was broken at capture; bookable\n                for debugging.\n  `Cancelled` — saga rolled back / dependency failed; no bytes.\n  `Lost`      — reaper terminated a `building` row after a node\n                crash; bytes absent or partial."
-      enum:
-      - building
-      - ready
-      - failed
-      - cancelled
-      - lost
-    CreateSnapshotResponse:
-      type: object
-      required:
-      - snapshotId
-      properties:
-        snapshotId:
-          $ref: '#/components/schemas/SnapshotId'
-    SnapshotInfo:
-      type: object
-      required:
-      - snapshotId
-      - state
-      - createdAt
-      - failed
-      - cancelled
-      - lost
-      - deleted
-      - snapshotPersistence
-      properties:
-        snapshotId:
-          $ref: '#/components/schemas/SnapshotId'
-          description: The ID of the snapshot
-        state:
-          $ref: '#/components/schemas/SnapshotStateTag'
-          description: 'Lifecycle state. `building` rows are in flight and may have
-
-            late-bound fields (sourceVmId, etc) unset.'
-        sourceVmId:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/VmId'
-            description: Source VM the snapshot was captured from. None while state=building.
-        accountId:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/AccountId'
-            description: Account ID of the creator
-        createdAt:
-          type: string
-          description: When the snapshot was created
-        name:
-          type:
-          - string
-          - 'null'
-          description: Optional name for the snapshot
-        failed:
-          type: boolean
-          description: '`state == failed`. Kept for backward compat; prefer reading `state`.'
-          deprecated: true
-        cancelled:
-          type: boolean
-          description: '`state == cancelled`.'
-        lost:
-          type: boolean
-          description: '`state == lost`.'
-        failureReason:
-          type:
-          - string
-          - 'null'
-        deleted:
-          type: boolean
-          description: Whether the snapshot has been soft-deleted
-        snapshotPersistence:
-          $ref: '#/components/schemas/SnapshotPersistence'
-          description: Snapshot persistence strategy
-        buildId:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/BuildId'
-            description: Build that produced this snapshot, if any.
-        templateHash:
-          type:
-          - string
-          - 'null'
-          description: Template hash used for cache lookups.
-        vcpuCount:
-          type:
-          - integer
-          - 'null'
-          format: int32
-          description: Number of vCPUs configured at snapshot time
-          minimum: 0
-        memSizeMib:
-          type:
-          - integer
-          - 'null'
-          format: int32
-          description: Memory size in MiB configured at snapshot time
-          minimum: 0
-        rootfsSizeMb:
-          type:
-          - integer
-          - 'null'
-          format: int64
-          description: Root filesystem size in MB
-          minimum: 0
-    DeleteVmResponses:
-      oneOf:
-      - type: object
-        required:
-        - id
-        properties:
-          id:
-            type: string
-    SnapshotVmRequest:
-      type: object
-      properties:
-        name:
-          type:
-          - string
-          - 'null'
-          description: Optional name/label for the snapshot
-        persistence:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/SnapshotPersistence'
-            description: Persistence strategy for the snapshot. Defaults to Sticky with priority 5.
-    JournaldLogsResponse:
-      type: object
-      required:
-      - logs
-      properties:
-        logs:
-          type: array
-          items:
-            $ref: '#/components/schemas/JournaldLogItem'
-    BatchServiceOperationResult:
-      type: object
-      required:
-      - serviceId
-      - success
-      - message
-      properties:
-        serviceId:
-          type: string
-        success:
-          type: boolean
-        message:
-          type: string
-    BatchServiceResponse:
-      type: object
-      required:
-      - results
-      properties:
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/BatchServiceOperationResult'
-    VmInfo:
-      type: object
-      required:
-      - id
-      - state
-      properties:
-        id:
-          $ref: '#/components/schemas/VmId'
-        name:
-          type:
-          - string
-          - 'null'
-        state:
-          $ref: '#/components/schemas/VMState'
-        metrics:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/VmMetricsInfo'
-        createdAt:
-          type:
-          - string
-          - 'null'
-          format: date-time
-        lastNetworkActivity:
-          type:
-          - string
-          - 'null'
-          format: date-time
-        cpuTimeSeconds:
-          type:
-          - number
-          - 'null'
-          format: double
-        persistence:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/VmPersistence'
-        snapshotId:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/SnapshotId'
-            description: The snapshot this VM was created from, if any.
-        deleted:
-          type: boolean
-        createdDeclaratively:
-          type: boolean
-        buildId:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/BuildId'
-            description: Build that produced this VM, if it was created via a build saga.
-    BuildRecord:
-      type: object
-      description: 'One row in the `builds` table — a long-running snapshot creation task.
-
-
-        Builds do not form trees. Sub-work (Docker pulls, systemd installs,
-
-        per-layer captures of a multi-layer spec) is captured via append-only
-
-        `build_phases` rows on this build, not via child builds. Builds related
-
-        to one user request (e.g. retries that produce a fresh build for the
-
-        same template) share a `request_id` — that''s the only correlation
-
-        mechanism between builds.
-
-
-        Build outputs are recorded on the artifact, not the build:
-
-        `vm_snapshots.build_id` is the only link.'
-      required:
-      - buildId
-      - accountId
-      - state
-      - plannedPhases
-      - startedAt
-      - updatedAt
-      properties:
-        buildId:
-          $ref: '#/components/schemas/BuildId'
-        accountId:
-          $ref: '#/components/schemas/AccountId'
-        requestId:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/RequestId'
-        state:
-          $ref: '#/components/schemas/BuildState'
-        templateHash:
-          type:
-          - string
-          - 'null'
-          description: 'Inputs that identify the unit of work. Historical / informational
-
-            only — not used for dedupe in Phase 1.'
-        failureReason:
-          type:
-          - string
-          - 'null'
-          description: Set when state is `Failed` or `RolledBack`.
-        plannedPhases:
-          type: array
-          items:
-            type: string
-          description: 'Phase names this build plans to emit, in order, populated once at
-
-            build open and never updated. Diffing against `build_phases.name`
-
-            yields "what''s still pending" without polling for state changes.'
-        startedAt:
-          type: string
-          format: date-time
-        finishedAt:
-          type:
-          - string
-          - 'null'
-          format: date-time
-        updatedAt:
-          type: string
-          format: date-time
-    WriteFileResponse:
-      oneOf:
-      - type: object
-    ForkVmResponse:
-      type: object
-      required:
-      - vmId
-      - forks
-      properties:
-        vmId:
-          type: string
-        forks:
-          type: array
-          items:
-            $ref: '#/components/schemas/ForkedVmResponse'
     CreateVmRequest:
       type: object
       properties:
@@ -3206,6 +2082,631 @@ components:
             description: 'Optional Docker registry credentials required when using a private
 
               image in the spec''s base image.'
+    BuildPhaseId:
+      type: string
+      description: Branded build phase ID in the format `bph-<20 lowercase alphanumeric chars>`.
+    WriteFileResponse:
+      oneOf:
+      - type: object
+    TerminalLogsResponse:
+      type: object
+      required:
+      - output
+      properties:
+        output:
+          type: string
+    FreestyleFile:
+      type: object
+      required:
+      - content
+      properties:
+        content:
+          type: string
+          description: The content of the file
+        encoding:
+          type: string
+          description: The encoding of the file. Either **utf-8** or **base64**
+        executable:
+          type: boolean
+          description: Whether the file should be marked executable after being written
+    StartedVmResponse:
+      type: object
+      required:
+      - id
+      - domains
+      properties:
+        id:
+          type: string
+        domains:
+          type: array
+          items:
+            type: string
+        console_url:
+          type:
+          - string
+          - 'null'
+    SystemdUnitSpecPatch:
+      type: object
+      required:
+      - name
+      properties:
+        name:
+          type: string
+          description: Unique slug; becomes unit name "<name>.service".
+        mode:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/SystemdUnitMode'
+            description: '"oneshot" (run and exit) or "service" (long-running/healing).'
+        exec:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+          description: Executable to run (can specify multiple commands that run sequentially).
+        env:
+          type:
+          - object
+          - 'null'
+          description: Environment variables.
+          additionalProperties:
+            type: string
+          propertyNames:
+            type: string
+        user:
+          type:
+          - string
+          - 'null'
+          description: Linux user to run the service as.
+        group:
+          type:
+          - string
+          - 'null'
+          description: Linux group to run the service in.
+        workdir:
+          type:
+          - string
+          - 'null'
+          description: Working directory.
+        after:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+          description: 'Establishes an ordering dependency. The current unit will start only
+
+            after the units listed in After= have started. This is useful for
+
+            ensuring that certain services are up and running before the current
+
+            service begins its operation.'
+        requires:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+          description: 'Establishes a strong dependency. If the required unit fails to
+
+            start or stops unexpectedly, the current unit will also be stopped. This
+
+            ensures that a service critical to the functioning of the current unit
+
+            is running and stable. Units listed in Requires= are activated along
+
+            with the current unit. If the required unit is not active, systemd will
+
+            attempt to start it. This directive signifies a tight coupling between
+
+            services, where the current service cannot function without the required
+
+            service.'
+        onFailure:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+          description: 'Units to activate when this unit enters a failed state. This is useful
+
+            for triggering recovery actions, notifications, or cleanup services when
+
+            the current service fails.'
+        wantedBy:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+          description: 'Target used when enabling (default: multi-user.target).'
+        enable:
+          type:
+          - boolean
+          - 'null'
+          description: 'Whether to enable this service (calls `systemctl enable <service>`).
+
+            When enabled, the service will start automatically at boot.'
+        timeoutSec:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          description: Overall start/stop timeout.
+          minimum: 0
+        deleteAfterSuccess:
+          type:
+          - boolean
+          - 'null'
+          description: 'For oneshot: remove unit on success.'
+        readySignal:
+          type:
+          - boolean
+          - 'null'
+          description: Use sd_notify; maps to Type=notify.
+        watchdogSec:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          description: Enable systemd watchdog (seconds).
+          minimum: 0
+        restartPolicy:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/SystemdRestartPolicy'
+            description: Restart semantics (service mode).
+    SnapshotVmResponse:
+      type: object
+      required:
+      - snapshotId
+      - sourceVmId
+      properties:
+        snapshotId:
+          $ref: '#/components/schemas/SnapshotId'
+          description: The ID of the snapshot
+        sourceVmId:
+          $ref: '#/components/schemas/VmId'
+          description: The ID of the source VM
+        sourceVmInstanceId:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/VmInstanceId'
+            description: The instance ID of the source VM
+    AccountId:
+      type: string
+      description: Account identifier — either "system" or a user UUID
+    TerminalLogsArrayResponse:
+      type: object
+      required:
+      - logs
+      properties:
+        logs:
+          type: array
+          items:
+            $ref: '#/components/schemas/LogEntry'
+    JournaldLogItem:
+      type: object
+      required:
+      - message
+      - timestamp
+      properties:
+        message:
+          type: string
+        timestamp:
+          type: string
+        priority:
+          type:
+          - string
+          - 'null'
+        unit:
+          type:
+          - string
+          - 'null'
+    DeleteSnapshotResponses:
+      oneOf:
+      - type: object
+        required:
+        - snapshot_id
+        properties:
+          snapshot_id:
+            $ref: '#/components/schemas/SnapshotId'
+    SuspendVmResponse:
+      type: object
+      required:
+      - id
+      - vmInstanceId
+      - snapshotLayerId
+      properties:
+        id:
+          type: string
+          description: The ID of the VM that was suspended
+        vmInstanceId:
+          $ref: '#/components/schemas/VmInstanceId'
+          description: The ID of the VM instance that was suspended
+        snapshotLayerId:
+          $ref: '#/components/schemas/SnapshotLayerId'
+          description: The ID of the snapshot layer created for this VM — if a layer was created
+    StartVmRequest:
+      type: object
+      properties:
+        idleTimeoutSeconds:
+          type:
+          - integer
+          - 'null'
+          format: int64
+        readySignalTimeoutSeconds:
+          type:
+          - integer
+          - 'null'
+          format: int64
+        waitForReadySignal:
+          type:
+          - boolean
+          - 'null'
+        activityThresholdBytes:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          minimum: 0
+    SnapshotId:
+      type: string
+      description: 'Branded snapshot ID in the format `sc-<20 lowercase alphanumeric chars>`.
+
+        Unlike `VmShortId`, this is a plain `String` wrapper with no fixed-size array or padding.'
+    ListSnapshotsResponse:
+      type: object
+      required:
+      - snapshots
+      - totalCount
+      - buildingCount
+      - readyCount
+      - failedCount
+      - cancelledCount
+      - lostCount
+      - deletedCount
+      properties:
+        snapshots:
+          type: array
+          items:
+            $ref: '#/components/schemas/SnapshotInfo'
+        totalCount:
+          type: integer
+          minimum: 0
+        buildingCount:
+          type: integer
+          minimum: 0
+        readyCount:
+          type: integer
+          minimum: 0
+        failedCount:
+          type: integer
+          minimum: 0
+        cancelledCount:
+          type: integer
+          minimum: 0
+        lostCount:
+          type: integer
+          minimum: 0
+        deletedCount:
+          type: integer
+          minimum: 0
+    SystemdDeleteServiceResponse:
+      type: object
+      required:
+      - success
+      - message
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+    SnapshotPersistence:
+      oneOf:
+      - type: object
+        description: 'When storage quota is reached, the least recently used snapshots will be
+
+          deleted. Higher priority = less likely to be evicted. Range 0-10, default 5.'
+        required:
+        - type
+        properties:
+          priority:
+            type:
+            - integer
+            - 'null'
+            format: int32
+            default: 5
+            maximum: 10
+            minimum: 0
+          type:
+            type: string
+            enum:
+            - sticky
+      - type: object
+        description: The snapshot will be stored until manually deleted.
+        required:
+        - type
+        properties:
+          type:
+            type: string
+            enum:
+            - persistent
+    VmSpec:
+      type: object
+      description: 'Top-level spec for `POST /v1/vms`. Identifies a reusable unit via `name`
+
+        and carries the cacheable `snapshot` chain that produces this VM''s base.'
+      properties:
+        snapshot:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/SnapshotSpec'
+            description: Cacheable snapshot chain. The outermost layer becomes this VM's base.
+        name:
+          type:
+          - string
+          - 'null'
+          description: 'Name of the spec itself — identifies this spec as a reusable unit,
+
+            independent of any VM instance created from it. Distinct from the
+
+            top-level VM `name` in `CreateVmRequest`, which names a VM instance.'
+    ForkVmRequest:
+      type: object
+      properties:
+        count:
+          type:
+          - integer
+          - 'null'
+          format: int32
+          minimum: 0
+    WriteFileRequest:
+      type: object
+      required:
+      - content
+      properties:
+        content:
+          type: string
+        encoding:
+          $ref: '#/components/schemas/FileEncoding'
+    VmMetricsInfo:
+      type: object
+      required:
+      - wallTimeSeconds
+      - billingDay
+      - isActiveToday
+      properties:
+        wallTimeSeconds:
+          type: integer
+          format: int64
+          minimum: 0
+        billingDay:
+          type: string
+        isActiveToday:
+          type: boolean
+    CreateVmResponse:
+      type: object
+      required:
+      - id
+      - domains
+      properties:
+        id:
+          type: string
+        domains:
+          type: array
+          items:
+            type: string
+        consoleUrl:
+          type:
+          - string
+          - 'null'
+          description: '**Deprecated:** this field is scheduled for removal and is no longer
+
+            populated. The default `{vm_id}.style.dev` hostname still resolves via
+
+            firecracker''s host registry; consumers should construct it themselves
+
+            if needed.'
+          deprecated: true
+        snapshotId:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/SnapshotId'
+            description: Debugging tool, if you believe its base is incorrect you can go off it.
+    JournaldLogsResponse:
+      type: object
+      required:
+      - logs
+      properties:
+        logs:
+          type: array
+          items:
+            $ref: '#/components/schemas/JournaldLogItem'
+    ForkedVmResponse:
+      type: object
+      required:
+      - id
+      - domains
+      properties:
+        id:
+          type: string
+        domains:
+          type: array
+          items:
+            type: string
+        consoleUrl:
+          type:
+          - string
+          - 'null'
+    WaitVmResponse:
+      type: object
+      required:
+      - id
+      - exitStatus
+      properties:
+        id:
+          $ref: '#/components/schemas/VmId'
+        exitStatus:
+          type: string
+    ServiceIdItem:
+      type: object
+      required:
+      - id
+      properties:
+        id:
+          type: string
+    CreateSnapshotResponse:
+      type: object
+      required:
+      - snapshotId
+      properties:
+        snapshotId:
+          $ref: '#/components/schemas/SnapshotId'
+    CreateSnapshotRequest:
+      type: object
+      properties:
+        name:
+          type:
+          - string
+          - 'null'
+        spec:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/SnapshotSpec'
+            description: 'Recursive snapshot spec. When set, `template` must be omitted.
+
+              `spec.snapshot` materializes into a chain of cached snapshots before
+
+              the outermost layer is built.'
+        template:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/VmTemplate'
+            description: 'Legacy single-layer snapshot template. Subsumed by the recursive
+
+              `spec` chain, which supports multiple cacheable layers.
+
+
+              **Deprecated: use `spec` instead.**'
+        persistence:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/SnapshotPersistence'
+            description: Defaults to persistent. If set to sticky we will intelligently clean it up as your account reaches its limits.
+        dockerCredentials:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/DockerCredentials'
+            description: 'Optional Docker registry credentials required when using a private image
+
+              in `spec.baseImage`.'
+    ResizeVmRequest:
+      type: object
+      properties:
+        rootfsSizeGb:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          minimum: 0
+        memSizeGb:
+          type:
+          - integer
+          - 'null'
+          format: int32
+          minimum: 0
+        vcpuCount:
+          type:
+          - integer
+          - 'null'
+          format: int32
+          minimum: 0
+    ListVmsResponse:
+      type: object
+      required:
+      - vms
+      - totalCount
+      - runningCount
+      - startingCount
+      - suspendedCount
+      - stoppedCount
+      properties:
+        vms:
+          type: array
+          items:
+            $ref: '#/components/schemas/VmInfo'
+        totalCount:
+          type: integer
+          minimum: 0
+        buildingCount:
+          type: integer
+          minimum: 0
+        runningCount:
+          type: integer
+          minimum: 0
+        startingCount:
+          type: integer
+          minimum: 0
+        suspendingCount:
+          type: integer
+          minimum: 0
+        suspendedCount:
+          type: integer
+          minimum: 0
+        stoppedCount:
+          type: integer
+          minimum: 0
+        lostCount:
+          type: integer
+          minimum: 0
+        userId:
+          type:
+          - string
+          - 'null'
+    BuildPhase:
+      type: object
+      description: 'One phase the build passed through. Append-only — rows are never
+
+        updated. The implicit `finished_at` of any phase is the next phase
+
+        row''s `started_at`, or `builds.finished_at` for the last phase.'
+      required:
+      - phaseId
+      - buildId
+      - name
+      - startedAt
+      properties:
+        phaseId:
+          $ref: '#/components/schemas/BuildPhaseId'
+        buildId:
+          $ref: '#/components/schemas/BuildId'
+        name:
+          type: string
+        snapshotId:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/SnapshotId'
+            description: 'Snapshot this phase is about, when applicable: the cached snapshot a
+
+              "(cached)" phase references, or the snapshot a build phase produces.
+
+              `None` for phases that don''t map to a single snapshot (e.g. variant
+
+              resize prep that hasn''t been pre-allocated yet).'
+        startedAt:
+          type: string
+          format: date-time
+    BatchServiceResponse:
+      type: object
+      required:
+      - results
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/BatchServiceOperationResult'
     LinuxUserSpec:
       type: object
       required:
@@ -3247,89 +2748,407 @@ components:
           - 'null'
           description: System user (allocator uses system range)
           default: false
-    FileKind:
+    StopVmResponse:
+      type: object
+      required:
+      - vmId
+      - vmInstanceId
+      properties:
+        vmId:
+          $ref: '#/components/schemas/VmId'
+        vmInstanceId:
+          $ref: '#/components/schemas/VmInstanceId'
+    VmId:
       type: string
-      enum:
-      - file
-      - directory
-    JournaldLogItem:
+      description: 'VM ID — always 20 alphanumeric lowercase characters.
+
+        New IDs are fully random. Legacy short IDs are right-padded with ''0'' on parse.'
+    TerminalListResponse:
       type: object
       required:
-      - message
-      - timestamp
+      - terminals
       properties:
-        message:
-          type: string
-        timestamp:
-          type: string
-        priority:
-          type:
-          - string
-          - 'null'
-        unit:
-          type:
-          - string
-          - 'null'
-    SystemdCreateServiceResponse:
+        terminals:
+          type: array
+          items:
+            $ref: '#/components/schemas/TerminalSession'
+    PortMapping:
       type: object
       required:
-      - success
-      - message
-      - serviceName
+      - port
+      - targetPort
       properties:
-        success:
-          type: boolean
-        message:
-          type: string
-        serviceName:
-          type: string
-    BaseImageSpec:
+        port:
+          type: integer
+          format: int32
+        targetPort:
+          type: integer
+          format: int32
+    SnapshotSpec:
       type: object
-      description: 'Specifies a Docker base image via inline Dockerfile content.
+      description: 'A cacheable snapshot layer. Recursive via `snapshot` — an optional inner
 
-        Used as an alternative to `docker_image` when you want to build
+        layer that is materialized into a snapshot before this layer builds. The
 
-        a custom image on the fly without a pre-published registry image.
+        resulting `snapshot_id` becomes the base for this layer. `snapshot`,
 
-        No build context is supported yet.'
-      required:
-      - dockerfileContent
-      properties:
-        dockerfileContent:
-          type: string
-          description: The text content of a Dockerfile (e.g., `"FROM debian:trixie-slim"`).
-    FileInfo:
-      type: object
-      required:
-      - name
-      - kind
-      properties:
-        name:
-          type: string
-        kind:
-          $ref: '#/components/schemas/FileKind'
-    VmSpec:
-      type: object
-      description: 'Top-level spec for `POST /v1/vms`. Identifies a reusable unit via `name`
-
-        and carries the cacheable `snapshot` chain that produces this VM''s base.'
+        `snapshot_id`, and `base_image` are mutually exclusive.'
       properties:
         snapshot:
           oneOf:
           - type: 'null'
           - $ref: '#/components/schemas/SnapshotSpec'
-            description: Cacheable snapshot chain. The outermost layer becomes this VM's base.
+            description: 'Inner cacheable layer. Materialized first, its resulting snapshot_id
+
+              becomes the base for this layer.'
+        snapshotId:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/SnapshotId'
+            description: 'Pre-existing snapshot to base this layer on. Mutually exclusive with
+
+              `snapshot` and `base_image`.'
+        baseImage:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/BaseImageSpec'
+            description: 'Inline Dockerfile content to build and import a custom base image
+
+              for this layer. Mutually exclusive with `snapshot` and `snapshot_id`.'
+        rootfsSizeGb:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          minimum: 0
+        memSizeGb:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          minimum: 0
+        vcpuCount:
+          type:
+          - integer
+          - 'null'
+          format: int32
+          minimum: 0
+        workdir:
+          type:
+          - string
+          - 'null'
+          description: Optional working directory for the VM. Defaults to '/'.
+        idleTimeoutSeconds:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          description: 'Idle timeout in seconds. If set, the VM will be automatically
+
+            suspended after this many seconds of no network activity.'
+          minimum: 0
+        waitForReadySignal:
+          type:
+          - boolean
+          - 'null'
+        readySignalTimeoutSeconds:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          minimum: 0
+        ports:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/PortConfig'
+          description: Optional list of ports to expose externally.
+        systemd:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/SystemdConfig'
+        users:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/LinuxUserSpec'
+          description: Linux users to create on VM startup.
+        groups:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/LinuxGroupSpec'
+          description: Linux groups to create on VM startup.
+        additionalFiles:
+          type:
+          - object
+          - 'null'
+          additionalProperties:
+            $ref: '#/components/schemas/FreestyleFile'
+          propertyNames:
+            type: string
+        git:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/GitOptions'
+            description: Repositories to clone and git options for the VM.
+        aptDeps:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+          description: apt packages to install on VM startup.
+          example:
+          - git
+          - curl
+          - vim
+        discriminator:
+          type:
+          - string
+          - 'null'
+          description: 'Optional discriminator to differentiate snapshots with otherwise
+
+            identical configurations.'
+        skipCache:
+          type:
+          - boolean
+          - 'null'
+          description: 'When true, bypasses the snapshot cache and always creates a new
+
+            snapshot. The new snapshot still stores the template hash, so it
+
+            becomes the updated cache entry for future requests that do not set
+
+            skip_cache.'
+    LogEntry:
+      type: object
+      required:
+      - line
+      properties:
+        line:
+          type: string
+        timestamp:
+          type:
+          - string
+          - 'null'
+    RequestId:
+      type: string
+      description: 'Branded request identifier — `ri-<20 lowercase alphanumeric chars>` for newly
+
+        minted IDs. The wrapped string is otherwise opaque, so legacy UUID-formatted
+
+        IDs (from in-flight requests during rollout) round-trip unchanged.'
+    BuildRecord:
+      type: object
+      description: 'One row in the `builds` table — a long-running snapshot creation task.
+
+
+        Builds do not form trees. Sub-work (Docker pulls, systemd installs,
+
+        per-layer captures of a multi-layer spec) is captured via append-only
+
+        `build_phases` rows on this build, not via child builds. Builds related
+
+        to one user request (e.g. retries that produce a fresh build for the
+
+        same template) share a `request_id` — that''s the only correlation
+
+        mechanism between builds.
+
+
+        Build outputs are recorded on the artifact, not the build:
+
+        `vm_snapshots.build_id` is the only link.'
+      required:
+      - buildId
+      - accountId
+      - state
+      - plannedPhases
+      - startedAt
+      - updatedAt
+      properties:
+        buildId:
+          $ref: '#/components/schemas/BuildId'
+        accountId:
+          $ref: '#/components/schemas/AccountId'
+        requestId:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/RequestId'
+        state:
+          $ref: '#/components/schemas/BuildState'
+        templateHash:
+          type:
+          - string
+          - 'null'
+          description: 'Inputs that identify the unit of work. Historical / informational
+
+            only — not used for dedupe in Phase 1.'
+        failureReason:
+          type:
+          - string
+          - 'null'
+          description: Set when state is `Failed` or `RolledBack`.
+        plannedPhases:
+          type: array
+          items:
+            type: string
+          description: 'Phase names this build plans to emit, in order, populated once at
+
+            build open and never updated. Diffing against `build_phases.name`
+
+            yields "what''s still pending" without polling for state changes.'
+        startedAt:
+          type: string
+          format: date-time
+        finishedAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    VmDeleteEvent:
+      type: string
+      enum:
+      - OnStop
+      - OnSuspend
+    GetVmResponse:
+      type: object
+      required:
+      - id
+      - state
+      properties:
+        id:
+          $ref: '#/components/schemas/VmId'
         name:
           type:
           - string
           - 'null'
-          description: 'Name of the spec itself — identifies this spec as a reusable unit,
-
-            independent of any VM instance created from it. Distinct from the
-
-            top-level VM `name` in `CreateVmRequest`, which names a VM instance.'
-    VmInstanceId:
+        vmInstanceId:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/VmInstanceId'
+            description: Unique ID for the current VM run (new ID generated on each start/resume)
+        lastNetworkActivity:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        state:
+          $ref: '#/components/schemas/VMState'
+        cpuTimeSeconds:
+          type:
+          - number
+          - 'null'
+          format: double
+        buildId:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/BuildId'
+            description: Build that produced this VM, if it was created via a build saga.
+    SnapshotVmRequest:
+      type: object
+      properties:
+        name:
+          type:
+          - string
+          - 'null'
+          description: Optional name/label for the snapshot
+        persistence:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/SnapshotPersistence'
+            description: Persistence strategy for the snapshot. Defaults to Sticky with priority 5.
+    FileKind:
       type: string
+      enum:
+      - file
+      - directory
+    VmDomainConfig:
+      type: object
+      description: Domain configuration for a VM, specifying the domain and optional target port
+      required:
+      - domain
+      properties:
+        domain:
+          type: string
+          description: The domain name to map to the VM
+          example: myapp.example.com
+        vmPort:
+          type:
+          - integer
+          - 'null'
+          format: int32
+          description: The port on the VM to route traffic to. Defaults to 443 if not specified.
+          example: 3000
+    SystemdListServicesResponse:
+      type: object
+      required:
+      - services
+      properties:
+        services:
+          type: array
+          items:
+            $ref: '#/components/schemas/SystemdServiceListItem'
+    FileEncoding:
+      type: string
+      description: File content encoding
+      enum:
+      - utf8
+      - base64
+    DockerCredentials:
+      type: object
+      required:
+      - registry
+      - username
+      - password
+      properties:
+        registry:
+          type: string
+          description: Docker registry URL (e.g., "ghcr.io", "docker.io")
+        username:
+          type: string
+          description: Username for the registry
+        password:
+          type: string
+          description: Password or token for the registry
+    SystemdServiceStatus:
+      type: object
+      required:
+      - name
+      - activeState
+      - subState
+      - loadState
+      - description
+      properties:
+        name:
+          type: string
+        activeState:
+          type: string
+        subState:
+          type: string
+        loadState:
+          type: string
+        description:
+          type: string
+    ForkVmResponse:
+      type: object
+      required:
+      - vmId
+      - forks
+      properties:
+        vmId:
+          type: string
+        forks:
+          type: array
+          items:
+            $ref: '#/components/schemas/ForkedVmResponse'
     SystemdUnitSpec:
       type: object
       required:
@@ -3472,39 +3291,30 @@ components:
           - type: 'null'
           - $ref: '#/components/schemas/SystemdRestartPolicy'
             description: Restart semantics (service mode).
-    SystemdServiceListItem:
+    ListBuildPhasesResponse:
       type: object
+      description: 'Ordered timeline of phases for a single build.
+
+
+        Phases are append-only; consumers wanting the "current phase" pick the
+
+        last entry. Empty for a build whose top-level saga short-circuited
+
+        (e.g. fully-cached chain) before any phase was recorded.'
       required:
-      - name
+      - phases
       properties:
-        name:
-          type: string
-    TerminalListResponse:
-      type: object
-      required:
-      - terminals
-      properties:
-        terminals:
+        phases:
           type: array
           items:
-            $ref: '#/components/schemas/TerminalSession'
-    VmDomainConfig:
-      type: object
-      description: Domain configuration for a VM, specifying the domain and optional target port
-      required:
-      - domain
-      properties:
-        domain:
-          type: string
-          description: The domain name to map to the VM
-          example: myapp.example.com
-        vmPort:
-          type:
-          - integer
-          - 'null'
-          format: int32
-          description: The port on the VM to route traffic to. Defaults to 443 if not specified.
-          example: 3000
+            $ref: '#/components/schemas/BuildPhase'
+    SystemdRestartPolicyKind:
+      type: string
+      enum:
+      - 'no'
+      - on-failure
+      - always
+      - on-abnormal
     SystemdRestartPolicy:
       type: object
       required:
@@ -3531,205 +3341,100 @@ components:
           - 'null'
           format: int64
           minimum: 0
-    ListSnapshotsResponse:
+    SystemdServiceListItem:
       type: object
       required:
-      - snapshots
-      - totalCount
-      - buildingCount
-      - readyCount
-      - failedCount
-      - cancelledCount
-      - lostCount
-      - deletedCount
+      - name
       properties:
-        snapshots:
-          type: array
-          items:
-            $ref: '#/components/schemas/SnapshotInfo'
-        totalCount:
-          type: integer
-          minimum: 0
-        buildingCount:
-          type: integer
-          minimum: 0
-        readyCount:
-          type: integer
-          minimum: 0
-        failedCount:
-          type: integer
-          minimum: 0
-        cancelledCount:
-          type: integer
-          minimum: 0
-        lostCount:
-          type: integer
-          minimum: 0
-        deletedCount:
-          type: integer
-          minimum: 0
-    SystemdUnitMode:
-      type: string
-      enum:
-      - oneshot
-      - service
-    SnapshotSpec:
+        name:
+          type: string
+    VmInfo:
       type: object
-      description: 'A cacheable snapshot layer. Recursive via `snapshot` — an optional inner
-
-        layer that is materialized into a snapshot before this layer builds. The
-
-        resulting `snapshot_id` becomes the base for this layer. `snapshot`,
-
-        `snapshot_id`, and `base_image` are mutually exclusive.'
+      required:
+      - id
+      - state
       properties:
-        snapshot:
+        id:
+          $ref: '#/components/schemas/VmId'
+        name:
+          type:
+          - string
+          - 'null'
+        state:
+          $ref: '#/components/schemas/VMState'
+        metrics:
           oneOf:
           - type: 'null'
-          - $ref: '#/components/schemas/SnapshotSpec'
-            description: 'Inner cacheable layer. Materialized first, its resulting snapshot_id
-
-              becomes the base for this layer.'
+          - $ref: '#/components/schemas/VmMetricsInfo'
+        createdAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        lastNetworkActivity:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        cpuTimeSeconds:
+          type:
+          - number
+          - 'null'
+          format: double
+        persistence:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/VmPersistence'
         snapshotId:
           oneOf:
           - type: 'null'
           - $ref: '#/components/schemas/SnapshotId'
-            description: 'Pre-existing snapshot to base this layer on. Mutually exclusive with
-
-              `snapshot` and `base_image`.'
-        baseImage:
+            description: The snapshot this VM was created from, if any.
+        deleted:
+          type: boolean
+        createdDeclaratively:
+          type: boolean
+        buildId:
           oneOf:
           - type: 'null'
-          - $ref: '#/components/schemas/BaseImageSpec'
-            description: 'Inline Dockerfile content to build and import a custom base image
-
-              for this layer. Mutually exclusive with `snapshot` and `snapshot_id`.'
-        rootfsSizeGb:
-          type:
-          - integer
-          - 'null'
-          format: int64
-          minimum: 0
-        memSizeGb:
-          type:
-          - integer
-          - 'null'
-          format: int64
-          minimum: 0
-        vcpuCount:
-          type:
-          - integer
-          - 'null'
-          format: int32
-          minimum: 0
-        workdir:
-          type:
-          - string
-          - 'null'
-          description: Optional working directory for the VM. Defaults to '/'.
-        idleTimeoutSeconds:
-          type:
-          - integer
-          - 'null'
-          format: int64
-          description: 'Idle timeout in seconds. If set, the VM will be automatically
-
-            suspended after this many seconds of no network activity.'
-          minimum: 0
-        waitForReadySignal:
-          type:
-          - boolean
-          - 'null'
-        readySignalTimeoutSeconds:
-          type:
-          - integer
-          - 'null'
-          format: int64
-          minimum: 0
-        ports:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/PortConfig'
-          description: Optional list of ports to expose externally.
-        systemd:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/SystemdConfig'
-        users:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/LinuxUserSpec'
-          description: Linux users to create on VM startup.
-        groups:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/LinuxGroupSpec'
-          description: Linux groups to create on VM startup.
-        additionalFiles:
-          type:
-          - object
-          - 'null'
-          additionalProperties:
-            $ref: '#/components/schemas/FreestyleFile'
-          propertyNames:
-            type: string
-        git:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/GitOptions'
-            description: Repositories to clone and git options for the VM.
-        aptDeps:
-          type:
-          - array
-          - 'null'
-          items:
-            type: string
-          description: apt packages to install on VM startup.
-          example:
-          - git
-          - curl
-          - vim
-        discriminator:
-          type:
-          - string
-          - 'null'
-          description: 'Optional discriminator to differentiate snapshots with otherwise
-
-            identical configurations.'
-        skipCache:
-          type:
-          - boolean
-          - 'null'
-          description: 'When true, bypasses the snapshot cache and always creates a new
-
-            snapshot. The new snapshot still stores the template hash, so it
-
-            becomes the updated cache entry for future requests that do not set
-
-            skip_cache.'
-    PortMapping:
+          - $ref: '#/components/schemas/BuildId'
+            description: Build that produced this VM, if it was created via a build saga.
+    ExecAwaitRequest:
       type: object
       required:
-      - port
-      - targetPort
+      - command
       properties:
-        port:
-          type: integer
-          format: int32
-        targetPort:
-          type: integer
-          format: int32
-    VmDeleteEvent:
+        command:
+          type: string
+        terminal:
+          type:
+          - string
+          - 'null'
+        timeoutMs:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          minimum: 0
+    BuildId:
       type: string
-      enum:
-      - OnStop
-      - OnSuspend
+      description: Branded build ID in the format `bld-<20 lowercase alphanumeric chars>`.
+    ExecAwaitVmResponse:
+      type: object
+      properties:
+        stdout:
+          type:
+          - string
+          - 'null'
+        stderr:
+          type:
+          - string
+          - 'null'
+        statusCode:
+          type:
+          - integer
+          - 'null'
+          format: int32
     VmTemplate:
       type: object
       properties:
@@ -3893,6 +3598,297 @@ components:
             The new snapshot still stores the template hash, so it becomes the updated cache entry
 
             for future requests that do not set skip_cache.'
+    OptimizeVmResponse:
+      type: object
+      required:
+      - id
+      - message
+      properties:
+        id:
+          type: string
+        message:
+          type: string
+    GitUser:
+      type: object
+      properties:
+        name:
+          type:
+          - string
+          - 'null'
+        email:
+          type:
+          - string
+          - 'null'
+        signingkey:
+          type:
+          - string
+          - 'null'
+    SnapshotLayerId:
+      type: string
+      description: Branded snapshot layer ID — always a 16-character alphanumeric lowercase string prefixed with "sl-".
+    BatchServiceRequest:
+      type: object
+      required:
+      - services
+      properties:
+        services:
+          type: array
+          items:
+            $ref: '#/components/schemas/ServiceIdItem'
+    VmInstanceId:
+      type: string
+    TerminalSession:
+      type: object
+      required:
+      - name
+      - status
+      properties:
+        name:
+          type: string
+        status:
+          type: string
+        created:
+          type:
+          - string
+          - 'null'
+    SystemdConfig:
+      type: object
+      properties:
+        services:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/SystemdUnitSpec'
+        patchedServices:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/SystemdUnitSpecPatch'
+    SystemdUnitMode:
+      type: string
+      enum:
+      - oneshot
+      - service
+    GitOptions:
+      type: object
+      required:
+      - config
+      properties:
+        config:
+          $ref: '#/components/schemas/GitConfig'
+        repos:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/GitRepositorySpec'
+    ResizeVmResponse:
+      type: object
+    GitRepositorySpec:
+      type: object
+      required:
+      - repo
+      - path
+      properties:
+        repo:
+          type: string
+          description: url or id of the git repository
+        path:
+          type: string
+          description: path to place the repo on
+        rev:
+          type:
+          - string
+          - 'null'
+          description: optional rev (branch, tag, commit)
+    BatchServiceOperationResult:
+      type: object
+      required:
+      - serviceId
+      - success
+      - message
+      properties:
+        serviceId:
+          type: string
+        success:
+          type: boolean
+        message:
+          type: string
+    UpdateSnapshotResponses:
+      oneOf:
+      - type: object
+        required:
+        - snapshot_id
+        properties:
+          snapshot_id:
+            $ref: '#/components/schemas/SnapshotId'
+          name:
+            type:
+            - string
+            - 'null'
+    SnapshotInfo:
+      type: object
+      required:
+      - snapshotId
+      - state
+      - createdAt
+      - failed
+      - cancelled
+      - lost
+      - deleted
+      - snapshotPersistence
+      properties:
+        snapshotId:
+          $ref: '#/components/schemas/SnapshotId'
+          description: The ID of the snapshot
+        state:
+          $ref: '#/components/schemas/SnapshotStateTag'
+          description: 'Lifecycle state. `building` rows are in flight and may have
+
+            late-bound fields (sourceVmId, etc) unset.'
+        sourceVmId:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/VmId'
+            description: Source VM the snapshot was captured from. None while state=building.
+        accountId:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/AccountId'
+            description: Account ID of the creator
+        createdAt:
+          type: string
+          description: When the snapshot was created
+        name:
+          type:
+          - string
+          - 'null'
+          description: Optional name for the snapshot
+        failed:
+          type: boolean
+          description: '`state == failed`. Kept for backward compat; prefer reading `state`.'
+          deprecated: true
+        cancelled:
+          type: boolean
+          description: '`state == cancelled`.'
+        lost:
+          type: boolean
+          description: '`state == lost`.'
+        failureReason:
+          type:
+          - string
+          - 'null'
+        deleted:
+          type: boolean
+          description: Whether the snapshot has been soft-deleted
+        snapshotPersistence:
+          $ref: '#/components/schemas/SnapshotPersistence'
+          description: Snapshot persistence strategy
+        buildId:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/BuildId'
+            description: Build that produced this snapshot, if any.
+        templateHash:
+          type:
+          - string
+          - 'null'
+          description: Template hash used for cache lookups.
+        vcpuCount:
+          type:
+          - integer
+          - 'null'
+          format: int32
+          description: Number of vCPUs configured at snapshot time
+          minimum: 0
+        memSizeMib:
+          type:
+          - integer
+          - 'null'
+          format: int32
+          description: Memory size in MiB configured at snapshot time
+          minimum: 0
+        rootfsSizeMb:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          description: Root filesystem size in MB
+          minimum: 0
+    DeleteVmResponses:
+      oneOf:
+      - type: object
+        required:
+        - id
+        properties:
+          id:
+            type: string
+    LinuxGroupSpec:
+      type: object
+      required:
+      - name
+      properties:
+        name:
+          type: string
+          description: Unique group name
+        gid:
+          type:
+          - integer
+          - 'null'
+          format: int32
+          description: Optional fixed GID; if None, allocate
+          minimum: 0
+        system:
+          type:
+          - boolean
+          - 'null'
+          description: System group (allocator uses system range)
+          default: false
+    BuildState:
+      type: string
+      description: Lifecycle state of a build row.
+      enum:
+      - pending
+      - running
+      - succeeded
+      - failed
+    KillVmResponse:
+      type: object
+      required:
+      - id
+      properties:
+        id:
+          $ref: '#/components/schemas/VmId'
+    SystemdCreateServiceResponse:
+      type: object
+      required:
+      - success
+      - message
+      - serviceName
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        serviceName:
+          type: string
+    BaseImageSpec:
+      type: object
+      description: 'Specifies a Docker base image via inline Dockerfile content.
+
+        Used as an alternative to `docker_image` when you want to build
+
+        a custom image on the fly without a pre-published registry image.
+
+        No build context is supported yet.'
+      required:
+      - dockerfileContent
+      properties:
+        dockerfileContent:
+          type: string
+          description: The text content of a Dockerfile (e.g., `"FROM debian:trixie-slim"`).
     FileSystemResponse:
       oneOf:
       - type: object
@@ -3911,38 +3907,42 @@ components:
             type: array
             items:
               $ref: '#/components/schemas/FileInfo'
-    AccountId:
+    SnapshotStateTag:
       type: string
-      description: Account identifier — either "system" or a user UUID
-    FileEncoding:
-      type: string
-      description: File content encoding
+      description: "Lifecycle state of a snapshot row.\n\n  `Building`  — saga in flight, late-bound fields NULL.\n  `Ready`     — saga finalized cleanly; usable as a base.\n  `Failed`    — bytes complete but VM was broken at capture; bookable\n                for debugging.\n  `Cancelled` — saga rolled back / dependency failed; no bytes.\n  `Lost`      — reaper terminated a `building` row after a node\n                crash; bytes absent or partial."
       enum:
-      - utf8
-      - base64
-    SuspendVmResponse:
+      - building
+      - ready
+      - failed
+      - cancelled
+      - lost
+    FileInfo:
       type: object
       required:
-      - id
-      - vmInstanceId
-      - snapshotLayerId
+      - name
+      - kind
       properties:
-        id:
+        name:
           type: string
-          description: The ID of the VM that was suspended
-        vmInstanceId:
-          $ref: '#/components/schemas/VmInstanceId'
-          description: The ID of the VM instance that was suspended
-        snapshotLayerId:
-          $ref: '#/components/schemas/SnapshotLayerId'
-          description: The ID of the snapshot layer created for this VM — if a layer was created
-    SystemdRestartPolicyKind:
+        kind:
+          $ref: '#/components/schemas/FileKind'
+    VMState:
       type: string
       enum:
-      - 'no'
-      - on-failure
-      - always
-      - on-abnormal
+      - building
+      - starting
+      - running
+      - suspending
+      - suspended
+      - stopped
+      - lost
+    GitConfig:
+      type: object
+      properties:
+        user:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/GitUser'
   securitySchemes:
     bearerAuth:
       type: http

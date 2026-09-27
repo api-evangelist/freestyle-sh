@@ -572,9 +572,6 @@ paths:
                     type: string
 components:
   schemas:
-    DeploymentId:
-      type: string
-      format: uuid
     FreestyleDomainVerificationRequest:
       type: object
       required:
@@ -584,18 +581,97 @@ components:
           type: string
           description: The domain to create a verification code for
           example: example.com
-    VerifyDomainSuccess:
+    CreateDomainMappingRequest:
+      type: object
+      properties:
+        deploymentId:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/DeploymentId'
+        vmId:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/VmId'
+        vmPort:
+          type:
+          - integer
+          - 'null'
+          format: int32
+    Public_DomainMappingError:
+      $ref: '#/components/schemas/Error_DomainMappingError'
+      description: 'Public API error wrapper. Mark public APIs with `Public<T>` to ensure private error
+
+        details aren''t exposed.'
+    SuccessfullyDeletedDomainMapping:
+      type: object
+    FreestyleVerifyDomainRequest:
+      oneOf:
+      - type: object
+        required:
+        - domain
+        properties:
+          domain:
+            type: string
+            example: example.com
+      - type: object
+        required:
+        - id
+        properties:
+          id:
+            type: string
+            format: uuid
+            example: 1234-5678-9012-3456
+      description: Verify a domain verification request, can either be done for a domain, or for a specific request
+    FreestyleDeleteDomainVerificationRequest:
       type: object
       required:
       - domain
+      - verificationCode
       properties:
         domain:
           type: string
-    VmId:
-      type: string
-      description: 'VM ID — always 20 alphanumeric lowercase characters.
-
-        New IDs are fully random. Legacy short IDs are right-padded with ''0'' on parse.'
+          description: The domain to create a verification code for
+          example: example.com
+        verificationCode:
+          type: string
+          description: The verification code
+    FreestyleSandboxDomainMapping:
+      type: object
+      required:
+      - id
+      - domain
+      - ownershipId
+      - createdAt
+      properties:
+        id:
+          type: string
+          format: uuid
+        domain:
+          type: string
+        deploymentId:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/DeploymentId'
+        vmId:
+          type:
+          - string
+          - 'null'
+        vmPort:
+          type:
+          - integer
+          - 'null'
+          format: int32
+        ownershipId:
+          type: string
+          format: uuid
+        createdAt:
+          type: string
+          format: date-time
+        unmappedAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
     DomainVerificationRequest:
       type: object
       required:
@@ -623,24 +699,9 @@ components:
           type: string
           format: date-time
           example: '1234567890'
-    FreestyleVerifyDomainRequest:
-      oneOf:
-      - type: object
-        required:
-        - domain
-        properties:
-          domain:
-            type: string
-            example: example.com
-      - type: object
-        required:
-        - id
-        properties:
-          id:
-            type: string
-            format: uuid
-            example: 1234-5678-9012-3456
-      description: Verify a domain verification request, can either be done for a domain, or for a specific request
+    DeploymentId:
+      type: string
+      format: uuid
     Error_DomainMappingError:
       type: object
       description: 'The structure of an error - should rarely be interacted with directly.
@@ -790,81 +851,20 @@ components:
           additionalProperties: {}
           propertyNames:
             type: string
+    VerifyDomainSuccess:
+      type: object
+      required:
+      - domain
+      properties:
+        domain:
+          type: string
+    VmId:
+      type: string
+      description: 'VM ID — always 20 alphanumeric lowercase characters.
+
+        New IDs are fully random. Legacy short IDs are right-padded with ''0'' on parse.'
     CreateDomainMappingSuccess:
       $ref: '#/components/schemas/FreestyleSandboxDomainMapping'
-    FreestyleSandboxDomainMapping:
-      type: object
-      required:
-      - id
-      - domain
-      - ownershipId
-      - createdAt
-      properties:
-        id:
-          type: string
-          format: uuid
-        domain:
-          type: string
-        deploymentId:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/DeploymentId'
-        vmId:
-          type:
-          - string
-          - 'null'
-        vmPort:
-          type:
-          - integer
-          - 'null'
-          format: int32
-        ownershipId:
-          type: string
-          format: uuid
-        createdAt:
-          type: string
-          format: date-time
-        unmappedAt:
-          type:
-          - string
-          - 'null'
-          format: date-time
-    CreateDomainMappingRequest:
-      type: object
-      properties:
-        deploymentId:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/DeploymentId'
-        vmId:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/VmId'
-        vmPort:
-          type:
-          - integer
-          - 'null'
-          format: int32
-    SuccessfullyDeletedDomainMapping:
-      type: object
-    FreestyleDeleteDomainVerificationRequest:
-      type: object
-      required:
-      - domain
-      - verificationCode
-      properties:
-        domain:
-          type: string
-          description: The domain to create a verification code for
-          example: example.com
-        verificationCode:
-          type: string
-          description: The verification code
-    Public_DomainMappingError:
-      $ref: '#/components/schemas/Error_DomainMappingError'
-      description: 'Public API error wrapper. Mark public APIs with `Public<T>` to ensure private error
-
-        details aren''t exposed.'
   securitySchemes:
     bearerAuth:
       type: http

@@ -179,14 +179,8 @@ components:
           oneOf:
           - type: 'null'
           - $ref: '#/components/schemas/BuildId'
-    VmId:
+    VmInstanceId:
       type: string
-      description: 'VM ID — always 20 alphanumeric lowercase characters.
-
-        New IDs are fully random. Legacy short IDs are right-padded with ''0'' on parse.'
-    BuildId:
-      type: string
-      description: Branded build ID in the format `bld-<20 lowercase alphanumeric chars>`.
     RequestId:
       type: string
       description: 'Branded request identifier — `ri-<20 lowercase alphanumeric chars>` for newly
@@ -207,8 +201,14 @@ components:
           type:
           - string
           - 'null'
-    VmInstanceId:
+    VmId:
       type: string
+      description: 'VM ID — always 20 alphanumeric lowercase characters.
+
+        New IDs are fully random. Legacy short IDs are right-padded with ''0'' on parse.'
+    BuildId:
+      type: string
+      description: Branded build ID in the format `bld-<20 lowercase alphanumeric chars>`.
   securitySchemes:
     bearerAuth:
       type: http

@@ -2019,322 +2019,56 @@ paths:
             application/zip: {}
 components:
   schemas:
-    DiffFileStatus:
-      type: string
-      description: The status of a file in a diff
-      enum:
-      - added
-      - removed
-      - modified
-      - renamed
-      - copied
-      - changed
-      - unchanged
-    CommitSearchResult:
-      type: object
-      required:
-      - totalCommits
-      - hasMore
-      - commits
-      properties:
-        totalCommits:
-          type: integer
-          description: Total number of matching commits found.
-          minimum: 0
-        hasMore:
-          type: boolean
-          description: Whether there are more results beyond those returned.
-        commits:
-          type: array
-          items:
-            $ref: '#/components/schemas/CommitSearchEntry'
-          description: The matching commits.
-    CommitAuthorInfo:
+    TagDetails:
       type: object
       required:
       - name
-      - email
+      - target
       properties:
         name:
           type: string
-          description: The name of the author/committer
-        email:
+        target:
           type: string
-          description: The email of the author/committer
-    DiffFileMatch:
-      type: object
-      description: A file within a commit that contained matching changed content.
-      required:
-      - path
-      - matches
-      properties:
-        path:
-          type: string
-          description: The file path relative to the repository root.
-        matches:
-          type: array
-          items:
-            $ref: '#/components/schemas/DiffLineMatch'
-          description: The matching lines in the diff for this file.
-    SearchResult:
-      type: object
-      required:
-      - totalFiles
-      - totalMatches
-      - hasMore
-      - files
-      properties:
-        totalFiles:
-          type: integer
-          description: Total number of files with matches (before pagination).
-          minimum: 0
-        totalMatches:
-          type: integer
-          description: Total number of individual line matches across all files (before pagination).
-          minimum: 0
-        hasMore:
-          type: boolean
-          description: Whether there are more results beyond the current page.
-        files:
-          type: array
-          items:
-            $ref: '#/components/schemas/FileSearchResult'
-          description: The matching files with their line matches (paginated).
-    DiffFile:
-      type: object
-      description: A file that was changed in the comparison
-      required:
-      - filename
-      - status
-      - additions
-      - deletions
-      - changes
-      properties:
-        sha:
-          type:
-          - string
-          - 'null'
-          description: The blob SHA of the file
-        filename:
-          type: string
-          description: The file path
-        status:
-          $ref: '#/components/schemas/DiffFileStatus'
-          description: The status of the file (added, removed, modified, renamed, copied, changed, unchanged)
-        additions:
-          type: integer
-          format: int32
-          description: Number of lines added
-          minimum: 0
-        deletions:
-          type: integer
-          format: int32
-          description: Number of lines deleted
-          minimum: 0
-        changes:
-          type: integer
-          format: int32
-          description: Total number of changes (additions + deletions)
-          minimum: 0
-        previous_filename:
-          type:
-          - string
-          - 'null'
-          description: Previous filename (for renamed/copied files)
-    BlobEncoding:
-      type: string
-      description: The encoding of a blob from the API. Always `base64`.
-      enum:
-      - base64
-    CreateBranchRequest:
-      type: object
-      properties:
-        sha:
-          type:
-          - string
-          - 'null'
-          description: 'The SHA of the commit this branch should point to.
-
-            If not provided, the branch will be created from the default branch.'
-    GetDefaultBranchResponse:
-      type: object
-      required:
-      - defaultBranch
-      properties:
-        defaultBranch:
-          type: string
-    ComparisonStatus:
-      type: string
-      description: The status of a commit comparison
-      enum:
-      - identical
-      - ahead
-      - behind
-      - diverged
-    Signature:
-      type: object
-      required:
-      - date
-      - name
-      - email
-      properties:
-        date:
-          type: string
-          format: date-time
-          description: The date marker for this signature
-        name:
-          type: string
-        email:
-          type: string
-    CommitTree:
-      type: object
-      required:
-      - sha
-      properties:
-        sha:
-          type: string
-          description: The tree's hash ID
-    CreateOdbCommitRequest:
-      type: object
-      required:
-      - message
-      - tree
-      - parents
-      properties:
         message:
-          type: string
-          description: The commit message
-        tree:
-          type: string
-          description: The SHA of the tree for this commit
-        parents:
-          type: array
-          items:
-            type: string
-          description: The SHAs of the parent commits (empty array for initial commit)
-        author:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/CommitAuthor'
-            description: Optional author information (if not provided, uses committer info)
-        committer:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/CommitAuthor'
-            description: Optional committer information (if not provided, uses default)
-    CreateCommitResponse:
-      type: object
-      required:
-      - commit
-      properties:
-        commit:
-          $ref: '#/components/schemas/CommitObject'
-          description: The created commit object
-    CreateOdbCommitResponse:
-      type: object
-      required:
-      - commit
-      properties:
-        commit:
-          $ref: '#/components/schemas/CommitObject'
-          description: The created commit object
-    CommitComparison:
-      type: object
-      description: Response containing the comparison between two commits
-      required:
-      - status
-      - ahead_by
-      - behind_by
-      - total_commits
-      - files
-      properties:
-        status:
-          $ref: '#/components/schemas/ComparisonStatus'
-          description: Status of the comparison
-        ahead_by:
-          type: integer
-          description: Number of commits the head is ahead of base
-          minimum: 0
-        behind_by:
-          type: integer
-          description: Number of commits the head is behind base
-          minimum: 0
-        total_commits:
-          type: integer
-          description: Total number of commits in the comparison
-          minimum: 0
-        files:
-          type: array
-          items:
-            $ref: '#/components/schemas/DiffFile'
-          description: List of changed files
-    RewrittenRef:
-      type: object
-      required:
-      - name
-      - originalOid
-      - rewrittenOid
-      properties:
-        name:
-          type: string
-          description: Full ref name (e.g. `refs/heads/main`).
-        originalOid:
-          type: string
-          description: OID the ref pointed at before repair.
-        rewrittenOid:
-          type: string
-          description: OID the ref now points at after substituting missing objects.
-    ListBranchesResponse:
+          type:
+          - string
+          - 'null'
+    RepositoryMetadata:
       type: object
       required:
       - branches
+      - tags
+      - defaultBranch
       properties:
         branches:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/BranchDetails'
+          propertyNames:
+            type: string
+        tags:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/TagDetails'
+          propertyNames:
+            type: string
+        defaultBranch:
+          type: string
+    TreeObject:
+      type: object
+      description: Tree object
+      required:
+      - tree
+      - sha
+      properties:
+        tree:
           type: array
           items:
-            $ref: '#/components/schemas/BranchInfo'
-    BlobObject:
-      type: object
-      description: Blob object
-      required:
-      - content
-      - encoding
-      - sha
-      - size
-      properties:
-        content:
-          type: string
-          description: The content of the blob, base64 encoded.
-        encoding:
-          $ref: '#/components/schemas/BlobEncoding'
-          description: The encoding of the blob. Always `base64`.
+            $ref: '#/components/schemas/TreeEntry'
+          description: The tree's entries
         sha:
           type: string
-          description: The object's hash.
-        size:
-          type: integer
-          format: int64
-          description: The blob's size in bytes
-          minimum: 0
-    FilenameSearchResult:
-      type: object
-      required:
-      - totalFiles
-      - hasMore
-      - files
-      properties:
-        totalFiles:
-          type: integer
-          description: Total number of matching files.
-          minimum: 0
-        hasMore:
-          type: boolean
-          description: Whether the results were truncated.
-        files:
-          type: array
-          items:
-            $ref: '#/components/schemas/FilenameEntry'
-          description: The matching file paths.
+          description: The tree's hash ID
     ListTagsResponse:
       type: object
       required:
@@ -2344,223 +2078,27 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TagObject'
-    GitContents:
-      oneOf:
-      - type: object
-        title: File
-        required:
-        - name
-        - path
-        - sha
-        - size
-        - content
-        - type
-        properties:
-          name:
-            type: string
-          path:
-            type: string
-          sha:
-            type: string
-            description: The hash / object ID of the file.
-          size:
-            type: integer
-            format: int64
-            minimum: 0
-          content:
-            type: string
-            description: Base64-encoded content.
-          type:
-            type: string
-            enum:
-            - file
-      - type: object
-        title: Directory
-        required:
-        - name
-        - path
-        - sha
-        - entries
-        - type
-        properties:
-          name:
-            type: string
-          path:
-            type: string
-          sha:
-            type: string
-            description: The hash / object ID of the directory.
-          entries:
-            type: array
-            items:
-              $ref: '#/components/schemas/GitContentsDirEntryItem'
-          type:
-            type: string
-            enum:
-            - dir
-    TagObject:
+    CreateBranchResponse:
       type: object
-      description: Tag object
       required:
       - name
-      - target
       - sha
       properties:
         name:
           type: string
-          description: The tag name
-        tagger:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/Signature'
-            description: The tagger who created the tag
-        message:
-          type:
-          - string
-          - 'null'
-          description: The tag message
-        target:
-          $ref: '#/components/schemas/TagTarget'
-          description: The object this tag points to
+          description: The name of the created branch
         sha:
           type: string
-          description: The tag's hash ID
-    ListGitTriggersSuccess:
+          description: The SHA of the commit the branch points to
+    ListBranchesResponse:
       type: object
       required:
-      - triggers
+      - branches
       properties:
-        triggers:
+        branches:
           type: array
           items:
-            $ref: '#/components/schemas/GitRepositoryTrigger'
-    GetVisibilityResponse:
-      type: object
-      required:
-      - visibility
-      properties:
-        visibility:
-          $ref: '#/components/schemas/Visibility'
-    SetVisibilityResponse:
-      type: object
-    Visibility:
-      type: string
-      enum:
-      - public
-      - private
-    RepairAccepted:
-      type: object
-      required:
-      - jobId
-      - repoId
-      - status
-      properties:
-        jobId:
-          type: string
-        repoId:
-          type: string
-        depth:
-          type:
-          - integer
-          - 'null'
-          format: int32
-          minimum: 0
-        status:
-          type: string
-    CreateRepoSource:
-      type: object
-      required:
-      - url
-      properties:
-        url:
-          type: string
-          format: uri
-        branch:
-          type:
-          - string
-          - 'null'
-          deprecated: true
-        rev:
-          type:
-          - string
-          - 'null'
-          description: 'The revision (branch, tag, or commit hash) to checkout from the source repo.
-
-            The given revision will be used as the new repository''s default branch.
-
-
-            This field supersedes ''branch''.'
-        depth:
-          type:
-          - integer
-          - 'null'
-          format: int32
-        allBranches:
-          type:
-          - boolean
-          - 'null'
-          description: 'If true, all branches and tags will be fetched from the source repository.
-
-            Defaults to false, which only fetches the default branch (unless `rev` is set).'
-    FileSearchResult:
-      type: object
-      required:
-      - path
-      - size
-      - matches
-      properties:
-        path:
-          type: string
-          description: The file path relative to the repository root.
-        extension:
-          type:
-          - string
-          - 'null'
-          description: The file extension (e.g. "rs", "ts"), if any.
-        size:
-          type: integer
-          format: int64
-          description: The size of the file in bytes.
-          minimum: 0
-        matches:
-          type: array
-          items:
-            $ref: '#/components/schemas/LineMatch'
-          description: The matches found in this file.
-    CreateRepositoryResponseSuccess:
-      type: object
-      required:
-      - repoId
-      properties:
-        repoId:
-          type: string
-          format: uuid
-    RepairJobList:
-      type: object
-      required:
-      - jobs
-      properties:
-        jobs:
-          type: array
-          items:
-            $ref: '#/components/schemas/RepairJobView'
-    RepairResult:
-      type: object
-      required:
-      - refsExamined
-      - rewrites
-      properties:
-        refsExamined:
-          type: integer
-          description: Number of refs walked.
-          minimum: 0
-        rewrites:
-          type: array
-          items:
-            $ref: '#/components/schemas/RewrittenRef'
-          description: 'Refs whose tip was rewritten because their reachable history had
-
-            missing objects. Empty for healthy repos.'
+            $ref: '#/components/schemas/BranchInfo'
     TreeEntry:
       oneOf:
       - type: object
@@ -2598,31 +2136,223 @@ components:
             type: string
             enum:
             - tree
-    ListRepositoriesSuccess:
+    CreateRepositoryResponseSuccess:
       type: object
       required:
-      - repositories
-      - total
-      - offset
+      - repoId
       properties:
-        repositories:
+        repoId:
+          type: string
+          format: uuid
+    FileSearchResult:
+      type: object
+      required:
+      - path
+      - size
+      - matches
+      properties:
+        path:
+          type: string
+          description: The file path relative to the repository root.
+        extension:
+          type:
+          - string
+          - 'null'
+          description: The file extension (e.g. "rs", "ts"), if any.
+        size:
+          type: integer
+          format: int64
+          description: The size of the file in bytes.
+          minimum: 0
+        matches:
           type: array
           items:
-            $ref: '#/components/schemas/RepositoryMetadata'
-        total:
+            $ref: '#/components/schemas/LineMatch'
+          description: The matches found in this file.
+    DiffFileMatch:
+      type: object
+      description: A file within a commit that contained matching changed content.
+      required:
+      - path
+      - matches
+      properties:
+        path:
+          type: string
+          description: The file path relative to the repository root.
+        matches:
+          type: array
+          items:
+            $ref: '#/components/schemas/DiffLineMatch'
+          description: The matching lines in the diff for this file.
+    DeleteRepositorySuccess:
+      type: object
+    RepairResult:
+      type: object
+      required:
+      - refsExamined
+      - rewrites
+      properties:
+        refsExamined:
           type: integer
-          format: int64
+          description: Number of refs walked.
           minimum: 0
-        offset:
+        rewrites:
+          type: array
+          items:
+            $ref: '#/components/schemas/RewrittenRef'
+          description: 'Refs whose tip was rewritten because their reachable history had
+
+            missing objects. Empty for healthy repos.'
+    DiffSearchResult:
+      type: object
+      description: Diff content search results.
+      required:
+      - totalCommits
+      - hasMore
+      - commits
+      properties:
+        totalCommits:
           type: integer
-          format: int64
+          description: Total number of commits with matching changes (before pagination).
           minimum: 0
-    CommitOrder:
+        hasMore:
+          type: boolean
+          description: Whether there are more results beyond the current page.
+        commits:
+          type: array
+          items:
+            $ref: '#/components/schemas/DiffSearchCommit'
+          description: The matching commits with their file-level diff matches.
+    SetDefaultBranchResponse:
+      type: object
+    CreateCommitRequest:
+      type: object
+      required:
+      - message
+      - files
+      properties:
+        message:
+          type: string
+          description: The commit message
+        files:
+          type: array
+          items:
+            $ref: '#/components/schemas/FileChange'
+          description: Files to add, modify, or delete in this commit
+        branch:
+          type:
+          - string
+          - 'null'
+          description: 'The branch to commit to (e.g., "main"). If not provided, commits to the default branch.
+
+            If the branch does not exist, it is created as an orphan branch with this commit as its root.'
+        author:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/CommitAuthorInfo'
+            description: Optional author information (if not provided, uses default)
+        expectedSha:
+          type:
+          - string
+          - 'null'
+          description: 'Optional expected parent SHA for optimistic concurrency control.
+
+            If provided, the commit will only be created if the current branch tip (or parent) matches this SHA.
+
+            This prevents race conditions when multiple commits are being created concurrently.
+
+            Returns a conflict error if the check fails.'
+    DiffFileStatus:
       type: string
-      description: Sort order for commit listing
+      description: The status of a file in a diff
       enum:
-      - desc
-      - asc
+      - added
+      - removed
+      - modified
+      - renamed
+      - copied
+      - changed
+      - unchanged
+    GithubSyncConfigResponse:
+      type: object
+      required:
+      - githubRepoName
+      properties:
+        githubRepoName:
+          type: string
+    RewrittenRef:
+      type: object
+      required:
+      - name
+      - originalOid
+      - rewrittenOid
+      properties:
+        name:
+          type: string
+          description: Full ref name (e.g. `refs/heads/main`).
+        originalOid:
+          type: string
+          description: OID the ref pointed at before repair.
+        rewrittenOid:
+          type: string
+          description: OID the ref now points at after substituting missing objects.
+    CreateCommitResponse:
+      type: object
+      required:
+      - commit
+      properties:
+        commit:
+          $ref: '#/components/schemas/CommitObject'
+          description: The created commit object
+    Visibility:
+      type: string
+      enum:
+      - public
+      - private
+    FileChange:
+      type: object
+      required:
+      - path
+      properties:
+        path:
+          type: string
+          description: The path of the file in the repository (e.g., "src/main.rs")
+        content:
+          type:
+          - string
+          - 'null'
+          description: 'The content of the file. Mutually exclusive with `deleted`.
+
+            If encoding is base64, this should be a base64-encoded string.'
+        encoding:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/FileEncoding'
+            description: The encoding of the content. Defaults to utf8.
+        deleted:
+          type:
+          - boolean
+          - 'null'
+          description: Whether to delete this file. Mutually exclusive with `content`.
+    FilenameSearchResult:
+      type: object
+      required:
+      - totalFiles
+      - hasMore
+      - files
+      properties:
+        totalFiles:
+          type: integer
+          description: Total number of matching files.
+          minimum: 0
+        hasMore:
+          type: boolean
+          description: Whether the results were truncated.
+        files:
+          type: array
+          items:
+            $ref: '#/components/schemas/FilenameEntry'
+          description: The matching file paths.
     CreateRepoImport:
       oneOf:
       - type: object
@@ -2749,286 +2479,36 @@ components:
             type: string
             enum:
             - git
-    TagTarget:
+    CommitAuthorInfo:
       type: object
       required:
-      - sha
+      - name
+      - email
       properties:
-        sha:
-          type: string
-          description: The target object's hash ID
-    CommitSearchEntry:
-      type: object
-      required:
-      - sha
-      - message
-      - fullMessage
-      - authorName
-      - authorEmail
-      - timestamp
-      properties:
-        sha:
-          type: string
-          description: The commit SHA.
-        message:
-          type: string
-          description: The commit message (first line / summary).
-        fullMessage:
-          type: string
-          description: The full commit message.
-        authorName:
-          type: string
-          description: The author name.
-        authorEmail:
-          type: string
-          description: The author email.
-        timestamp:
-          type: string
-          description: The commit timestamp (ISO 8601).
-    RepositoryInfoRaw:
-      type: object
-      required:
-      - id
-      - accountId
-      - visibility
-      - defaultBranch
-      - createdAt
-      properties:
-        id:
-          type: string
-          format: uuid
         name:
+          type: string
+          description: The name of the author/committer
+        email:
+          type: string
+          description: The email of the author/committer
+    CommitAuthor:
+      type: object
+      required:
+      - name
+      - email
+      properties:
+        name:
+          type: string
+          description: The name of the author/committer
+        email:
+          type: string
+          description: The email of the author/committer
+        date:
           type:
           - string
           - 'null'
-          examples:
-          - my-repo
-        accountId:
-          type: string
-          format: uuid
-        visibility:
-          $ref: '#/components/schemas/Visibility'
-        defaultBranch:
-          type: string
-        createdAt:
-          type: string
           format: date-time
-    GitContentsDirEntryItem:
-      oneOf:
-      - type: object
-        title: File Entry
-        required:
-        - name
-        - path
-        - sha
-        - size
-        - type
-        properties:
-          name:
-            type: string
-          path:
-            type: string
-          sha:
-            type: string
-            description: The hash / object ID of the file.
-          size:
-            type: integer
-            format: int64
-            minimum: 0
-          type:
-            type: string
-            enum:
-            - file
-      - type: object
-        title: Directory Entry
-        description: Directory
-        required:
-        - name
-        - path
-        - sha
-        - entries
-        - type
-        properties:
-          name:
-            type: string
-          path:
-            type: string
-          sha:
-            type: string
-            description: The hash / object ID of the directory.
-          entries:
-            type: array
-            items:
-              oneOf:
-              - type: object
-                title: File Entry
-              - type: object
-                title: Dir Entry (recursive)
-          type:
-            type: string
-            enum:
-            - dir
-    CommitList:
-      type: object
-      required:
-      - commits
-      - count
-      - limit
-      - order
-      properties:
-        commits:
-          type: array
-          items:
-            $ref: '#/components/schemas/CommitObject'
-          description: List of commits
-        count:
-          type: integer
-          description: Number of commits returned in this page
-          minimum: 0
-        offset:
-          type:
-          - integer
-          - 'null'
-          description: Number of commits skipped (offset) - deprecated, use `since`/`until` selectors instead
-          minimum: 0
-        limit:
-          type: integer
-          description: Maximum number of commits requested (limit)
-          minimum: 0
-        total:
-          type:
-          - integer
-          - 'null'
-          description: 'Total number of commits in the branch/range.
-
-            Omitted when the caller passed `disableTotalCount=true`.'
-          minimum: 0
-        order:
-          $ref: '#/components/schemas/CommitOrder'
-          description: Sort order used for this query
-        selector:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/CommitsSelector'
-            description: The selector used for this query (echoed back)
-        next_commit:
-          type:
-          - string
-          - 'null'
-          description: 'SHA of the next commit for pagination. None if there are no more commits.
-
-            - For `order=desc`: use `until=next_commit` to get the next page
-
-            - For `order=asc`: use `since=next_commit` to get the next page'
-    LineMatch:
-      type: object
-      required:
-      - lineNumber
-      - line
-      - startColumn
-      - endColumn
-      - contextBefore
-      - contextAfter
-      properties:
-        lineNumber:
-          type: integer
-          description: 1-based line number of the match.
-          minimum: 0
-        line:
-          type: string
-          description: The full text of the matching line.
-        startColumn:
-          type: integer
-          description: 0-based column offset of the first match in the line.
-          minimum: 0
-        endColumn:
-          type: integer
-          description: 0-based column offset of the end of the first match in the line.
-          minimum: 0
-        contextBefore:
-          type: array
-          items:
-            type: string
-          description: Context lines before the match.
-        contextAfter:
-          type: array
-          items:
-            type: string
-          description: Context lines after the match.
-    DiffSearchCommit:
-      type: object
-      description: A commit that contained matching diff content.
-      required:
-      - sha
-      - message
-      - authorName
-      - authorEmail
-      - timestamp
-      - files
-      properties:
-        sha:
-          type: string
-          description: The commit SHA.
-        message:
-          type: string
-          description: The commit message summary (first line).
-        authorName:
-          type: string
-          description: The author name.
-        authorEmail:
-          type: string
-          description: The author email.
-        timestamp:
-          type: string
-          description: The commit timestamp (ISO 8601).
-        files:
-          type: array
-          items:
-            $ref: '#/components/schemas/DiffFileMatch'
-          description: Files in this commit with matching changed content.
-    DeleteRepositorySuccess:
-      type: object
-    BranchDetails:
-      type: object
-      required:
-      - default
-      - name
-      properties:
-        default:
-          type: boolean
-        name:
-          type: string
-        target:
-          type:
-          - string
-          - 'null'
-    BranchInfo:
-      type: object
-      required:
-      - name
-      properties:
-        name:
-          type: string
-        commit:
-          type:
-          - string
-          - 'null'
-          description: The latest commit ID on this branch. Null if the branch is empty.
-    ConfigureGithubSyncRequest:
-      type: object
-      required:
-      - githubRepoName
-      properties:
-        githubRepoName:
-          type: string
-          description: The GitHub repository name in "owner/repo" format
-    SetDefaultBranchRequest:
-      type: object
-      required:
-      - defaultBranch
-      properties:
-        defaultBranch:
-          type: string
+          description: Optional date (if not provided, uses current time)
     CommitObject:
       type: object
       description: Commit object
@@ -3060,53 +2540,59 @@ components:
         sha:
           type: string
           description: The commit's hash ID
-    TreeObject:
+    CreateOdbCommitResponse:
       type: object
-      description: Tree object
       required:
-      - tree
-      - sha
+      - commit
       properties:
-        tree:
+        commit:
+          $ref: '#/components/schemas/CommitObject'
+          description: The created commit object
+    DiffSearchCommit:
+      type: object
+      description: A commit that contained matching diff content.
+      required:
+      - sha
+      - message
+      - authorName
+      - authorEmail
+      - timestamp
+      - files
+      properties:
+        sha:
+          type: string
+          description: The commit SHA.
+        message:
+          type: string
+          description: The commit message summary (first line).
+        authorName:
+          type: string
+          description: The author name.
+        authorEmail:
+          type: string
+          description: The author email.
+        timestamp:
+          type: string
+          description: The commit timestamp (ISO 8601).
+        files:
           type: array
           items:
-            $ref: '#/components/schemas/TreeEntry'
-          description: The tree's entries
-        sha:
-          type: string
-          description: The tree's hash ID
-    GitReference:
-      type: object
-      description: A reference to a Git object
-      required:
-      - name
-      - sha
-      properties:
-        name:
-          type: string
-          description: The name of the ref (e.g., "refs/heads/main" or "refs/tags/v1.0.0")
-        sha:
-          type: string
-          description: The SHA-1 hash of the Git object this reference points to
-    FilenameEntry:
+            $ref: '#/components/schemas/DiffFileMatch'
+          description: Files in this commit with matching changed content.
+    GetDefaultBranchResponse:
       type: object
       required:
-      - path
-      - size
+      - defaultBranch
       properties:
-        path:
+        defaultBranch:
           type: string
-          description: The full file path relative to the repository root.
-        extension:
-          type:
-          - string
-          - 'null'
-          description: The file extension (e.g. "rs", "ts"), if any.
-        size:
-          type: integer
-          format: int64
-          description: The file size in bytes.
-          minimum: 0
+    SetVisibilityRequest:
+      type: object
+      required:
+      - visibility
+      properties:
+        visibility:
+          $ref: '#/components/schemas/Visibility'
     RepairJobView:
       type: object
       description: 'JSON view of a job for the GET endpoint. Status is tagged so the
@@ -3173,9 +2659,417 @@ components:
               phase. Carries the offending OID and the rewrites that were
 
               already persisted to the repo.'
-    DiffSearchResult:
+    BlobObject:
       type: object
-      description: Diff content search results.
+      description: Blob object
+      required:
+      - content
+      - encoding
+      - sha
+      - size
+      properties:
+        content:
+          type: string
+          description: The content of the blob, base64 encoded.
+        encoding:
+          $ref: '#/components/schemas/BlobEncoding'
+          description: The encoding of the blob. Always `base64`.
+        sha:
+          type: string
+          description: The object's hash.
+        size:
+          type: integer
+          format: int64
+          description: The blob's size in bytes
+          minimum: 0
+    TagObject:
+      type: object
+      description: Tag object
+      required:
+      - name
+      - target
+      - sha
+      properties:
+        name:
+          type: string
+          description: The tag name
+        tagger:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/Signature'
+            description: The tagger who created the tag
+        message:
+          type:
+          - string
+          - 'null'
+          description: The tag message
+        target:
+          $ref: '#/components/schemas/TagTarget'
+          description: The object this tag points to
+        sha:
+          type: string
+          description: The tag's hash ID
+    CommitsSelector:
+      oneOf:
+      - type: object
+        title: Range
+        description: Select commits in a range (like git's A..B)
+        required:
+        - Range
+        properties:
+          Range:
+            type: object
+            description: Select commits in a range (like git's A..B)
+            required:
+            - since
+            - until
+            properties:
+              since:
+                type: string
+                description: Exclude this commit and its ancestors
+              until:
+                type: string
+                description: Start from this commit (inclusive)
+      - type: object
+        title: Since
+        description: Select commits since this commit SHA (exclusive)
+        required:
+        - Since
+        properties:
+          Since:
+            type: string
+            format: Commit SHA
+            description: Select commits since this commit SHA (exclusive)
+      - type: object
+        title: Until
+        description: Select commits until this commit SHA (inclusive)
+        required:
+        - Until
+        properties:
+          Until:
+            type: string
+            format: Commit SHA
+            description: Select commits until this commit SHA (inclusive)
+      title: CommitsSelector
+      description: Selector for commits based on since/until
+    RepairAccepted:
+      type: object
+      required:
+      - jobId
+      - repoId
+      - status
+      properties:
+        jobId:
+          type: string
+        repoId:
+          type: string
+        depth:
+          type:
+          - integer
+          - 'null'
+          format: int32
+          minimum: 0
+        status:
+          type: string
+    CommitOrder:
+      type: string
+      description: Sort order for commit listing
+      enum:
+      - desc
+      - asc
+    GetVisibilityResponse:
+      type: object
+      required:
+      - visibility
+      properties:
+        visibility:
+          $ref: '#/components/schemas/Visibility'
+    CreateOdbCommitRequest:
+      type: object
+      required:
+      - message
+      - tree
+      - parents
+      properties:
+        message:
+          type: string
+          description: The commit message
+        tree:
+          type: string
+          description: The SHA of the tree for this commit
+        parents:
+          type: array
+          items:
+            type: string
+          description: The SHAs of the parent commits (empty array for initial commit)
+        author:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/CommitAuthor'
+            description: Optional author information (if not provided, uses committer info)
+        committer:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/CommitAuthor'
+            description: Optional committer information (if not provided, uses default)
+    ComparisonStatus:
+      type: string
+      description: The status of a commit comparison
+      enum:
+      - identical
+      - ahead
+      - behind
+      - diverged
+    DiffLineMatch:
+      type: object
+      description: A line that was added or changed in a diff that matched the search query.
+      required:
+      - line
+      - lineNumber
+      - startColumn
+      - endColumn
+      - isAddition
+      properties:
+        line:
+          type: string
+          description: The matched line content (without the leading +/- prefix).
+        lineNumber:
+          type: integer
+          description: 1-based line number in the new file (for additions) or old file (for deletions).
+          minimum: 0
+        startColumn:
+          type: integer
+          description: 0-based byte offset of the match start within the line.
+          minimum: 0
+        endColumn:
+          type: integer
+          description: 0-based byte offset of the match end within the line.
+          minimum: 0
+        isAddition:
+          type: boolean
+          description: Whether this was an added line (true) or a deleted line (false).
+    Signature:
+      type: object
+      required:
+      - date
+      - name
+      - email
+      properties:
+        date:
+          type: string
+          format: date-time
+          description: The date marker for this signature
+        name:
+          type: string
+        email:
+          type: string
+    BlobEncoding:
+      type: string
+      description: The encoding of a blob from the API. Always `base64`.
+      enum:
+      - base64
+    GitContentsDirEntryItem:
+      oneOf:
+      - type: object
+        title: File Entry
+        required:
+        - name
+        - path
+        - sha
+        - size
+        - type
+        properties:
+          name:
+            type: string
+          path:
+            type: string
+          sha:
+            type: string
+            description: The hash / object ID of the file.
+          size:
+            type: integer
+            format: int64
+            minimum: 0
+          type:
+            type: string
+            enum:
+            - file
+      - type: object
+        title: Directory Entry
+        description: Directory
+        required:
+        - name
+        - path
+        - sha
+        - entries
+        - type
+        properties:
+          name:
+            type: string
+          path:
+            type: string
+          sha:
+            type: string
+            description: The hash / object ID of the directory.
+          entries:
+            type: array
+            items:
+              oneOf:
+              - type: object
+                title: File Entry
+              - type: object
+                title: Dir Entry (recursive)
+          type:
+            type: string
+            enum:
+            - dir
+    CommitSearchEntry:
+      type: object
+      required:
+      - sha
+      - message
+      - fullMessage
+      - authorName
+      - authorEmail
+      - timestamp
+      properties:
+        sha:
+          type: string
+          description: The commit SHA.
+        message:
+          type: string
+          description: The commit message (first line / summary).
+        fullMessage:
+          type: string
+          description: The full commit message.
+        authorName:
+          type: string
+          description: The author name.
+        authorEmail:
+          type: string
+          description: The author email.
+        timestamp:
+          type: string
+          description: The commit timestamp (ISO 8601).
+    CommitParent:
+      type: object
+      required:
+      - sha
+      properties:
+        sha:
+          type: string
+          description: The commit's hash ID
+    SearchResult:
+      type: object
+      required:
+      - totalFiles
+      - totalMatches
+      - hasMore
+      - files
+      properties:
+        totalFiles:
+          type: integer
+          description: Total number of files with matches (before pagination).
+          minimum: 0
+        totalMatches:
+          type: integer
+          description: Total number of individual line matches across all files (before pagination).
+          minimum: 0
+        hasMore:
+          type: boolean
+          description: Whether there are more results beyond the current page.
+        files:
+          type: array
+          items:
+            $ref: '#/components/schemas/FileSearchResult'
+          description: The matching files with their line matches (paginated).
+    ListGitTriggersSuccess:
+      type: object
+      required:
+      - triggers
+      properties:
+        triggers:
+          type: array
+          items:
+            $ref: '#/components/schemas/GitRepositoryTrigger'
+    SetVisibilityResponse:
+      type: object
+    RepairJobList:
+      type: object
+      required:
+      - jobs
+      properties:
+        jobs:
+          type: array
+          items:
+            $ref: '#/components/schemas/RepairJobView'
+    GitReference:
+      type: object
+      description: A reference to a Git object
+      required:
+      - name
+      - sha
+      properties:
+        name:
+          type: string
+          description: The name of the ref (e.g., "refs/heads/main" or "refs/tags/v1.0.0")
+        sha:
+          type: string
+          description: The SHA-1 hash of the Git object this reference points to
+    CommitList:
+      type: object
+      required:
+      - commits
+      - count
+      - limit
+      - order
+      properties:
+        commits:
+          type: array
+          items:
+            $ref: '#/components/schemas/CommitObject'
+          description: List of commits
+        count:
+          type: integer
+          description: Number of commits returned in this page
+          minimum: 0
+        offset:
+          type:
+          - integer
+          - 'null'
+          description: Number of commits skipped (offset) - deprecated, use `since`/`until` selectors instead
+          minimum: 0
+        limit:
+          type: integer
+          description: Maximum number of commits requested (limit)
+          minimum: 0
+        total:
+          type:
+          - integer
+          - 'null'
+          description: 'Total number of commits in the branch/range.
+
+            Omitted when the caller passed `disableTotalCount=true`.'
+          minimum: 0
+        order:
+          $ref: '#/components/schemas/CommitOrder'
+          description: Sort order used for this query
+        selector:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/CommitsSelector'
+            description: The selector used for this query (echoed back)
+        next_commit:
+          type:
+          - string
+          - 'null'
+          description: 'SHA of the next commit for pagination. None if there are no more commits.
+
+            - For `order=desc`: use `until=next_commit` to get the next page
+
+            - For `order=asc`: use `since=next_commit` to get the next page'
+    CommitSearchResult:
+      type: object
       required:
       - totalCommits
       - hasMore
@@ -3183,16 +3077,95 @@ components:
       properties:
         totalCommits:
           type: integer
-          description: Total number of commits with matching changes (before pagination).
+          description: Total number of matching commits found.
           minimum: 0
         hasMore:
           type: boolean
-          description: Whether there are more results beyond the current page.
+          description: Whether there are more results beyond those returned.
         commits:
           type: array
           items:
-            $ref: '#/components/schemas/DiffSearchCommit'
-          description: The matching commits with their file-level diff matches.
+            $ref: '#/components/schemas/CommitSearchEntry'
+          description: The matching commits.
+    ListRepositoriesSuccess:
+      type: object
+      required:
+      - repositories
+      - total
+      - offset
+      properties:
+        repositories:
+          type: array
+          items:
+            $ref: '#/components/schemas/RepositoryMetadata'
+        total:
+          type: integer
+          format: int64
+          minimum: 0
+        offset:
+          type: integer
+          format: int64
+          minimum: 0
+    ConfigureGithubSyncRequest:
+      type: object
+      required:
+      - githubRepoName
+      properties:
+        githubRepoName:
+          type: string
+          description: The GitHub repository name in "owner/repo" format
+    FilenameEntry:
+      type: object
+      required:
+      - path
+      - size
+      properties:
+        path:
+          type: string
+          description: The full file path relative to the repository root.
+        extension:
+          type:
+          - string
+          - 'null'
+          description: The file extension (e.g. "rs", "ts"), if any.
+        size:
+          type: integer
+          format: int64
+          description: The file size in bytes.
+          minimum: 0
+    BranchInfo:
+      type: object
+      required:
+      - name
+      properties:
+        name:
+          type: string
+        commit:
+          type:
+          - string
+          - 'null'
+          description: The latest commit ID on this branch. Null if the branch is empty.
+    SetDefaultBranchRequest:
+      type: object
+      required:
+      - defaultBranch
+      properties:
+        defaultBranch:
+          type: string
+    BranchDetails:
+      type: object
+      required:
+      - default
+      - name
+      properties:
+        default:
+          type: boolean
+        name:
+          type: string
+        target:
+          type:
+          - string
+          - 'null'
     GitRepositoryTrigger:
       type: object
       required:
@@ -3249,46 +3222,218 @@ components:
         createdAt:
           type: string
           format: date-time
-    TagDetails:
+    DiffFile:
       type: object
+      description: A file that was changed in the comparison
       required:
-      - name
-      - target
+      - filename
+      - status
+      - additions
+      - deletions
+      - changes
       properties:
-        name:
-          type: string
-        target:
-          type: string
-        message:
+        sha:
           type:
           - string
           - 'null'
-    SetVisibilityRequest:
+          description: The blob SHA of the file
+        filename:
+          type: string
+          description: The file path
+        status:
+          $ref: '#/components/schemas/DiffFileStatus'
+          description: The status of the file (added, removed, modified, renamed, copied, changed, unchanged)
+        additions:
+          type: integer
+          format: int32
+          description: Number of lines added
+          minimum: 0
+        deletions:
+          type: integer
+          format: int32
+          description: Number of lines deleted
+          minimum: 0
+        changes:
+          type: integer
+          format: int32
+          description: Total number of changes (additions + deletions)
+          minimum: 0
+        previous_filename:
+          type:
+          - string
+          - 'null'
+          description: Previous filename (for renamed/copied files)
+    LineMatch:
       type: object
       required:
-      - visibility
+      - lineNumber
+      - line
+      - startColumn
+      - endColumn
+      - contextBefore
+      - contextAfter
       properties:
-        visibility:
-          $ref: '#/components/schemas/Visibility'
-    CreateBranchResponse:
+        lineNumber:
+          type: integer
+          description: 1-based line number of the match.
+          minimum: 0
+        line:
+          type: string
+          description: The full text of the matching line.
+        startColumn:
+          type: integer
+          description: 0-based column offset of the first match in the line.
+          minimum: 0
+        endColumn:
+          type: integer
+          description: 0-based column offset of the end of the first match in the line.
+          minimum: 0
+        contextBefore:
+          type: array
+          items:
+            type: string
+          description: Context lines before the match.
+        contextAfter:
+          type: array
+          items:
+            type: string
+          description: Context lines after the match.
+    CommitComparison:
+      type: object
+      description: Response containing the comparison between two commits
+      required:
+      - status
+      - ahead_by
+      - behind_by
+      - total_commits
+      - files
+      properties:
+        status:
+          $ref: '#/components/schemas/ComparisonStatus'
+          description: Status of the comparison
+        ahead_by:
+          type: integer
+          description: Number of commits the head is ahead of base
+          minimum: 0
+        behind_by:
+          type: integer
+          description: Number of commits the head is behind base
+          minimum: 0
+        total_commits:
+          type: integer
+          description: Total number of commits in the comparison
+          minimum: 0
+        files:
+          type: array
+          items:
+            $ref: '#/components/schemas/DiffFile'
+          description: List of changed files
+    FileEncoding:
+      type: string
+      description: File content encoding
+      enum:
+      - utf8
+      - base64
+    TagTarget:
       type: object
       required:
-      - name
       - sha
       properties:
-        name:
-          type: string
-          description: The name of the created branch
         sha:
           type: string
-          description: The SHA of the commit the branch points to
-    GithubSyncConfigResponse:
+          description: The target object's hash ID
+    RepositoryInfoRaw:
       type: object
       required:
-      - githubRepoName
+      - id
+      - accountId
+      - visibility
+      - defaultBranch
+      - createdAt
       properties:
-        githubRepoName:
+        id:
           type: string
+          format: uuid
+        name:
+          type:
+          - string
+          - 'null'
+          examples:
+          - my-repo
+        accountId:
+          type: string
+          format: uuid
+        visibility:
+          $ref: '#/components/schemas/Visibility'
+        defaultBranch:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+    CreateBranchRequest:
+      type: object
+      properties:
+        sha:
+          type:
+          - string
+          - 'null'
+          description: 'The SHA of the commit this branch should point to.
+
+            If not provided, the branch will be created from the default branch.'
+    GitContents:
+      oneOf:
+      - type: object
+        title: File
+        required:
+        - name
+        - path
+        - sha
+        - size
+        - content
+        - type
+        properties:
+          name:
+            type: string
+          path:
+            type: string
+          sha:
+            type: string
+            description: The hash / object ID of the file.
+          size:
+            type: integer
+            format: int64
+            minimum: 0
+          content:
+            type: string
+            description: Base64-encoded content.
+          type:
+            type: string
+            enum:
+            - file
+      - type: object
+        title: Directory
+        required:
+        - name
+        - path
+        - sha
+        - entries
+        - type
+        properties:
+          name:
+            type: string
+          path:
+            type: string
+          sha:
+            type: string
+            description: The hash / object ID of the directory.
+          entries:
+            type: array
+            items:
+              $ref: '#/components/schemas/GitContentsDirEntryItem'
+          type:
+            type: string
+            enum:
+            - dir
     VerificationFailureView:
       type: object
       description: 'Failure shape for the post-rewrite verification phase. Surfaced via
@@ -3328,194 +3473,49 @@ components:
           type: integer
           description: Number of refs the rewrite phase walked before verification ran.
           minimum: 0
-    CreateCommitRequest:
+    CreateRepoSource:
       type: object
       required:
-      - message
-      - files
+      - url
       properties:
-        message:
+        url:
           type: string
-          description: The commit message
-        files:
-          type: array
-          items:
-            $ref: '#/components/schemas/FileChange'
-          description: Files to add, modify, or delete in this commit
+          format: uri
         branch:
           type:
           - string
           - 'null'
-          description: 'The branch to commit to (e.g., "main"). If not provided, commits to the default branch.
-
-            If the branch does not exist, it is created as an orphan branch with this commit as its root.'
-        author:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/CommitAuthorInfo'
-            description: Optional author information (if not provided, uses default)
-        expectedSha:
+          deprecated: true
+        rev:
           type:
           - string
           - 'null'
-          description: 'Optional expected parent SHA for optimistic concurrency control.
+          description: 'The revision (branch, tag, or commit hash) to checkout from the source repo.
 
-            If provided, the commit will only be created if the current branch tip (or parent) matches this SHA.
+            The given revision will be used as the new repository''s default branch.
 
-            This prevents race conditions when multiple commits are being created concurrently.
 
-            Returns a conflict error if the check fails.'
-    CommitParent:
+            This field supersedes ''branch''.'
+        depth:
+          type:
+          - integer
+          - 'null'
+          format: int32
+        allBranches:
+          type:
+          - boolean
+          - 'null'
+          description: 'If true, all branches and tags will be fetched from the source repository.
+
+            Defaults to false, which only fetches the default branch (unless `rev` is set).'
+    CommitTree:
       type: object
       required:
       - sha
       properties:
         sha:
           type: string
-          description: The commit's hash ID
-    CommitsSelector:
-      oneOf:
-      - type: object
-        title: Range
-        description: Select commits in a range (like git's A..B)
-        required:
-        - Range
-        properties:
-          Range:
-            type: object
-            description: Select commits in a range (like git's A..B)
-            required:
-            - since
-            - until
-            properties:
-              since:
-                type: string
-                description: Exclude this commit and its ancestors
-              until:
-                type: string
-                description: Start from this commit (inclusive)
-      - type: object
-        title: Since
-        description: Select commits since this commit SHA (exclusive)
-        required:
-        - Since
-        properties:
-          Since:
-            type: string
-            format: Commit SHA
-            description: Select commits since this commit SHA (exclusive)
-      - type: object
-        title: Until
-        description: Select commits until this commit SHA (inclusive)
-        required:
-        - Until
-        properties:
-          Until:
-            type: string
-            format: Commit SHA
-            description: Select commits until this commit SHA (inclusive)
-      title: CommitsSelector
-      description: Selector for commits based on since/until
-    CommitAuthor:
-      type: object
-      required:
-      - name
-      - email
-      properties:
-        name:
-          type: string
-          description: The name of the author/committer
-        email:
-          type: string
-          description: The email of the author/committer
-        date:
-          type:
-          - string
-          - 'null'
-          format: date-time
-          description: Optional date (if not provided, uses current time)
-    SetDefaultBranchResponse:
-      type: object
-    FileChange:
-      type: object
-      required:
-      - path
-      properties:
-        path:
-          type: string
-          description: The path of the file in the repository (e.g., "src/main.rs")
-        content:
-          type:
-          - string
-          - 'null'
-          description: 'The content of the file. Mutually exclusive with `deleted`.
-
-            If encoding is base64, this should be a base64-encoded string.'
-        encoding:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/FileEncoding'
-            description: The encoding of the content. Defaults to utf8.
-        deleted:
-          type:
-          - boolean
-          - 'null'
-          description: Whether to delete this file. Mutually exclusive with `content`.
-    FileEncoding:
-      type: string
-      description: File content encoding
-      enum:
-      - utf8
-      - base64
-    RepositoryMetadata:
-      type: object
-      required:
-      - branches
-      - tags
-      - defaultBranch
-      properties:
-        branches:
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/BranchDetails'
-          propertyNames:
-            type: string
-        tags:
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/TagDetails'
-          propertyNames:
-            type: string
-        defaultBranch:
-          type: string
-    DiffLineMatch:
-      type: object
-      description: A line that was added or changed in a diff that matched the search query.
-      required:
-      - line
-      - lineNumber
-      - startColumn
-      - endColumn
-      - isAddition
-      properties:
-        line:
-          type: string
-          description: The matched line content (without the leading +/- prefix).
-        lineNumber:
-          type: integer
-          description: 1-based line number in the new file (for additions) or old file (for deletions).
-          minimum: 0
-        startColumn:
-          type: integer
-          description: 0-based byte offset of the match start within the line.
-          minimum: 0
-        endColumn:
-          type: integer
-          description: 0-based byte offset of the match end within the line.
-          minimum: 0
-        isAddition:
-          type: boolean
-          description: Whether this was an added line (true) or a deleted line (false).
+          description: The tree's hash ID
   securitySchemes:
     bearerAuth:
       type: http
