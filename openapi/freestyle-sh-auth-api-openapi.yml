@@ -61,6 +61,23 @@ paths:
                 $ref: '#/components/schemas/WhoAmIResponse'
 components:
   schemas:
+    BackgroundRequestPendingResponse:
+      type: object
+      required:
+      - requestId
+      - status
+      properties:
+        requestId:
+          $ref: '#/components/schemas/RequestId'
+        status:
+          type: string
+    BackgroundRequestErrorResponse:
+      type: object
+      required:
+      - message
+      properties:
+        message:
+          type: string
     WhoAmIResponse:
       type: object
       required:
@@ -81,23 +98,6 @@ components:
         minted IDs. The wrapped string is otherwise opaque, so legacy UUID-formatted
 
         IDs (from in-flight requests during rollout) round-trip unchanged.'
-    BackgroundRequestPendingResponse:
-      type: object
-      required:
-      - requestId
-      - status
-      properties:
-        requestId:
-          $ref: '#/components/schemas/RequestId'
-        status:
-          type: string
-    BackgroundRequestErrorResponse:
-      type: object
-      required:
-      - message
-      properties:
-        message:
-          type: string
   securitySchemes:
     bearerAuth:
       type: http

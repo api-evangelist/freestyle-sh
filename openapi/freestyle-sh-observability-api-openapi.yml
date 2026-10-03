@@ -137,6 +137,13 @@ paths:
                 $ref: '#/components/schemas/FreestyleGetLogsResponse'
 components:
   schemas:
+    VmId:
+      type: string
+      description: 'VM ID — always 20 alphanumeric lowercase characters.
+
+        New IDs are fully random. Legacy short IDs are right-padded with ''0'' on parse.'
+    VmInstanceId:
+      type: string
     FreestyleLogResponseObject:
       type: object
       required:
@@ -179,15 +186,9 @@ components:
           oneOf:
           - type: 'null'
           - $ref: '#/components/schemas/BuildId'
-    VmInstanceId:
+    BuildId:
       type: string
-    RequestId:
-      type: string
-      description: 'Branded request identifier — `ri-<20 lowercase alphanumeric chars>` for newly
-
-        minted IDs. The wrapped string is otherwise opaque, so legacy UUID-formatted
-
-        IDs (from in-flight requests during rollout) round-trip unchanged.'
+      description: Branded build ID in the format `bld-<20 lowercase alphanumeric chars>`.
     FreestyleGetLogsResponse:
       type: object
       required:
@@ -201,14 +202,13 @@ components:
           type:
           - string
           - 'null'
-    VmId:
+    RequestId:
       type: string
-      description: 'VM ID — always 20 alphanumeric lowercase characters.
+      description: 'Branded request identifier — `ri-<20 lowercase alphanumeric chars>` for newly
 
-        New IDs are fully random. Legacy short IDs are right-padded with ''0'' on parse.'
-    BuildId:
-      type: string
-      description: Branded build ID in the format `bld-<20 lowercase alphanumeric chars>`.
+        minted IDs. The wrapped string is otherwise opaque, so legacy UUID-formatted
+
+        IDs (from in-flight requests during rollout) round-trip unchanged.'
   securitySchemes:
     bearerAuth:
       type: http

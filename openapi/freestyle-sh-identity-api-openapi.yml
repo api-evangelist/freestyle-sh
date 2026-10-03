@@ -495,6 +495,57 @@ components:
           description: 'List of allowed Linux users. If null, identity can SSH as any user.
 
             If specified, identity can only SSH as users in this list.'
+    DescribeGitPermissionSuccess:
+      type: object
+      required:
+      - identity
+      - repo
+      properties:
+        identity:
+          type: string
+          format: uuid
+        repo:
+          type: string
+          format: uuid
+        accessLevel:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/AccessLevel'
+    AccessLevel:
+      type: string
+      enum:
+      - read
+      - write
+    ListVmPermissionsSuccess:
+      type: object
+      required:
+      - permissions
+      - offset
+      - total
+      properties:
+        permissions:
+          type: array
+          items:
+            $ref: '#/components/schemas/VmPermission'
+        offset:
+          type: integer
+          format: int64
+          minimum: 0
+        total:
+          type: integer
+          format: int64
+          minimum: 0
+    FreestyleIdentity:
+      type: object
+      required:
+      - id
+      - managed
+      properties:
+        id:
+          type: string
+          format: uuid
+        managed:
+          type: boolean
     AccessTokenInfo:
       type: object
       required:
@@ -503,25 +554,36 @@ components:
         id:
           type: string
           format: uuid
-    EmptyResponse:
-      type: object
-    UpdateGitPermissionRequest:
+    GrantGitPermissionRequest:
       type: object
       required:
       - permission
       properties:
         permission:
           $ref: '#/components/schemas/AccessLevel'
-    Visibility:
-      type: string
-      enum:
-      - public
-      - private
-    AccessLevel:
-      type: string
-      enum:
-      - read
-      - write
+    AccessibleRepository:
+      type: object
+      description: Identical to [`RepositoryInfo`], but with the permissions field added.
+      required:
+      - id
+      - accountId
+      - permissions
+      - visibility
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type:
+          - string
+          - 'null'
+        accountId:
+          type: string
+          format: uuid
+        permissions:
+          $ref: '#/components/schemas/AccessLevel'
+        visibility:
+          $ref: '#/components/schemas/Visibility'
     CreatedToken:
       type: object
       required:
@@ -533,6 +595,8 @@ components:
           format: uuid
         token:
           type: string
+    EmptyResponse:
+      type: object
     VmPermission:
       type: object
       description: Full VM permission record
@@ -572,32 +636,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/AccessTokenInfo'
-    ListVmPermissionsSuccess:
-      type: object
-      required:
-      - permissions
-      - offset
-      - total
-      properties:
-        permissions:
-          type: array
-          items:
-            $ref: '#/components/schemas/VmPermission'
-        offset:
-          type: integer
-          format: int64
-          minimum: 0
-        total:
-          type: integer
-          format: int64
-          minimum: 0
-    GrantGitPermissionRequest:
-      type: object
-      required:
-      - permission
-      properties:
-        permission:
-          $ref: '#/components/schemas/AccessLevel'
     UpdateAllowedUsersRequestBody:
       type: object
       properties:
@@ -610,15 +648,13 @@ components:
           description: 'List of allowed Linux users. If null, identity can SSH as any user.
 
             If specified, identity can only SSH as users in this list.'
-    ListGitPermissionSuccess:
+    UpdateGitPermissionRequest:
       type: object
       required:
-      - repositories
+      - permission
       properties:
-        repositories:
-          type: array
-          items:
-            $ref: '#/components/schemas/AccessibleRepository'
+        permission:
+          $ref: '#/components/schemas/AccessLevel'
     ListIdentitiesSuccess:
       type: object
       required:
@@ -638,56 +674,20 @@ components:
           type: integer
           format: int64
           minimum: 0
-    FreestyleIdentity:
+    ListGitPermissionSuccess:
       type: object
       required:
-      - id
-      - managed
+      - repositories
       properties:
-        id:
-          type: string
-          format: uuid
-        managed:
-          type: boolean
-    AccessibleRepository:
-      type: object
-      description: Identical to [`RepositoryInfo`], but with the permissions field added.
-      required:
-      - id
-      - accountId
-      - permissions
-      - visibility
-      properties:
-        id:
-          type: string
-          format: uuid
-        name:
-          type:
-          - string
-          - 'null'
-        accountId:
-          type: string
-          format: uuid
-        permissions:
-          $ref: '#/components/schemas/AccessLevel'
-        visibility:
-          $ref: '#/components/schemas/Visibility'
-    DescribeGitPermissionSuccess:
-      type: object
-      required:
-      - identity
-      - repo
-      properties:
-        identity:
-          type: string
-          format: uuid
-        repo:
-          type: string
-          format: uuid
-        accessLevel:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/AccessLevel'
+        repositories:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccessibleRepository'
+    Visibility:
+      type: string
+      enum:
+      - public
+      - private
   securitySchemes:
     bearerAuth:
       type: http

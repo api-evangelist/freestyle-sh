@@ -166,29 +166,30 @@ components:
           type: string
         record:
           $ref: '#/components/schemas/DnsRecordData'
-    DnsRecordData:
+    ListRecordsResponse:
       type: object
       required:
-      - kind
-      - name
-      - value
+      - records
       properties:
-        kind:
-          $ref: '#/components/schemas/DnsRecordKind'
-        name:
-          type: string
-        value:
-          type: string
-        ttl:
-          type:
-          - string
-          - 'null'
-        priority:
-          type:
-          - integer
-          - 'null'
-          format: int32
-          minimum: 0
+        records:
+          type: array
+          items:
+            $ref: '#/components/schemas/DnsRecord'
+    CreateRecordResponse:
+      type: object
+      required:
+      - record
+      properties:
+        record:
+          $ref: '#/components/schemas/DnsRecord'
+    DnsRecordKind:
+      type: string
+      enum:
+      - A
+      - AAAA
+      - CNAME
+      - TXT
+      - NS
     DeleteRecordResponse:
       type: object
       required:
@@ -221,30 +222,29 @@ components:
           minimum: 0
         managed:
           type: boolean
-    CreateRecordResponse:
+    DnsRecordData:
       type: object
       required:
-      - record
+      - kind
+      - name
+      - value
       properties:
-        record:
-          $ref: '#/components/schemas/DnsRecord'
-    ListRecordsResponse:
-      type: object
-      required:
-      - records
-      properties:
-        records:
-          type: array
-          items:
-            $ref: '#/components/schemas/DnsRecord'
-    DnsRecordKind:
-      type: string
-      enum:
-      - A
-      - AAAA
-      - CNAME
-      - TXT
-      - NS
+        kind:
+          $ref: '#/components/schemas/DnsRecordKind'
+        name:
+          type: string
+        value:
+          type: string
+        ttl:
+          type:
+          - string
+          - 'null'
+        priority:
+          type:
+          - integer
+          - 'null'
+          format: int32
+          minimum: 0
   securitySchemes:
     bearerAuth:
       type: http
