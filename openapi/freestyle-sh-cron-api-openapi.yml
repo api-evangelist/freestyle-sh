@@ -287,6 +287,305 @@ paths:
       x-summary-source: derived
 components:
   schemas:
+    CronRunConfigParams:
+      type: object
+      description: Optional configuration for a cron-triggered serverless run.
+      properties:
+        envVars:
+          type: object
+          description: Environment variables available to the script
+          default: {}
+          additionalProperties:
+            type: string
+          propertyNames:
+            type: string
+        nodeModules:
+          type: object
+          description: Node modules to install (package name → version)
+          default: {}
+          additionalProperties:
+            type: string
+          propertyNames:
+            type: string
+        inferNodeModules:
+          type: boolean
+          description: If true, Freestyle will best-effort infer npm packages from script imports.
+          default: false
+        timeout:
+          type:
+          - integer
+          - 'null'
+          format: int32
+          description: Script execution timeout in seconds
+          default: null
+          minimum: 0
+        tags:
+          type: array
+          items:
+            type: string
+          description: Tags for organizing runs
+          default: []
+        peerDependencyResolution:
+          type:
+          - boolean
+          - 'null'
+          description: If false, peer dependencies are not auto-resolved.
+          default: null
+        networkPermissions:
+          description: Outbound network permission rules.
+        customHeaders:
+          type: object
+          description: Headers injected into outgoing fetch requests.
+          default: {}
+          additionalProperties:
+            type: string
+          propertyNames:
+            type: string
+        proxy:
+          type:
+          - string
+          - 'null'
+          description: Proxy URL for outbound requests.
+          default: null
+        egress:
+          description: Egress control configuration.
+        zeroRetention:
+          type:
+          - boolean
+          - 'null'
+          description: If true, avoid retaining logs/results/code for this run.
+          default: null
+    ExecutionWithAttempts:
+      allOf:
+      - $ref: '#/components/schemas/Execution'
+      - type: object
+        required:
+        - attemptHistory
+        properties:
+          attemptHistory:
+            type: array
+            items:
+              $ref: '#/components/schemas/ExecutionAttempt'
+    ExecutionStatus:
+      type: string
+      enum:
+      - queued
+      - running
+      - succeeded
+      - failed
+      - retry
+    ListScheduleExecutionsResponse:
+      type: object
+      required:
+      - executions
+      - total
+      - offset
+      - limit
+      properties:
+        executions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExecutionWithAttempts'
+        total:
+          type: integer
+          format: int64
+        offset:
+          type: integer
+          format: int64
+        limit:
+          type: integer
+          format: int64
+    UpdateScheduleRequest:
+      type: object
+      properties:
+        deploymentId:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/DeploymentId'
+        name:
+          type:
+          - string
+          - 'null'
+        active:
+          type:
+          - boolean
+          - 'null'
+        path:
+          type:
+          - string
+          - 'null'
+        cron:
+          type:
+          - string
+          - 'null'
+        timezone:
+          type:
+          - string
+          - 'null'
+        retries:
+          type:
+          - integer
+          - 'null'
+          format: int32
+        payload: {}
+        run:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/CronRunConfig'
+            description: Update the serverless run config. Set to null to clear (requires a deploymentId to be set separately).
+    ListSchedulesResponse:
+      type: object
+      required:
+      - schedules
+      properties:
+        schedules:
+          type: array
+          items:
+            $ref: '#/components/schemas/ScheduleWithStats'
+    GetScheduleResponse:
+      type: object
+      required:
+      - schedule
+      properties:
+        schedule:
+          $ref: '#/components/schemas/Schedule'
+    ExecutionAttempt:
+      type: object
+      required:
+      - id
+      - executionId
+      - attemptNumber
+      - status
+      - startedAt
+      - createdAt
+      - updatedAt
+      properties:
+        id:
+          type: string
+          format: uuid
+        executionId:
+          type: string
+          format: uuid
+        attemptNumber:
+          type: integer
+          format: int32
+        status:
+          $ref: '#/components/schemas/ExecutionStatus'
+        instanceId:
+          type:
+          - string
+          - 'null'
+        error:
+          type:
+          - string
+          - 'null'
+        startedAt:
+          type: string
+          format: date-time
+        completedAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    CreateScheduleResponse:
+      type: object
+      required:
+      - schedule
+      properties:
+        schedule:
+          $ref: '#/components/schemas/Schedule'
+    MetricsDataPoint:
+      type: object
+      description: 'A single bucket of execution metrics.
+
+
+        `succeeded_count` includes every terminal success. The first-try and retry
+
+        success counts split that total and sum to `succeeded_count`.
+
+        `execution_count` is `succeeded_count + failed_count`.'
+      required:
+      - timestamp
+      - executionCount
+      - succeededCount
+      - succeededOnFirstTryCount
+      - succeededOnRetryCount
+      - failedCount
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        executionCount:
+          type: integer
+          format: int64
+        succeededCount:
+          type: integer
+          format: int64
+        succeededOnFirstTryCount:
+          type: integer
+          format: int64
+        succeededOnRetryCount:
+          type: integer
+          format: int64
+        failedCount:
+          type: integer
+          format: int64
+        averageLatencyMs:
+          type:
+          - number
+          - 'null'
+          format: double
+        averageSuccessLatencyMs:
+          type:
+          - number
+          - 'null'
+          format: double
+        averageFailureLatencyMs:
+          type:
+          - number
+          - 'null'
+          format: double
+        p50SuccessLatencyMs:
+          type:
+          - number
+          - 'null'
+          format: double
+        p90SuccessLatencyMs:
+          type:
+          - number
+          - 'null'
+          format: double
+        p99SuccessLatencyMs:
+          type:
+          - number
+          - 'null'
+          format: double
+    ScheduleWithStats:
+      allOf:
+      - $ref: '#/components/schemas/Schedule'
+      - type: object
+        properties:
+          successRate:
+            type:
+            - number
+            - 'null'
+            format: double
+          averageLatencyMs:
+            type:
+            - number
+            - 'null'
+            format: double
+          executionCount:
+            type:
+            - integer
+            - 'null'
+            format: int64
     ScheduleSuccessRateResponseBody:
       type: object
       description: 'Aggregate success-rate stats over a time window.
@@ -332,85 +631,90 @@ components:
           - number
           - 'null'
           format: double
-    ExecutionAttempt:
+    CreateScheduleRequest:
       type: object
       required:
-      - id
-      - executionId
-      - attemptNumber
-      - status
-      - startedAt
-      - createdAt
-      - updatedAt
+      - cron
       properties:
-        id:
+        deploymentId:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/DeploymentId'
+            description: The deployment to invoke on each tick. Exactly one of `deploymentId` or `run` must be set.
+        name:
+          type:
+          - string
+          - 'null'
+        path:
+          type:
+          - string
+          - 'null'
+        cron:
           type: string
-          format: uuid
-        executionId:
+        timezone:
           type: string
-          format: uuid
-        attemptNumber:
+        retries:
           type: integer
           format: int32
-        status:
-          $ref: '#/components/schemas/ExecutionStatus'
-        instanceId:
-          type:
-          - string
-          - 'null'
-        error:
-          type:
-          - string
-          - 'null'
-        startedAt:
-          type: string
-          format: date-time
-        completedAt:
-          type:
-          - string
-          - 'null'
-          format: date-time
-        createdAt:
-          type: string
-          format: date-time
-        updatedAt:
-          type: string
-          format: date-time
-    ScheduleWithStats:
-      allOf:
-      - $ref: '#/components/schemas/Schedule'
-      - type: object
-        properties:
-          successRate:
-            type:
-            - number
-            - 'null'
-            format: double
-          averageLatencyMs:
-            type:
-            - number
-            - 'null'
-            format: double
-          executionCount:
-            type:
-            - integer
-            - 'null'
-            format: int64
-    ExecutionStatus:
-      type: string
-      enum:
-      - queued
-      - running
-      - succeeded
-      - failed
-      - retry
-    GetScheduleResponse:
+        payload: {}
+        run:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/CronRunConfig'
+            description: Serverless run config to execute on each tick. Exactly one of `deploymentId` or `run` must be set.
+    UpdateScheduleResponse:
       type: object
       required:
-      - schedule
+      - success
       properties:
-        schedule:
-          $ref: '#/components/schemas/Schedule'
+        success:
+          type: boolean
+    DeploymentId:
+      type: string
+      format: uuid
+    DeleteScheduleResponse:
+      type: object
+      required:
+      - success
+      properties:
+        success:
+          type: boolean
+    CronRunConfig:
+      allOf:
+      - $ref: '#/components/schemas/CronRunConfigParams'
+      - type: object
+        required:
+        - code
+        properties:
+          code:
+            type: string
+            description: The JavaScript or TypeScript module to execute. Must export a default function.
+      description: 'Configuration for running a serverless script when a cron schedule fires.
+
+        This is an alternative to targeting a deployment — use this to run ad-hoc
+
+        code on each cron tick without needing a deployed project.'
+    MetricsTimelineResponseBody:
+      type: object
+      required:
+      - scheduleId
+      - dataPoints
+      - start
+      - end
+      properties:
+        scheduleId:
+          type: string
+          format: uuid
+        dataPoints:
+          type: array
+          items:
+            $ref: '#/components/schemas/MetricsDataPoint'
+        start:
+          type: string
+          format: date-time
+        end:
+          type: string
+          format: date-time
     Execution:
       type: object
       required:
@@ -482,72 +786,6 @@ components:
         updatedAt:
           type: string
           format: date-time
-    MetricsDataPoint:
-      type: object
-      description: 'A single bucket of execution metrics.
-
-
-        `succeeded_count` includes every terminal success. The first-try and retry
-
-        success counts split that total and sum to `succeeded_count`.
-
-        `execution_count` is `succeeded_count + failed_count`.'
-      required:
-      - timestamp
-      - executionCount
-      - succeededCount
-      - succeededOnFirstTryCount
-      - succeededOnRetryCount
-      - failedCount
-      properties:
-        timestamp:
-          type: string
-          format: date-time
-        executionCount:
-          type: integer
-          format: int64
-        succeededCount:
-          type: integer
-          format: int64
-        succeededOnFirstTryCount:
-          type: integer
-          format: int64
-        succeededOnRetryCount:
-          type: integer
-          format: int64
-        failedCount:
-          type: integer
-          format: int64
-        averageLatencyMs:
-          type:
-          - number
-          - 'null'
-          format: double
-        averageSuccessLatencyMs:
-          type:
-          - number
-          - 'null'
-          format: double
-        averageFailureLatencyMs:
-          type:
-          - number
-          - 'null'
-          format: double
-        p50SuccessLatencyMs:
-          type:
-          - number
-          - 'null'
-          format: double
-        p90SuccessLatencyMs:
-          type:
-          - number
-          - 'null'
-          format: double
-        p99SuccessLatencyMs:
-          type:
-          - number
-          - 'null'
-          format: double
     Schedule:
       type: object
       required:
@@ -598,244 +836,6 @@ components:
           format: date-time
         runConfig:
           description: Serverless run config to execute on each tick. Mutually exclusive with `deploymentId`.
-    MetricsTimelineResponseBody:
-      type: object
-      required:
-      - scheduleId
-      - dataPoints
-      - start
-      - end
-      properties:
-        scheduleId:
-          type: string
-          format: uuid
-        dataPoints:
-          type: array
-          items:
-            $ref: '#/components/schemas/MetricsDataPoint'
-        start:
-          type: string
-          format: date-time
-        end:
-          type: string
-          format: date-time
-    CreateScheduleRequest:
-      type: object
-      required:
-      - cron
-      properties:
-        deploymentId:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/DeploymentId'
-            description: The deployment to invoke on each tick. Exactly one of `deploymentId` or `run` must be set.
-        name:
-          type:
-          - string
-          - 'null'
-        path:
-          type:
-          - string
-          - 'null'
-        cron:
-          type: string
-        timezone:
-          type: string
-        retries:
-          type: integer
-          format: int32
-        payload: {}
-        run:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/CronRunConfig'
-            description: Serverless run config to execute on each tick. Exactly one of `deploymentId` or `run` must be set.
-    DeleteScheduleResponse:
-      type: object
-      required:
-      - success
-      properties:
-        success:
-          type: boolean
-    CronRunConfigParams:
-      type: object
-      description: Optional configuration for a cron-triggered serverless run.
-      properties:
-        envVars:
-          type: object
-          description: Environment variables available to the script
-          default: {}
-          additionalProperties:
-            type: string
-          propertyNames:
-            type: string
-        nodeModules:
-          type: object
-          description: Node modules to install (package name → version)
-          default: {}
-          additionalProperties:
-            type: string
-          propertyNames:
-            type: string
-        inferNodeModules:
-          type: boolean
-          description: If true, Freestyle will best-effort infer npm packages from script imports.
-          default: false
-        timeout:
-          type:
-          - integer
-          - 'null'
-          format: int32
-          description: Script execution timeout in seconds
-          default: null
-          minimum: 0
-        tags:
-          type: array
-          items:
-            type: string
-          description: Tags for organizing runs
-          default: []
-        peerDependencyResolution:
-          type:
-          - boolean
-          - 'null'
-          description: If false, peer dependencies are not auto-resolved.
-          default: null
-        networkPermissions:
-          description: Outbound network permission rules.
-        customHeaders:
-          type: object
-          description: Headers injected into outgoing fetch requests.
-          default: {}
-          additionalProperties:
-            type: string
-          propertyNames:
-            type: string
-        proxy:
-          type:
-          - string
-          - 'null'
-          description: Proxy URL for outbound requests.
-          default: null
-        egress:
-          description: Egress control configuration.
-        zeroRetention:
-          type:
-          - boolean
-          - 'null'
-          description: If true, avoid retaining logs/results/code for this run.
-          default: null
-    UpdateScheduleResponse:
-      type: object
-      required:
-      - success
-      properties:
-        success:
-          type: boolean
-    UpdateScheduleRequest:
-      type: object
-      properties:
-        deploymentId:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/DeploymentId'
-        name:
-          type:
-          - string
-          - 'null'
-        active:
-          type:
-          - boolean
-          - 'null'
-        path:
-          type:
-          - string
-          - 'null'
-        cron:
-          type:
-          - string
-          - 'null'
-        timezone:
-          type:
-          - string
-          - 'null'
-        retries:
-          type:
-          - integer
-          - 'null'
-          format: int32
-        payload: {}
-        run:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/CronRunConfig'
-            description: Update the serverless run config. Set to null to clear (requires a deploymentId to be set separately).
-    ListSchedulesResponse:
-      type: object
-      required:
-      - schedules
-      properties:
-        schedules:
-          type: array
-          items:
-            $ref: '#/components/schemas/ScheduleWithStats'
-    DeploymentId:
-      type: string
-      format: uuid
-    CronRunConfig:
-      allOf:
-      - $ref: '#/components/schemas/CronRunConfigParams'
-      - type: object
-        required:
-        - code
-        properties:
-          code:
-            type: string
-            description: The JavaScript or TypeScript module to execute. Must export a default function.
-      description: 'Configuration for running a serverless script when a cron schedule fires.
-
-        This is an alternative to targeting a deployment — use this to run ad-hoc
-
-        code on each cron tick without needing a deployed project.'
-    CreateScheduleResponse:
-      type: object
-      required:
-      - schedule
-      properties:
-        schedule:
-          $ref: '#/components/schemas/Schedule'
-    ListScheduleExecutionsResponse:
-      type: object
-      required:
-      - executions
-      - total
-      - offset
-      - limit
-      properties:
-        executions:
-          type: array
-          items:
-            $ref: '#/components/schemas/ExecutionWithAttempts'
-        total:
-          type: integer
-          format: int64
-        offset:
-          type: integer
-          format: int64
-        limit:
-          type: integer
-          format: int64
-    ExecutionWithAttempts:
-      allOf:
-      - $ref: '#/components/schemas/Execution'
-      - type: object
-        required:
-        - attemptHistory
-        properties:
-          attemptHistory:
-            type: array
-            items:
-              $ref: '#/components/schemas/ExecutionAttempt'
   securitySchemes:
     bearerAuth:
       type: http

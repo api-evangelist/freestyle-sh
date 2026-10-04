@@ -61,6 +61,13 @@ paths:
                 $ref: '#/components/schemas/WhoAmIResponse'
 components:
   schemas:
+    BackgroundRequestErrorResponse:
+      type: object
+      required:
+      - message
+      properties:
+        message:
+          type: string
     BackgroundRequestPendingResponse:
       type: object
       required:
@@ -70,13 +77,6 @@ components:
         requestId:
           $ref: '#/components/schemas/RequestId'
         status:
-          type: string
-    BackgroundRequestErrorResponse:
-      type: object
-      required:
-      - message
-      properties:
-        message:
           type: string
     WhoAmIResponse:
       type: object

@@ -249,6 +249,56 @@ paths:
                     description: Human-readable error message
 components:
   schemas:
+    FreestyleJavaScriptLog:
+      type: object
+      required:
+      - message
+      - type
+      properties:
+        message:
+          type: string
+          description: The log message
+          example: I'm a log!
+        type:
+          type: string
+          description: The log level
+          example: log
+    ExecuteRunInfo:
+      type: object
+      required:
+      - code
+      - nodeModules
+      properties:
+        code:
+          type: string
+        nodeModules:
+          type: object
+          additionalProperties:
+            type: string
+          propertyNames:
+            type: string
+    FreestyleNetworkPermission:
+      oneOf:
+      - allOf:
+        - $ref: '#/components/schemas/NetworkPermissionData'
+        - type: object
+          required:
+          - action
+          properties:
+            action:
+              type: string
+              enum:
+              - allow
+      - allOf:
+        - $ref: '#/components/schemas/NetworkPermissionData'
+        - type: object
+          required:
+          - action
+          properties:
+            action:
+              type: string
+              enum:
+              - deny
     EgressConfig:
       type: object
       properties:
@@ -262,53 +312,12 @@ components:
           - type: 'null'
           - $ref: '#/components/schemas/EgressDenyRules'
             description: Deny rules for egress traffic (evaluated after allow)
-    ExecuteLogEntry:
-      type: object
-      required:
-      - deployment
-      - accountId
-      - provisionedAt
-      - state
-      - envVars
-      properties:
-        deployment:
-          type: string
-          format: uuid
-        accountId:
-          type: string
-          format: uuid
-        provisionedAt:
-          type: string
-          format: date-time
-        startedAt:
-          type:
-          - string
-          - 'null'
-          format: date-time
-        duration:
-          type:
-          - string
-          - 'null'
-        state:
-          $ref: '#/components/schemas/ExecuteRunState'
-        envVars:
-          type: object
-          additionalProperties:
-            type: string
-          propertyNames:
-            type: string
-    ExecuteScriptSuccess:
-      type: object
-      description: Success result from script execution
-      required:
-      - result
-      - logs
-      properties:
-        result: {}
-        logs:
-          type: array
-          items:
-            $ref: '#/components/schemas/JavascriptLog'
+    Behavior:
+      type: string
+      default: exact
+      enum:
+      - regex
+      - exact
     EgressAllowRules:
       type: object
       properties:
@@ -359,6 +368,12 @@ components:
           description: Optional execution ID for callers that need deterministic run correlation.
         config:
           $ref: '#/components/schemas/FreestyleExecuteScriptParamsConfiguration'
+    ExecuteRunState:
+      type: string
+      enum:
+      - starting
+      - running
+      - complete
     EgressIpConfig:
       type: object
       properties:
@@ -369,147 +384,6 @@ components:
           items:
             $ref: '#/components/schemas/EgressTransform'
           description: Transformations to apply to requests to this IP
-    ExecuteRunInfo:
-      type: object
-      required:
-      - code
-      - nodeModules
-      properties:
-        code:
-          type: string
-        nodeModules:
-          type: object
-          additionalProperties:
-            type: string
-          propertyNames:
-            type: string
-    NetworkPermissionData:
-      type: object
-      required:
-      - query
-      properties:
-        query:
-          type: string
-        behavior:
-          $ref: '#/components/schemas/Behavior'
-    Behavior:
-      type: string
-      default: exact
-      enum:
-      - regex
-      - exact
-    EgressTransform:
-      type: object
-      properties:
-        headers:
-          type:
-          - object
-          - 'null'
-          description: Headers to set on outgoing requests
-          additionalProperties:
-            type: string
-          propertyNames:
-            type: string
-    FreestyleNetworkPermission:
-      oneOf:
-      - allOf:
-        - $ref: '#/components/schemas/NetworkPermissionData'
-        - type: object
-          required:
-          - action
-          properties:
-            action:
-              type: string
-              enum:
-              - allow
-      - allOf:
-        - $ref: '#/components/schemas/NetworkPermissionData'
-        - type: object
-          required:
-          - action
-          properties:
-            action:
-              type: string
-              enum:
-              - deny
-    EgressDenyRules:
-      type: object
-      properties:
-        ips:
-          type:
-          - object
-          - 'null'
-          description: 'Blacklist of IPs. These override allow rules.
-
-            CIDR notation supported.'
-          additionalProperties:
-            type: array
-            items:
-              $ref: '#/components/schemas/EgressIpConfig'
-          propertyNames:
-            type: string
-    ExecuteRunState:
-      type: string
-      enum:
-      - starting
-      - running
-      - complete
-    FreestyleJavaScriptLog:
-      type: object
-      required:
-      - message
-      - type
-      properties:
-        message:
-          type: string
-          description: The log message
-          example: I'm a log!
-        type:
-          type: string
-          description: The log level
-          example: log
-    EgressDomainConfig:
-      type: object
-      properties:
-        transform:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/EgressTransform'
-          description: Transformations to apply to requests to this domain
-    JavascriptLog:
-      oneOf:
-      - type: object
-        required:
-        - message
-        - type
-        properties:
-          message:
-            type: string
-          callstack:
-            type:
-            - string
-            - 'null'
-          type:
-            type: string
-            enum:
-            - log
-      - type: object
-        required:
-        - message
-        - type
-        properties:
-          message:
-            type: string
-          callstack:
-            type:
-            - string
-            - 'null'
-          type:
-            type: string
-            enum:
-            - error
     FreestyleExecuteScriptParamsConfiguration:
       type: object
       properties:
@@ -592,6 +466,132 @@ components:
           description: If true, Freestyle will not retain the code, any logs, environment variables, or results from this execution.
           default: null
           example: false
+    JavascriptLog:
+      oneOf:
+      - type: object
+        required:
+        - message
+        - type
+        properties:
+          message:
+            type: string
+          callstack:
+            type:
+            - string
+            - 'null'
+          type:
+            type: string
+            enum:
+            - log
+      - type: object
+        required:
+        - message
+        - type
+        properties:
+          message:
+            type: string
+          callstack:
+            type:
+            - string
+            - 'null'
+          type:
+            type: string
+            enum:
+            - error
+    EgressDenyRules:
+      type: object
+      properties:
+        ips:
+          type:
+          - object
+          - 'null'
+          description: 'Blacklist of IPs. These override allow rules.
+
+            CIDR notation supported.'
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/EgressIpConfig'
+          propertyNames:
+            type: string
+    EgressDomainConfig:
+      type: object
+      properties:
+        transform:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/EgressTransform'
+          description: Transformations to apply to requests to this domain
+    NetworkPermissionData:
+      type: object
+      required:
+      - query
+      properties:
+        query:
+          type: string
+        behavior:
+          $ref: '#/components/schemas/Behavior'
+    ExecuteLogEntry:
+      type: object
+      required:
+      - deployment
+      - accountId
+      - provisionedAt
+      - state
+      - envVars
+      properties:
+        deployment:
+          type: string
+          format: uuid
+        accountId:
+          type: string
+          format: uuid
+        provisionedAt:
+          type: string
+          format: date-time
+        startedAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        duration:
+          type:
+          - string
+          - 'null'
+        state:
+          $ref: '#/components/schemas/ExecuteRunState'
+        envVars:
+          type: object
+          additionalProperties:
+            type: string
+          propertyNames:
+            type: string
+    ExecuteScriptSuccess:
+      type: object
+      description: Success result from script execution
+      required:
+      - result
+      - logs
+      properties:
+        result: {}
+        logs:
+          type: array
+          items:
+            $ref: '#/components/schemas/JavascriptLog'
+    EgressTransform:
+      type: object
+      properties:
+        headers:
+          type:
+          - object
+          - 'null'
+          description: Headers to set on outgoing requests
+          additionalProperties:
+            type: string
+          propertyNames:
+            type: string
   securitySchemes:
     bearerAuth:
       type: http
