@@ -1,0 +1,69 @@
+slug: freestyle-sh
+provider: Freestyle
+generated_by: planning/capability-mapping/scripts/classify_capabilities.py
+model: claude-opus-5
+frame:
+- Software & Technology
+min_confidence: 0.7
+capability_model:
+  source: https://github.com/vincentmakes/turbo-ea-capabilities
+  license: CC-BY-4.0
+  attribution: Turbo EA Capabilities by Vincent Verdet — Turbo EA, https://github.com/vincentmakes/turbo-ea-capabilities,
+    CC BY 4.0
+  notice: NOTICE
+edge_count: 5
+edges:
+- tag: Git
+  spec_file: freestyle-sh-git-api-openapi.yml
+  capability_id: BC-4200.40
+  capability_id_l1: BC-4200
+  capability_name: Software Construction Management
+  confidence: 0.8
+  evidence: '''Multi-tenant Git hosting for AI agents — repos, commits, branches, tags, trees, blobs,
+    search across files/commits/diffs, GitHub Sync'''
+  reason: Repository, commit and branch management is source-control practice, which is explicitly within
+    Software Construction Management ('source control, code review').
+- tag: Identity
+  spec_file: freestyle-sh-identity-api-openapi.yml
+  capability_id: BC-620.20
+  capability_id_l1: BC-620
+  capability_name: Identity & Access Management
+  confidence: 0.75
+  evidence: '''Grant a Git Repository Permission to an Identity'', ''Revoke Git Repository Permission
+    From an Identity'', ''Grant VM Permission to an Identity for a VM'''
+  reason: Creating identities, issuing access tokens and granting/revoking fine-grained resource permissions
+    is identity and access management. Some ambiguity with developer-credential management for an API
+    ecosystem, so not maximal confidence.
+- tag: vm
+  spec_file: freestyle-sh-vm-api-openapi.yml
+  capability_id: BC-600.50
+  capability_id_l1: BC-600
+  capability_name: IT Infrastructure Management
+  confidence: 0.75
+  evidence: '"Manage Linux microVMs ... create, snapshot, fork, suspend, resume, exec, file I/O"; create_vm,
+    create_snapshot, resize_vm'
+  reason: Operations provision and operate compute instances (VMs, snapshots, resizing), i.e. cloud compute
+    infrastructure management. It is not tenant management or a release pipeline, so IT Infrastructure
+    Management is the honest fit.
+- tag: Observability
+  spec_file: freestyle-sh-observability-api-openapi.yml
+  capability_id: BC-4220.20
+  capability_id_l1: BC-4220
+  capability_name: Observability Management
+  confidence: 0.72
+  evidence: '''Query structured logs across Freestyle services for VMs, runs, deployments, and identity
+    events'''
+  reason: Centralised structured log querying over running platform services is observability management
+    (logs/metrics/traces of production services). Only one endpoint, so moderate confidence; an IT operations
+    monitoring reading overlaps.
+- tag: Web
+  spec_file: freestyle-sh-web-api-openapi.yml
+  capability_id: BC-4210.40
+  capability_id_l1: BC-4210
+  capability_name: Deployment Orchestration
+  confidence: 0.7
+  evidence: '"Deploy and manage hosted Node.js / static websites — push code, list and inspect deployments";
+    POST /web/v1/deployment "Deploy a Website"'
+  reason: The operations push code and manage deployments of web applications to a hosted runtime, which
+    is deployment orchestration of software changes rather than any industry business process. Some ambiguity
+    remains between deployment orchestration and generic IT infrastructure, hence moderate confidence.
