@@ -1,23 +1,63 @@
-generated: '2026-07-15'
+generated: '2026-09-23'
 method: generated
-source: openapi/freestyle-cron-api-openapi.yml, openapi/freestyle-domains-api-openapi.yml, openapi/freestyle-execute-api-openapi.yml,
-  openapi/freestyle-git-api-openapi.yml, openapi/freestyle-identity-api-openapi.yml, openapi/freestyle-observability-api-openapi.yml,
-  openapi/freestyle-vm-api-openapi.yml, openapi/freestyle-web-api-openapi.yml
+source: openapi/freestyle-sh-auth-api-openapi.yml, openapi/freestyle-sh-certs-api-openapi.yml,
+  openapi/freestyle-sh-cron-api-openapi.yml, openapi/freestyle-sh-dns-api-openapi.yml, openapi/freestyle-sh-domains-api-openapi.yml,
+  openapi/freestyle-sh-execute-api-openapi.yml, openapi/freestyle-sh-git-api-openapi.yml, openapi/freestyle-sh-identity-api-openapi.yml,
+  openapi/freestyle-sh-observability-api-openapi.yml, openapi/freestyle-sh-vm-api-openapi.yml,
+  openapi/freestyle-sh-web-api-openapi.yml
 description: Recommended x-agentic-access execution contracts, classified heuristically from
   the OpenAPI. A governance starting point for exposing this API to AI agents — review and bind
   audience per deployment. See research/curity/agentic-governance/.
 summary:
-  operations: 128
+  operations: 129
   by_action_class:
-    connected: 66
+    connected: 67
     acting: 62
   by_consequence:
-    read: 66
-    write: 50
+    read: 67
     physical: 6
+    write: 50
     safety-critical: 6
   human_in_the_loop_required: 6
 operations:
+- path: /auth/v1/background-requests/{request_id}
+  method: get
+  operationId: handle_get_background_request
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /auth/v1/whoami
+  method: get
+  operationId: handle_whoami
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /domains/v1/certs/{domain}/wildcard
+  method: post
+  operationId: handle_verify_wildcard
+  x-agentic-access:
+    action-class: acting
+    consequence: physical
+    subject: required
+    audience: null
+    token:
+      max-ttl: 300
+      exchange: true
+      purpose-required: true
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
 - path: /v1/cron/schedules
   method: get
   operationId: handle_list_schedules
@@ -783,26 +823,6 @@ operations:
 - path: /git/v1/repo/{repo}/zip
   method: get
   operationId: handle_download_zip
-  x-agentic-access:
-    action-class: connected
-    consequence: read
-    subject: optional
-    token:
-      max-ttl: 3600
-    audit: none
-- path: /auth/v1/background-requests/{request_id}
-  method: get
-  operationId: handle_get_background_request
-  x-agentic-access:
-    action-class: connected
-    consequence: read
-    subject: optional
-    token:
-      max-ttl: 3600
-    audit: none
-- path: /auth/v1/whoami
-  method: get
-  operationId: handle_whoami
   x-agentic-access:
     action-class: connected
     consequence: read
@@ -1612,20 +1632,12 @@ operations:
   method: post
   operationId: handle_fetch_deployment
   x-agentic-access:
-    action-class: acting
-    consequence: physical
-    subject: required
-    audience: null
+    action-class: connected
+    consequence: read
+    subject: optional
     token:
-      max-ttl: 300
-      exchange: true
-      purpose-required: true
-    escalation:
-      human-in-the-loop: conditional
-      triggers:
-      - abnormal
-      - high-value
-    audit: required
+      max-ttl: 3600
+    audit: none
 - path: /web/v1/deployments/{deployment_id}/fetch
   method: delete
   operationId: handle_fetch_deployment
