@@ -156,6 +156,70 @@ paths:
                     description: Human-readable error message
 components:
   schemas:
+    CreateRecordResponse:
+      type: object
+      required:
+      - record
+      properties:
+        record:
+          $ref: '#/components/schemas/DnsRecord'
+    ListRecordsResponse:
+      type: object
+      required:
+      - records
+      properties:
+        records:
+          type: array
+          items:
+            $ref: '#/components/schemas/DnsRecord'
+    DnsRecordKind:
+      type: string
+      enum:
+      - A
+      - AAAA
+      - CNAME
+      - TXT
+      - NS
+    DeleteRecordResponse:
+      type: object
+      required:
+      - message
+      properties:
+        message:
+          type: string
+    DnsRecordData:
+      type: object
+      required:
+      - kind
+      - name
+      - value
+      properties:
+        kind:
+          $ref: '#/components/schemas/DnsRecordKind'
+        name:
+          type: string
+        value:
+          type: string
+        ttl:
+          type:
+          - string
+          - 'null'
+        priority:
+          type:
+          - integer
+          - 'null'
+          format: int32
+          minimum: 0
+    CreateRecordParams:
+      type: object
+      required:
+      - domain
+      - record
+      properties:
+        domain:
+          type: string
+        record:
+          $ref: '#/components/schemas/DnsRecordData'
     DnsRecord:
       type: object
       required:
@@ -181,70 +245,6 @@ components:
           minimum: 0
         managed:
           type: boolean
-    DnsRecordData:
-      type: object
-      required:
-      - kind
-      - name
-      - value
-      properties:
-        kind:
-          $ref: '#/components/schemas/DnsRecordKind'
-        name:
-          type: string
-        value:
-          type: string
-        ttl:
-          type:
-          - string
-          - 'null'
-        priority:
-          type:
-          - integer
-          - 'null'
-          format: int32
-          minimum: 0
-    DeleteRecordResponse:
-      type: object
-      required:
-      - message
-      properties:
-        message:
-          type: string
-    DnsRecordKind:
-      type: string
-      enum:
-      - A
-      - AAAA
-      - CNAME
-      - TXT
-      - NS
-    CreateRecordParams:
-      type: object
-      required:
-      - domain
-      - record
-      properties:
-        domain:
-          type: string
-        record:
-          $ref: '#/components/schemas/DnsRecordData'
-    ListRecordsResponse:
-      type: object
-      required:
-      - records
-      properties:
-        records:
-          type: array
-          items:
-            $ref: '#/components/schemas/DnsRecord'
-    CreateRecordResponse:
-      type: object
-      required:
-      - record
-      properties:
-        record:
-          $ref: '#/components/schemas/DnsRecord'
   securitySchemes:
     bearerAuth:
       type: http

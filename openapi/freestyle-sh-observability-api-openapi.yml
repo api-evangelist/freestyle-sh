@@ -137,16 +137,26 @@ paths:
                 $ref: '#/components/schemas/FreestyleGetLogsResponse'
 components:
   schemas:
-    VmInstanceId:
+    RequestId:
       type: string
-    VmId:
-      type: string
-      description: 'VM ID — always 20 alphanumeric lowercase characters.
+      description: 'Branded request identifier — `ri-<20 lowercase alphanumeric chars>` for newly
 
-        New IDs are fully random. Legacy short IDs are right-padded with ''0'' on parse.'
-    BuildId:
-      type: string
-      description: Branded build ID in the format `bld-<20 lowercase alphanumeric chars>`.
+        minted IDs. The wrapped string is otherwise opaque, so legacy UUID-formatted
+
+        IDs (from in-flight requests during rollout) round-trip unchanged.'
+    FreestyleGetLogsResponse:
+      type: object
+      required:
+      - logs
+      properties:
+        logs:
+          type: array
+          items:
+            $ref: '#/components/schemas/FreestyleLogResponseObject'
+        nextPageToken:
+          type:
+          - string
+          - 'null'
     FreestyleLogResponseObject:
       type: object
       required:
@@ -189,26 +199,16 @@ components:
           oneOf:
           - type: 'null'
           - $ref: '#/components/schemas/BuildId'
-    RequestId:
+    BuildId:
       type: string
-      description: 'Branded request identifier — `ri-<20 lowercase alphanumeric chars>` for newly
+      description: Branded build ID in the format `bld-<20 lowercase alphanumeric chars>`.
+    VmId:
+      type: string
+      description: 'VM ID — always 20 alphanumeric lowercase characters.
 
-        minted IDs. The wrapped string is otherwise opaque, so legacy UUID-formatted
-
-        IDs (from in-flight requests during rollout) round-trip unchanged.'
-    FreestyleGetLogsResponse:
-      type: object
-      required:
-      - logs
-      properties:
-        logs:
-          type: array
-          items:
-            $ref: '#/components/schemas/FreestyleLogResponseObject'
-        nextPageToken:
-          type:
-          - string
-          - 'null'
+        New IDs are fully random. Legacy short IDs are right-padded with ''0'' on parse.'
+    VmInstanceId:
+      type: string
   securitySchemes:
     bearerAuth:
       type: http
