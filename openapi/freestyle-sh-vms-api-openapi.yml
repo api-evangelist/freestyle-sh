@@ -1,0 +1,2911 @@
+openapi: 3.2.0
+info:
+  title: Freestyle VMs API
+  description: '# Powerful Virtual Machines
+
+
+    Documentation: freestyle.sh/docs
+
+
+    Freestyle VMs are full Linux virtual machines designed for long running, complex tasks. ## Key Features
+
+
+    - **Instant Startup**: Freestyle VMs provision in milliseconds, with p99s under 400ms. - **Persistence**: Freestyle VMs can run forever, they can be hibernated with their exact memory in place and come back to life weeks later instantly, in that exact state. - **Powerful**: Freestyle VMs go up to 64GB of RAM for public tiers and much further for enterprise. Freestyle does high quality hardware virtualization supporting nested virtualization, FUSE, eBPF, full Linux networking and more. If it can run in an EC2, it can run in a Freestyle VM. - **Cheaply Snapshottable and Branchable**: Freestyle VMs are instantly and cheaply snapshottable (sub 1ms interruption, sub 50ms to snapshot ready). These snapshots can be used to create new VMs in the exact state of the original VM (memory and disk). This enables powerful workflows like branching, cloning, and rapid recovery from failures. ## When to use Freestyle
+
+
+    - **Long Running Agent Tasks**: When you have tasks that take hours, days, weeks or months to run, Freestyle VMs provide a persistent and powerful environment that your agent can work in to completion. - **Failure Prone/Experimental Exploration**: When your tasks involve branching, cloning or need time travel Freestyle VMs are ideal because of their cheap snapshottability and power that makes them great for experiments. - **Complex Coding Problems**: When you are tackling advanced coding problems in research or production codebases, poor virtualization and small sandboxes will not cut it. Freestyle VMs provide the necessary resources and environment to handle these challenges effectively. - **Multi Tenant Usage Patterns**: Freestyle VMs are intentionally built to be used by agent builders with multiple customers. The slug system allows for keying VMs by their user, the identity system allows for granular acccess control and permissioning, and the VPC system allows for multi-tenant network isolation. ## When not to use it
+
+
+    - **"Run AI Code"**: If your exclusively executing short lived Python scripts or other ephemeral tasks the benefits above aren''t relevant. Freestyle VMs should still be benchmarked but there may be alternatives better suited. - **CPU Intensive CI/CD**: Freestyle VMs run on bare metal on data center CPUs. We also oversubscribe host resources. For workloads that require sustained high CPU usage like building the Linux Kernel or mining crypto prefer cloud providers that offer consumer CPU performance. - **Short Lived Tasks**: If your tasks are extremely short lived and do not benefit from persistence or powerful hardware. If your average task takes less than 15 minutes to complete then they are likely cheaply retryable and don''t require the reliability and persistence that Freestyle VMs provide. - **Sole Application Hosting**: Freestyle VMs are designed as workbenches for development, experimentation and task execution. Not for hosting production applications. Hosting a minecraft server for some friends will work great on Freestyle, but we do not offer autoscaling, load balancers or CDNs and we don''t plan to. ## Emerging Use Cases
+
+
+    - **RL Environments**: Freestyle VMs are well-suited for running reinforcement learning environments that require persistent state and complex setups. The ability to snapshot and branch VMs allows researchers to experiment with different strategies and record environment states efficiently. - **Auto Research Climbing**: Freestyle VMs are great for auto research as the snapshotting and fan out allows research agents to explore multiple strategies, review past results and iterate efficiently without ever losing progress.'
+  license:
+    name: ''
+  version: 0.1.0
+security:
+- apiKey: []
+tags:
+- name: VMs
+  description: Boot, control, and run commands in your VMs
+paths:
+  /v5/vms:
+    get:
+      tags:
+      - VMs
+      description: List your VMs.
+      operationId: list_vms
+      parameters:
+      - name: state
+        in: query
+        description: Only VMs in this state.
+        required: false
+        schema:
+          $ref: '#/components/schemas/VmState'
+      - name: slug
+        in: query
+        description: Exact slug match.
+        required: false
+        schema:
+          type: string
+      - name: search
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: snapshotId
+        in: query
+        description: Only VMs booted from this snapshot.
+        required: false
+        schema:
+          type: string
+      - name: vpc
+        in: query
+        description: Only VMs attached to this network (id, or your slug for it).
+        required: false
+        schema:
+          type: string
+      - name: metadata
+        in: query
+        description: Comma-separated `key:value` pairs, e.g. `env:prod,region:us-west`.
+        required: false
+        schema:
+          type: string
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+      responses:
+        '200':
+          description: The account's VMs, with per-state counts
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListVmsResponse'
+        '404':
+          description: 'NOT_FOUND: the `vpc` filter names a network that does not exist in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: List vms
+      x-summary-source: derived
+    post:
+      tags:
+      - VMs
+      description: Boot a new VM.
+      operationId: create_vm
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateVmRequest'
+        required: true
+      responses:
+        '201':
+          description: VM created and booting
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vm'
+        '400':
+          description: 'BAD_REQUEST: invalid slug, metadata, or a snapshot that does not exist'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '409':
+          description: 'CONFLICT: that slug is already used by another VM in your account (pass `reassignSlug` to take it), or no capacity is available'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '429':
+          description: 'LIMIT_EXCEEDED: your plan''s limit for this resource is reached'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: Create vm
+      x-summary-source: derived
+  /v5/vms/{vmIdOrSlug}:
+    get:
+      tags:
+      - VMs
+      description: Fetch a VM by its id or its slug.
+      operationId: get_vm
+      parameters:
+      - name: vmIdOrSlug
+        in: path
+        description: VM id, or your slug for it
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The VM
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vm'
+        '404':
+          description: 'NOT_FOUND: no such VM in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: Get vm
+      x-summary-source: derived
+    delete:
+      tags:
+      - VMs
+      description: Permanently destroy the VM.
+      operationId: delete_vm
+      parameters:
+      - name: vmIdOrSlug
+        in: path
+        description: VM id, or your slug for it
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: VM deleted
+        '404':
+          description: 'NOT_FOUND: no such VM in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: Delete vm
+      x-summary-source: derived
+    patch:
+      tags:
+      - VMs
+      description: Rename a VM, change its slug or idle timeout, or merge in metadata.
+      operationId: update_vm
+      parameters:
+      - name: vmIdOrSlug
+        in: path
+        description: VM id, or your slug for it
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateVmRequest'
+        required: true
+      responses:
+        '200':
+          description: The updated VM
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vm'
+        '400':
+          description: 'BAD_REQUEST: invalid slug or metadata'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '404':
+          description: 'NOT_FOUND: no such VM in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '409':
+          description: 'CONFLICT: that slug is already used by another VM in your account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: Update vm
+      x-summary-source: derived
+  /v5/vms/{vmIdOrSlug}/exec-await:
+    post:
+      tags:
+      - VMs
+      description: Run a command in the guest and wait for it to finish. A non-zero exit status is still a 200. Read `statusCode`, which is null if the command was killed by its timeout.
+      operationId: exec_vm
+      parameters:
+      - name: vmIdOrSlug
+        in: path
+        description: VM id, or your slug for it
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExecRequest'
+        required: true
+      responses:
+        '200':
+          description: The command finished (a non-zero exit is still a 200)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExecResponse'
+        '400':
+          description: 'BAD_REQUEST: invalid timeoutMs (maximum 86400000 when backgrounded, 300000 inline), or stdin over 1 MiB'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '403':
+          description: 'FORBIDDEN: the identity access token is not allowed to use this VM or guest Linux user'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '404':
+          description: 'NOT_FOUND: no such VM in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '409':
+          description: 'CONFLICT: the VM is not running, or it stopped responding mid-command (`VM_NON_RESPONSIVE` — the command may already have run; do not retry blindly)'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      security:
+      - apiKey: []
+      - identityAccessToken: []
+      summary: Exec vm
+      x-summary-source: derived
+  /v5/vms/{vmIdOrSlug}/networks:
+    put:
+      tags:
+      - VMs
+      description: 'Set the VM''s private networks — attach, update, or detach in one declarative call (an empty list detaches). Works while the VM is stopped, running, or paused: a stopped VM picks the change up on its next start, a running VM is reconfigured live, and a paused VM applies it on resume. At most one network is accepted today. The VM keeps its address while it stays in the same network; moving networks (or naming a different address) renumbers it.'
+      operationId: update_vm_networks
+      parameters:
+      - name: vmIdOrSlug
+        in: path
+        description: VM id, or your slug for it
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateVmNetworksRequest'
+        required: true
+      responses:
+        '200':
+          description: The updated VM
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vm'
+        '400':
+          description: 'BAD_REQUEST: more than one network, an address outside the network CIDR, or invalid routes'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '404':
+          description: 'NOT_FOUND: no such VM, or the named network does not exist in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '409':
+          description: 'CONFLICT: the VM is starting or pausing, the address is already reserved, or the guest cannot be reconfigured live (shut it down and start it again instead)'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: Update vm networks
+      x-summary-source: derived
+  /v5/vms/{vmIdOrSlug}/pause:
+    post:
+      tags:
+      - VMs
+      description: Freeze a running VM, keeping its memory so a later start resumes it exactly.
+      operationId: pause_vm
+      parameters:
+      - name: vmIdOrSlug
+        in: path
+        description: VM id, or your slug for it
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The paused VM
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vm'
+        '404':
+          description: 'NOT_FOUND: no such VM in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '409':
+          description: 'CONFLICT: the VM is not running'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: Pause vm
+      x-summary-source: derived
+  /v5/vms/{vmIdOrSlug}/pty:
+    get:
+      tags:
+      - VMs
+      description: 'Open an interactive terminal on the VM over a WebSocket. The session outlives this connection: closing the socket only detaches, so it can be reattached or listed later. It also outlives the host that serves it — a host restart reattaches this socket to the same session and replays its scrollback behind a terminal reset, with no break in the stream.'
+      operationId: open_pty
+      parameters:
+      - name: vmIdOrSlug
+        in: path
+        description: VM id, or your slug for it
+        required: true
+        schema:
+          type: string
+      - name: exec
+        in: query
+        description: Command to run; omit for a login shell
+        required: false
+        schema:
+          type: string
+      - name: cols
+        in: query
+        description: Initial width in columns (default 80)
+        required: false
+        schema:
+          type: integer
+          format: int32
+          minimum: 0
+      - name: rows
+        in: query
+        description: Initial height in rows (default 24)
+        required: false
+        schema:
+          type: integer
+          format: int32
+          minimum: 0
+      - name: linuxUser
+        in: query
+        description: Guest Linux user to run as; omit for the guest's default user (uid 1000, else root)
+        required: false
+        schema:
+          type: string
+      - name: slug
+        in: query
+        description: 'Name this session so you can reattach to it later without storing the id we mint. If a session already has this name you get that one back — alive, or exited with its final output and exit code still readable — and `exec` is NOT run; the `sessionInfo` frame''s `created` says which happened. Starting over is DELETE then open again. Must not be all digits: session ids are bare integers, so an all-digit name could not be told apart from one.'
+        required: false
+        schema:
+          type: string
+      - name: replaceOnExit
+        in: query
+        description: 'Respawn the shell in place when it exits, keeping this session''s id, name and scrollback — for a terminal that should outlive whatever runs in it. A command that dies at startup is not respawned forever; after a few exits in quick succession the session is left dead so the error is readable. Leave this off if you are waiting on a command''s exit code: a session that comes back to life reports `running` again.'
+        required: false
+        schema:
+          type: boolean
+      responses:
+        '101':
+          description: Switching protocols. The first text frame carries `{"type":"sessionInfo","sessionId":N,"slug":"…","created":true}`; after that, binary frames are terminal I/O and text frames are `resize`/`signal` in, `exited`/`error` out.
+        '400':
+          description: 'BAD_REQUEST: not a WebSocket upgrade request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '404':
+          description: 'NOT_FOUND: no such VM in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '409':
+          description: 'CONFLICT: the VM stopped responding during the terminal handshake (`VM_NON_RESPONSIVE`); the session may have been created, so list sessions before opening another'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      security:
+      - apiKey: []
+      - identityAccessToken: []
+      summary: Open pty
+      x-summary-source: derived
+  /v5/vms/{vmIdOrSlug}/pty/sessions:
+    get:
+      tags:
+      - VMs
+      description: List the VM's terminal sessions, running and recently exited. Scoped to one Linux user when the request names one, otherwise every session on the VM.
+      operationId: list_pty_sessions
+      parameters:
+      - name: vmIdOrSlug
+        in: path
+        description: VM id, or your slug for it
+        required: true
+        schema:
+          type: string
+      - name: linuxUser
+        in: query
+        description: Only sessions owned by this guest Linux user; omit for all of them
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The VM's terminal sessions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListPtySessionsResponse'
+        '404':
+          description: 'NOT_FOUND: no such VM in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      security:
+      - apiKey: []
+      - identityAccessToken: []
+      summary: List pty sessions
+      x-summary-source: derived
+  /v5/vms/{vmIdOrSlug}/pty/sessions/{sessionId}:
+    get:
+      tags:
+      - VMs
+      description: Reattach to an existing terminal session over a WebSocket, addressed by id or by the slug it was opened with. The retained scrollback replays first, then live output follows.
+      operationId: attach_pty
+      parameters:
+      - name: vmIdOrSlug
+        in: path
+        description: VM id, or your slug for it
+        required: true
+        schema:
+          type: string
+      - name: sessionId
+        in: path
+        description: Session id, or the slug the session was opened with
+        required: true
+        schema:
+          type: string
+      - name: linuxUser
+        in: query
+        description: Guest Linux user that must own the session
+        required: false
+        schema:
+          type: string
+      responses:
+        '101':
+          description: Switching protocols. Same frame protocol as opening a terminal, including the initial `sessionInfo` frame — a caller that attached by slug has not seen the id yet.
+        '400':
+          description: 'BAD_REQUEST: not a WebSocket upgrade request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '404':
+          description: 'NOT_FOUND: no such VM or session'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      security:
+      - apiKey: []
+      - identityAccessToken: []
+      summary: Attach pty
+      x-summary-source: derived
+    delete:
+      tags:
+      - VMs
+      description: Kill a terminal session and remove it, addressed by id or by the slug it was opened with.
+      operationId: close_pty_session
+      parameters:
+      - name: vmIdOrSlug
+        in: path
+        description: VM id, or your slug for it
+        required: true
+        schema:
+          type: string
+      - name: sessionId
+        in: path
+        description: Session id, or the slug the session was opened with
+        required: true
+        schema:
+          type: string
+      - name: linuxUser
+        in: query
+        description: Guest Linux user that must own the session
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Session killed and removed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClosePtySessionResponse'
+        '404':
+          description: 'NOT_FOUND: no such VM or session'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      security:
+      - apiKey: []
+      - identityAccessToken: []
+      summary: Close pty session
+      x-summary-source: derived
+  /v5/vms/{vmIdOrSlug}/resize:
+    post:
+      tags:
+      - VMs
+      description: 'Change a VM''s vCPU, memory, or disk. Resizing is grow-only on every axis: each can go up but never down. Omitted fields keep their current value. vCPU and memory apply live to a running VM, apply on resume for a paused one, and apply at the next boot for a stopped one. Growing the disk needs a running VM, since it grows a live block device and then its filesystem.'
+      operationId: resize_vm
+      parameters:
+      - name: vmIdOrSlug
+        in: path
+        description: VM id, or your slug for it
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResizeVmRequest'
+        required: true
+      responses:
+        '200':
+          description: The resized VM
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vm'
+        '400':
+          description: 'BAD_REQUEST: requested size is below the current size on some axis'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '404':
+          description: 'NOT_FOUND: no such VM in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '409':
+          description: 'CONFLICT: the disk can only grow while the VM is running, or the node is out of capacity'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '429':
+          description: 'LIMIT_EXCEEDED: your plan''s limit for this resource is reached'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: Resize vm
+      x-summary-source: derived
+  /v5/vms/{vmIdOrSlug}/start:
+    post:
+      tags:
+      - VMs
+      description: Boot a stopped VM, or resume a paused one.
+      operationId: start_vm
+      parameters:
+      - name: vmIdOrSlug
+        in: path
+        description: VM id, or your slug for it
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The starting VM
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vm'
+        '404':
+          description: 'NOT_FOUND: no such VM in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '409':
+          description: 'CONFLICT: the VM is ephemeral and was deleted when it shut down, or no capacity is available'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: Start vm
+      x-summary-source: derived
+  /vms:
+    get:
+      tags:
+      - VMs
+      description: List your VMs.
+      operationId: getVms
+      parameters:
+      - name: state
+        in: query
+        description: Only VMs in this state.
+        required: false
+        schema:
+          $ref: '#/components/schemas/VmState'
+      - name: slug
+        in: query
+        description: Exact slug match.
+        required: false
+        schema:
+          type: string
+      - name: search
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: snapshotId
+        in: query
+        description: Only VMs booted from this snapshot.
+        required: false
+        schema:
+          type: string
+      - name: vpc
+        in: query
+        description: Only VMs attached to this network (id, or your slug for it).
+        required: false
+        schema:
+          type: string
+      - name: metadata
+        in: query
+        description: Comma-separated `key:value` pairs, e.g. `env:prod,region:us-west`.
+        required: false
+        schema:
+          type: string
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+      responses:
+        '200':
+          description: The account's VMs, with per-state counts
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListVmsResponse'
+        '404':
+          description: 'NOT_FOUND: the `vpc` filter names a network that does not exist in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: List vms
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: list_vms
+    post:
+      tags:
+      - VMs
+      description: Boot a new VM.
+      operationId: postVms
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateVmRequest'
+        required: true
+      responses:
+        '201':
+          description: VM created and booting
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vm'
+        '400':
+          description: 'BAD_REQUEST: invalid slug, metadata, or a snapshot that does not exist'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '409':
+          description: 'CONFLICT: that slug is already used by another VM in your account (pass `reassignSlug` to take it), or no capacity is available'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '429':
+          description: 'LIMIT_EXCEEDED: your plan''s limit for this resource is reached'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: Create vm
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: create_vm
+  /vms/{vmIdOrSlug}:
+    get:
+      tags:
+      - VMs
+      description: Fetch a VM by its id or its slug.
+      operationId: getVmsByVmIdOrSlug
+      parameters:
+      - name: vmIdOrSlug
+        in: path
+        description: VM id, or your slug for it
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The VM
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vm'
+        '404':
+          description: 'NOT_FOUND: no such VM in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: Get vm
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: get_vm
+    delete:
+      tags:
+      - VMs
+      description: Permanently destroy the VM.
+      operationId: deleteVmsByVmIdOrSlug
+      parameters:
+      - name: vmIdOrSlug
+        in: path
+        description: VM id, or your slug for it
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: VM deleted
+        '404':
+          description: 'NOT_FOUND: no such VM in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: Delete vm
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: delete_vm
+    patch:
+      tags:
+      - VMs
+      description: Rename a VM, change its slug or idle timeout, or merge in metadata.
+      operationId: patchVmsByVmIdOrSlug
+      parameters:
+      - name: vmIdOrSlug
+        in: path
+        description: VM id, or your slug for it
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateVmRequest'
+        required: true
+      responses:
+        '200':
+          description: The updated VM
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vm'
+        '400':
+          description: 'BAD_REQUEST: invalid slug or metadata'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '404':
+          description: 'NOT_FOUND: no such VM in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '409':
+          description: 'CONFLICT: that slug is already used by another VM in your account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: Update vm
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: update_vm
+  /vms/{vmIdOrSlug}/exec-await:
+    post:
+      tags:
+      - VMs
+      description: Run a command in the guest and wait for it to finish. A non-zero exit status is still a 200. Read `statusCode`, which is null if the command was killed by its timeout.
+      operationId: postVmsByVmIdOrSlugExecAwait
+      parameters:
+      - name: vmIdOrSlug
+        in: path
+        description: VM id, or your slug for it
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExecRequest'
+        required: true
+      responses:
+        '200':
+          description: The command finished (a non-zero exit is still a 200)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExecResponse'
+        '400':
+          description: 'BAD_REQUEST: invalid timeoutMs (maximum 86400000 when backgrounded, 300000 inline), or stdin over 1 MiB'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '403':
+          description: 'FORBIDDEN: the identity access token is not allowed to use this VM or guest Linux user'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '404':
+          description: 'NOT_FOUND: no such VM in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '409':
+          description: 'CONFLICT: the VM is not running, or it stopped responding mid-command (`VM_NON_RESPONSIVE` — the command may already have run; do not retry blindly)'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      security:
+      - apiKey: []
+      - identityAccessToken: []
+      summary: Exec vm
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: exec_vm
+  /vms/{vmIdOrSlug}/networks:
+    put:
+      tags:
+      - VMs
+      description: 'Set the VM''s private networks — attach, update, or detach in one declarative call (an empty list detaches). Works while the VM is stopped, running, or paused: a stopped VM picks the change up on its next start, a running VM is reconfigured live, and a paused VM applies it on resume. At most one network is accepted today. The VM keeps its address while it stays in the same network; moving networks (or naming a different address) renumbers it.'
+      operationId: putVmsByVmIdOrSlugNetworks
+      parameters:
+      - name: vmIdOrSlug
+        in: path
+        description: VM id, or your slug for it
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateVmNetworksRequest'
+        required: true
+      responses:
+        '200':
+          description: The updated VM
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vm'
+        '400':
+          description: 'BAD_REQUEST: more than one network, an address outside the network CIDR, or invalid routes'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '404':
+          description: 'NOT_FOUND: no such VM, or the named network does not exist in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '409':
+          description: 'CONFLICT: the VM is starting or pausing, the address is already reserved, or the guest cannot be reconfigured live (shut it down and start it again instead)'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: Update vm networks
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: update_vm_networks
+  /vms/{vmIdOrSlug}/pause:
+    post:
+      tags:
+      - VMs
+      description: Freeze a running VM, keeping its memory so a later start resumes it exactly.
+      operationId: postVmsByVmIdOrSlugPause
+      parameters:
+      - name: vmIdOrSlug
+        in: path
+        description: VM id, or your slug for it
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The paused VM
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vm'
+        '404':
+          description: 'NOT_FOUND: no such VM in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '409':
+          description: 'CONFLICT: the VM is not running'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: Pause vm
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: pause_vm
+  /vms/{vmIdOrSlug}/pty:
+    get:
+      tags:
+      - VMs
+      description: 'Open an interactive terminal on the VM over a WebSocket. The session outlives this connection: closing the socket only detaches, so it can be reattached or listed later. It also outlives the host that serves it — a host restart reattaches this socket to the same session and replays its scrollback behind a terminal reset, with no break in the stream.'
+      operationId: getVmsByVmIdOrSlugPty
+      parameters:
+      - name: vmIdOrSlug
+        in: path
+        description: VM id, or your slug for it
+        required: true
+        schema:
+          type: string
+      - name: exec
+        in: query
+        description: Command to run; omit for a login shell
+        required: false
+        schema:
+          type: string
+      - name: cols
+        in: query
+        description: Initial width in columns (default 80)
+        required: false
+        schema:
+          type: integer
+          format: int32
+          minimum: 0
+      - name: rows
+        in: query
+        description: Initial height in rows (default 24)
+        required: false
+        schema:
+          type: integer
+          format: int32
+          minimum: 0
+      - name: linuxUser
+        in: query
+        description: Guest Linux user to run as; omit for the guest's default user (uid 1000, else root)
+        required: false
+        schema:
+          type: string
+      - name: slug
+        in: query
+        description: 'Name this session so you can reattach to it later without storing the id we mint. If a session already has this name you get that one back — alive, or exited with its final output and exit code still readable — and `exec` is NOT run; the `sessionInfo` frame''s `created` says which happened. Starting over is DELETE then open again. Must not be all digits: session ids are bare integers, so an all-digit name could not be told apart from one.'
+        required: false
+        schema:
+          type: string
+      - name: replaceOnExit
+        in: query
+        description: 'Respawn the shell in place when it exits, keeping this session''s id, name and scrollback — for a terminal that should outlive whatever runs in it. A command that dies at startup is not respawned forever; after a few exits in quick succession the session is left dead so the error is readable. Leave this off if you are waiting on a command''s exit code: a session that comes back to life reports `running` again.'
+        required: false
+        schema:
+          type: boolean
+      responses:
+        '101':
+          description: Switching protocols. The first text frame carries `{"type":"sessionInfo","sessionId":N,"slug":"…","created":true}`; after that, binary frames are terminal I/O and text frames are `resize`/`signal` in, `exited`/`error` out.
+        '400':
+          description: 'BAD_REQUEST: not a WebSocket upgrade request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '404':
+          description: 'NOT_FOUND: no such VM in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '409':
+          description: 'CONFLICT: the VM stopped responding during the terminal handshake (`VM_NON_RESPONSIVE`); the session may have been created, so list sessions before opening another'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      security:
+      - apiKey: []
+      - identityAccessToken: []
+      summary: Open pty
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: open_pty
+  /vms/{vmIdOrSlug}/pty/sessions:
+    get:
+      tags:
+      - VMs
+      description: List the VM's terminal sessions, running and recently exited. Scoped to one Linux user when the request names one, otherwise every session on the VM.
+      operationId: getVmsByVmIdOrSlugPtySessions
+      parameters:
+      - name: vmIdOrSlug
+        in: path
+        description: VM id, or your slug for it
+        required: true
+        schema:
+          type: string
+      - name: linuxUser
+        in: query
+        description: Only sessions owned by this guest Linux user; omit for all of them
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The VM's terminal sessions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListPtySessionsResponse'
+        '404':
+          description: 'NOT_FOUND: no such VM in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      security:
+      - apiKey: []
+      - identityAccessToken: []
+      summary: List pty sessions
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: list_pty_sessions
+  /vms/{vmIdOrSlug}/pty/sessions/{sessionId}:
+    get:
+      tags:
+      - VMs
+      description: Reattach to an existing terminal session over a WebSocket, addressed by id or by the slug it was opened with. The retained scrollback replays first, then live output follows.
+      operationId: getVmsByVmIdOrSlugPtySessionsBySessionId
+      parameters:
+      - name: vmIdOrSlug
+        in: path
+        description: VM id, or your slug for it
+        required: true
+        schema:
+          type: string
+      - name: sessionId
+        in: path
+        description: Session id, or the slug the session was opened with
+        required: true
+        schema:
+          type: string
+      - name: linuxUser
+        in: query
+        description: Guest Linux user that must own the session
+        required: false
+        schema:
+          type: string
+      responses:
+        '101':
+          description: Switching protocols. Same frame protocol as opening a terminal, including the initial `sessionInfo` frame — a caller that attached by slug has not seen the id yet.
+        '400':
+          description: 'BAD_REQUEST: not a WebSocket upgrade request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '404':
+          description: 'NOT_FOUND: no such VM or session'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      security:
+      - apiKey: []
+      - identityAccessToken: []
+      summary: Attach pty
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: attach_pty
+    delete:
+      tags:
+      - VMs
+      description: Kill a terminal session and remove it, addressed by id or by the slug it was opened with.
+      operationId: deleteVmsByVmIdOrSlugPtySessionsBySessionId
+      parameters:
+      - name: vmIdOrSlug
+        in: path
+        description: VM id, or your slug for it
+        required: true
+        schema:
+          type: string
+      - name: sessionId
+        in: path
+        description: Session id, or the slug the session was opened with
+        required: true
+        schema:
+          type: string
+      - name: linuxUser
+        in: query
+        description: Guest Linux user that must own the session
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Session killed and removed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClosePtySessionResponse'
+        '404':
+          description: 'NOT_FOUND: no such VM or session'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      security:
+      - apiKey: []
+      - identityAccessToken: []
+      summary: Close pty session
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: close_pty_session
+  /vms/{vmIdOrSlug}/resize:
+    post:
+      tags:
+      - VMs
+      description: 'Change a VM''s vCPU, memory, or disk. Resizing is grow-only on every axis: each can go up but never down. Omitted fields keep their current value. vCPU and memory apply live to a running VM, apply on resume for a paused one, and apply at the next boot for a stopped one. Growing the disk needs a running VM, since it grows a live block device and then its filesystem.'
+      operationId: postVmsByVmIdOrSlugResize
+      parameters:
+      - name: vmIdOrSlug
+        in: path
+        description: VM id, or your slug for it
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResizeVmRequest'
+        required: true
+      responses:
+        '200':
+          description: The resized VM
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vm'
+        '400':
+          description: 'BAD_REQUEST: requested size is below the current size on some axis'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '404':
+          description: 'NOT_FOUND: no such VM in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '409':
+          description: 'CONFLICT: the disk can only grow while the VM is running, or the node is out of capacity'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '429':
+          description: 'LIMIT_EXCEEDED: your plan''s limit for this resource is reached'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: Resize vm
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: resize_vm
+  /vms/{vmIdOrSlug}/start:
+    post:
+      tags:
+      - VMs
+      description: Boot a stopped VM, or resume a paused one.
+      operationId: postVmsByVmIdOrSlugStart
+      parameters:
+      - name: vmIdOrSlug
+        in: path
+        description: VM id, or your slug for it
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The starting VM
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vm'
+        '404':
+          description: 'NOT_FOUND: no such VM in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '409':
+          description: 'CONFLICT: the VM is ephemeral and was deleted when it shut down, or no capacity is available'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: Start vm
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: start_vm
+components:
+  schemas:
+    RemoveOperation:
+      type: object
+      description: JSON Patch 'remove' operation representation
+      required:
+      - path
+      properties:
+        path:
+          type: string
+          description: 'JSON-Pointer value [RFC6901](https://tools.ietf.org/html/rfc6901) that references a location
+
+            within the target document where the operation is performed.'
+    AttachNetwork:
+      type: object
+      description: Attach a VM to one of your private networks. A VM may be on at most one.
+      required:
+      - vpc
+      properties:
+        ipv4:
+          type: object
+          description: 'The IPv4 address to take inside the network: an explicit address,
+
+            `true` to auto-allocate, or `false` to opt out. Omitted = allocate one
+
+            (networks are dual-stack), except on a network with no IPv4 CIDR,
+
+            where the VM simply joins over IPv6.'
+        ipv6:
+          type: object
+          description: 'The IPv6 address to take: an explicit address, `true` to auto-allocate
+
+            (the default), or `false` to opt out. Every network has an IPv6 CIDR.'
+        routes:
+          type: array
+          items:
+            $ref: '#/components/schemas/NetworkRoute'
+          description: Static routes to install in the guest.
+        vpc:
+          type: string
+          description: 'The network to join, by id or by your slug for it. Also accepted as
+
+            `vpcId`, the name the rest of the API uses.'
+    ListPtySessionsResponse:
+      type: object
+      required:
+      - sessions
+      properties:
+        sessions:
+          type: array
+          items:
+            $ref: '#/components/schemas/PtySession'
+    TlsEndpoint:
+      type: object
+      description: 'One end of a rule: which session this side matches.
+
+
+        A `source` says *who* may open the session (`vmId`/`vpcId`/`public: true`); a
+
+        `destination` says *where it lands* (`vmId`+`port`, `host`+`port`, or
+
+        `public: true` for the domain''s own origin). Unknown fields are rejected
+
+        rather than ignored: a rule is a security statement, and a typo that quietly
+
+        widened it is the wrong failure.'
+      properties:
+        host:
+          type:
+          - string
+          - 'null'
+          description: '**Destination only.** Pin the session to this host instead of resolving
+
+            the domain, while still presenting `domain` as the SNI.'
+        port:
+          type:
+          - integer
+          - 'null'
+          format: int32
+          description: '**Destination only.** The port the session lands on. Required with a
+
+            `vmId` or `host` destination; defaults to 443 for a `public` origin.'
+          minimum: 0
+        public:
+          type:
+          - boolean
+          - 'null'
+          description: 'On a source, every publicly routable client — the open Internet dials the
+
+            name. On a destination, the domain''s own public origin. Only `true` is
+
+            meaningful; omit the field otherwise.'
+        vmId:
+          type:
+          - string
+          - 'null'
+          description: 'A single VM, by id or by your slug for it. On a source, the VM that may
+
+            open the session; on a destination, the VM it lands on. Answers hold its id.'
+        vpcId:
+          type:
+          - string
+          - 'null'
+          description: 'Everything on one private network, by id or by your slug for it. **Source
+
+            only** — a landing is one place, so a network cannot be a destination.
+
+            Answers hold its id.'
+      additionalProperties: false
+    HttpRequestMatch:
+      type: object
+      description: 'Select which HTTP egress requests receive a rule''s transforms.
+
+        Included dimensions are ANDed; methods are ORed. An empty object matches all.
+
+        A non-match skips every transform, without denying access to the origin.
+
+        See <https://vercel.com/docs/sandbox/concepts/firewall#matchers>.'
+      properties:
+        method:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+          description: Case-sensitive HTTP method tokens. Omitted matches any; an empty list matches none.
+        path:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/HttpPathMatch'
+            description: Case-sensitive path comparison, excluding the query string.
+      additionalProperties: false
+    ClosePtySessionResponse:
+      type: object
+      required:
+      - sessionId
+      properties:
+        exitCode:
+          type:
+          - integer
+          - 'null'
+          format: int32
+          description: 'Exit code if the session had already exited. Absent when it was still
+
+            running: it is sent `SIGHUP` and torn down asynchronously.'
+        sessionId:
+          type: integer
+          format: int64
+          minimum: 0
+    ExecResponse:
+      type: object
+      properties:
+        statusCode:
+          type:
+          - integer
+          - 'null'
+          format: int32
+          description: The command's exit status; absent if it was killed by the timeout.
+        stderr:
+          type:
+          - string
+          - 'null'
+          description: Command errors as UTF-8 text; invalid byte sequences are replaced with U+FFFD.
+        stdout:
+          type:
+          - string
+          - 'null'
+          description: Command output as UTF-8 text; invalid byte sequences are replaced with U+FFFD.
+    VmPlacementTopology:
+      type: string
+      description: 'The topology domain an anti-affinity rule spreads across. `node` — the
+
+        only domain today — means "not on the same host machine".'
+      enum:
+      - node
+    CreateFirewallRuleRequest:
+      type: object
+      required:
+      - action
+      - source
+      - destination
+      properties:
+        action:
+          $ref: '#/components/schemas/FirewallAction'
+          description: Required, and `allow` is the only accepted value.
+        description:
+          type:
+          - string
+          - 'null'
+          description: A free-form note, up to 1024 characters.
+        destination:
+          $ref: '#/components/schemas/FirewallEndpoint'
+        source:
+          $ref: '#/components/schemas/FirewallEndpoint'
+      additionalProperties: false
+    VmId:
+      type: string
+      description: Identifies a VM. Minted as `"vm-<uuid>"`.
+    VmAntiAffinityRule:
+      type: object
+      description: 'One anti-affinity rule: "not on the same `topology` domain as any VM
+
+        matching `selector`". At most 8 rules per VM.'
+      required:
+      - topology
+      - selector
+      properties:
+        selector:
+          $ref: '#/components/schemas/VmLabelSelector'
+        topology:
+          $ref: '#/components/schemas/VmPlacementTopology'
+    FirewallProtocol:
+      type: string
+      description: The transport a matcher is restricted to.
+      enum:
+      - tcp
+      - udp
+      - icmp
+    TlsTransformDocumented:
+      oneOf:
+      - type: object
+        description: 'Set request headers on an `http` session. Header names are preserved
+
+          (they are not secret); values are write-only.'
+        required:
+        - headers
+        properties:
+          headers:
+            type: object
+            description: 'Set request headers on an `http` session. Header names are preserved
+
+              (they are not secret); values are write-only.'
+            additionalProperties:
+              type: string
+            propertyNames:
+              type: string
+      - type: object
+        description: 'Apply RFC 6902 operations to JSON HTTP egress request bodies.
+
+          Values are write-only; operation names and JSON Pointer paths remain visible.'
+        required:
+        - jsonPatch
+        properties:
+          jsonPatch:
+            $ref: '#/components/schemas/JsonPatch'
+            description: 'Apply RFC 6902 operations to JSON HTTP egress request bodies.
+
+              Values are write-only; operation names and JSON Pointer paths remain visible.'
+      - type: object
+        description: Inject credentials into a `postgres` handshake.
+        required:
+        - postgres
+        properties:
+          postgres:
+            $ref: '#/components/schemas/PostgresTransform'
+            description: Inject credentials into a `postgres` handshake.
+      - type: object
+        description: Authenticate a `socks5` session to your upstream proxy provider.
+        required:
+        - socks5
+        properties:
+          socks5:
+            $ref: '#/components/schemas/Socks5Transform'
+            description: Authenticate a `socks5` session to your upstream proxy provider.
+      - type: object
+        description: Authorize and sign scoped S3 HTTP requests at the edge.
+        required:
+        - s3
+        properties:
+          s3:
+            $ref: '#/components/schemas/S3Transform'
+            description: Authorize and sign scoped S3 HTTP requests at the edge.
+      description: The rewrites a rule applies, in order.
+    Vm:
+      type: object
+      description: 'A VM as the owning account sees it. Placement and topology internals
+
+        (hosting manager, VXLAN ids, node-local network allocation) are not part of
+
+        this contract.'
+      required:
+      - id
+      - state
+      - resources
+      - createdAt
+      - updatedAt
+      properties:
+        autoDeleteFromPlan:
+          type: boolean
+          description: 'Whether `autoDeleteSeconds` above is your plan''s doing rather than
+
+            yours. A window your plan set goes away by itself if you move to a plan
+
+            that does not reclaim unused VMs; one you set is yours and stays.'
+        autoDeleteSeconds:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          description: 'Delete the VM once it has gone this long without running. Absent means
+
+            never; 0 means the VM is ephemeral — deleted the moment it stops. Note
+
+            that this may be set for you: some plans cap how long an unused VM is
+
+            kept, and the cap shows up here.'
+          minimum: 0
+        automaticRestart:
+          type:
+          - boolean
+          - 'null'
+          description: Whether the VM is booted again when it stops without being asked to.
+        cpuTimeSeconds:
+          type:
+          - number
+          - 'null'
+          format: double
+          description: Total CPU time consumed, seconds.
+        createdAt:
+          type: string
+          format: date-time
+        displayName:
+          type:
+          - string
+          - 'null'
+        egressIpv4:
+          type:
+          - string
+          - 'null'
+          description: 'The public IPv4 address the VM''s outbound traffic is seen as coming
+
+            from. It belongs to your account rather than to this VM: every VM you
+
+            own shares it, and it survives restarts and moves between machines.
+
+
+            Optional, and worth reading as optional even though a VM in service
+
+            has one: nothing promises an account keeps a single outbound address,
+
+            so allow for it being absent rather than depending on it being there.'
+        egressIpv6:
+          type:
+          - string
+          - 'null'
+          description: 'The public IPv6 address the VM''s outbound traffic is seen as coming
+
+            from. Today it is the VM''s own `publicIpv6` — it appears from the
+
+            address it answers on — but read it as its own field: where a VM
+
+            answers and where it appears from are two questions, and `egressIpv4`
+
+            above already answers them differently.'
+        id:
+          $ref: '#/components/schemas/VmId'
+        idleTimeoutSeconds:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          minimum: 0
+        image:
+          type:
+          - string
+          - 'null'
+          description: The image the VM booted from, when it booted from one.
+        lastNetworkActivity:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        maxRunSeconds:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          description: Pause the VM once one run has lasted this long, however busy it is.
+          minimum: 0
+        maxRunTotalSeconds:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          description: 'The VM''s lifetime runtime budget in seconds. Spending it pauses the VM
+
+            and makes every later start a 409 until you raise this.'
+          minimum: 0
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
+          propertyNames:
+            type: string
+        networks:
+          type: array
+          items:
+            $ref: '#/components/schemas/VmNetwork'
+          description: 'Deprecated: the same list as `vpcs`, kept for old readers.'
+        placement:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/VmPlacement'
+            description: The placement constraints the VM was created with, when any.
+        publicIpv6:
+          type:
+          - string
+          - 'null'
+          description: 'The VM''s stable public IPv6 address — assigned at create and kept for
+
+            the VM''s life, across restarts and moves between machines.'
+        resources:
+          $ref: '#/components/schemas/VmResources'
+        slug:
+          type:
+          - string
+          - 'null'
+          description: URL-safe identifier, unique within the account; usable anywhere an id is.
+        snapshotId:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/SnapshotId'
+            description: The snapshot the VM booted from, when it booted from one.
+        sourceSnapshotDisplayName:
+          type:
+          - string
+          - 'null'
+          description: The snapshot's display name now, under the same rules.
+        sourceSnapshotSlug:
+          type:
+          - string
+          - 'null'
+          description: 'What that snapshot is called *now* — its own slug, unqualified. Absent
+
+            when it has no slug and when it is gone, so read against
+
+            `sourceSnapshotSlugAtCreate` a renamed origin tells apart from a
+
+            deleted one.'
+        sourceSnapshotSlugAtCreate:
+          type:
+          - string
+          - 'null'
+          description: 'What that snapshot was called when the VM was created, qualified
+
+            `{owner}/{slug}` when it belongs to another account. A name, not a
+
+            pointer: slugs move, so boot from `snapshotId`, not from this.'
+        state:
+          $ref: '#/components/schemas/VmState'
+        totalRunSeconds:
+          type: integer
+          format: int64
+          description: 'Seconds this VM has spent running, across every run it has ever had.
+
+            What `maxRunTotalSeconds` is measured against.'
+          minimum: 0
+        ttlSeconds:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          description: Delete the VM this long after it was created, whatever it is doing.
+          minimum: 0
+        updatedAt:
+          type: string
+          format: date-time
+    ReplaceOperation:
+      type: object
+      description: JSON Patch 'replace' operation representation
+      required:
+      - path
+      - value
+      properties:
+        path:
+          type: string
+          description: 'JSON-Pointer value [RFC6901](https://tools.ietf.org/html/rfc6901) that references a location
+
+            within the target document where the operation is performed.'
+        value:
+          description: Value to replace with.
+    TlsForwardAuthReference:
+      type: object
+      description: A reusable authorization check attached to public HTTP ingress.
+      required:
+      - id
+      properties:
+        id:
+          type: string
+          description: The configuration id returned by `POST /v5/tls/forward-auth`.
+      additionalProperties: false
+    PublicErrorBody:
+      type: object
+      description: 'The shape of every error response: a stable machine-readable `code` and a
+
+        human-readable `message`. The HTTP status carries the class of failure.
+
+
+        Some errors add fields alongside these two; `code` and `message` are always
+
+        present.'
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: string
+          description: 'A stable identifier for the failure, in `SCREAMING_SNAKE_CASE`. Branch
+
+            on this; `message` is prose and may be reworded at any time.'
+          example: NOT_FOUND
+        message:
+          type: string
+          description: 'A human-readable explanation of what went wrong. A fault inside the
+
+            platform is always reported as `INTERNAL_ERROR` with no further detail.'
+          example: vm vm-1234 not found
+    LinuxUserId:
+      type: string
+      description: 'Branded POSIX-style Linux username carried as `linuxUser` in JSON bodies
+
+        and query strings. Constructed only via
+
+        `try_from`/`from_str`, which enforces the same rule as
+
+        `freestyle-firecracker/models/src/users.rs::is_valid_posix_name`:
+
+        `[a-z_][a-z0-9_-]*` up to `MAX_LEN` chars.
+
+
+        Validating at the type boundary keeps shell metacharacters and oversized
+
+        values out of the host node and prevents them from reaching the guest.'
+    PostgresTransform:
+      type: object
+      description: 'Credentials injected into a Postgres startup handshake. The guest connects
+
+        with no password; the edge completes the real handshake upstream.'
+      required:
+      - username
+      - password
+      properties:
+        database:
+          type:
+          - string
+          - 'null'
+          description: 'The database to select. Optional: omitted leaves the guest''s choice.'
+        password:
+          type: string
+          description: 'The upstream password. Write-only: sealed at rest, read back as `"***"`.'
+        username:
+          type: string
+          description: The upstream role to authenticate as.
+      additionalProperties: false
+    S3Transform:
+      type: object
+      required:
+      - region
+      - credentials
+      - scope
+      properties:
+        credentials:
+          $ref: '#/components/schemas/S3Credentials'
+        region:
+          type: string
+        scope:
+          $ref: '#/components/schemas/S3Scope'
+      additionalProperties: false
+    Socks5Transform:
+      type: object
+      description: 'Credentials presented to an upstream SOCKS5 proxy. Your VM connects to the
+
+        platform''s SOCKS5 front with no authentication at all; the edge authenticates
+
+        to your provider on its behalf, so the subscription is never inside the VM.'
+      required:
+      - username
+      - password
+      properties:
+        password:
+          type: string
+          description: 'The password to present to the upstream proxy. Write-only: sealed at
+
+            rest, read back as `"***"`.'
+        username:
+          type: string
+          description: The username to present to the upstream proxy.
+      additionalProperties: false
+    PatchOperation:
+      oneOf:
+      - allOf:
+        - $ref: '#/components/schemas/AddOperation'
+          description: '''add'' operation'
+        - type: object
+          required:
+          - op
+          properties:
+            op:
+              type: string
+              enum:
+              - add
+        description: '''add'' operation'
+      - allOf:
+        - $ref: '#/components/schemas/RemoveOperation'
+          description: '''remove'' operation'
+        - type: object
+          required:
+          - op
+          properties:
+            op:
+              type: string
+              enum:
+              - remove
+        description: '''remove'' operation'
+      - allOf:
+        - $ref: '#/components/schemas/ReplaceOperation'
+          description: '''replace'' operation'
+        - type: object
+          required:
+          - op
+          properties:
+            op:
+              type: string
+              enum:
+              - replace
+        description: '''replace'' operation'
+      - allOf:
+        - $ref: '#/components/schemas/MoveOperation'
+          description: '''move'' operation'
+        - type: object
+          required:
+          - op
+          properties:
+            op:
+              type: string
+              enum:
+              - move
+        description: '''move'' operation'
+      - allOf:
+        - $ref: '#/components/schemas/CopyOperation'
+          description: '''copy'' operation'
+        - type: object
+          required:
+          - op
+          properties:
+            op:
+              type: string
+              enum:
+              - copy
+        description: '''copy'' operation'
+      - allOf:
+        - $ref: '#/components/schemas/TestOperation'
+          description: '''test'' operation'
+        - type: object
+          required:
+          - op
+          properties:
+            op:
+              type: string
+              enum:
+              - test
+        description: '''test'' operation'
+      description: JSON Patch single patch operation
+    ListVmsResponse:
+      type: object
+      required:
+      - vms
+      - totalCount
+      - runningCount
+      - startingCount
+      - pausedCount
+      - stoppedCount
+      properties:
+        pausedCount:
+          type: integer
+          minimum: 0
+        pausingCount:
+          type: integer
+          minimum: 0
+        runningCount:
+          type: integer
+          minimum: 0
+        startingCount:
+          type: integer
+          minimum: 0
+        stoppedCount:
+          type: integer
+          minimum: 0
+        totalCount:
+          type: integer
+          minimum: 0
+        vms:
+          type: array
+          items:
+            $ref: '#/components/schemas/Vm'
+    VmState:
+      type: string
+      enum:
+      - starting
+      - running
+      - pausing
+      - paused
+      - stopped
+    ExecRequest:
+      type: object
+      required:
+      - command
+      properties:
+        command:
+          type: string
+          description: The command line, run through the guest's shell.
+        env:
+          type: object
+          description: Extra environment variables. Keys must be valid POSIX names.
+          additionalProperties:
+            type: string
+          propertyNames:
+            type: string
+        linuxUser:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/LinuxUserId'
+            description: 'Existing in-guest Linux user to run the command as. Omit for the guest''s default user:
+
+              whoever holds uid 1000, or root in an image that has no such account.'
+        stdin:
+          type:
+          - string
+          - 'null'
+          description: Base64-encoded stdin, up to 1 MiB decoded.
+        timeoutMs:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          description: 'Wall-clock limit, milliseconds. 1–86400000 with background requests and a native-exec-capable agent;
+
+            otherwise at most 300000. Defaults to 30000 (30 s).
+
+            The guest kills the command at the deadline.'
+          minimum: 0
+      additionalProperties: false
+    PtySession:
+      type: object
+      description: 'One interactive terminal session. Sessions are owned by the guest agent and
+
+        outlive the connection that opened them: dropping the WebSocket only
+
+        detaches, so the shell keeps running and a later client can reattach. An
+
+        exited session stays listable and attachable briefly, so a client can still
+
+        read the final output and exit code.'
+      required:
+      - sessionId
+      - state
+      - createdUnix
+      - cols
+      - rows
+      properties:
+        cols:
+          type: integer
+          format: int32
+          description: Last-known terminal width, in columns.
+          minimum: 0
+        createdUnix:
+          type: integer
+          format: int64
+          description: Unix timestamp, in seconds, when the session was opened.
+          minimum: 0
+        exitCode:
+          type:
+          - integer
+          - 'null'
+          format: int32
+          description: Exit code, present only once the session has exited.
+        linuxUser:
+          type:
+          - string
+          - 'null'
+          description: Linux user the session runs as. Absent means the guest default, root.
+        rows:
+          type: integer
+          format: int32
+          description: Last-known terminal height, in rows.
+          minimum: 0
+        sessionId:
+          type: integer
+          format: int64
+          description: Per-VM session id, for attaching or closing this session.
+          minimum: 0
+        slug:
+          type:
+          - string
+          - 'null'
+          description: 'The name this session was opened with, while it still answers to it.
+
+            Released as soon as the shell exits, so an exited session reports none
+
+            and is addressable only by `sessionId`.'
+        state:
+          type: string
+          description: '`running` while the shell is alive, `exited` once it has terminated.'
+    FirewallEndpoint:
+      type: object
+      description: 'One end of a rule: which traffic this side matches.
+
+
+        Fields intersect — `{ vpcId, port, protocol }` is "traffic in that network,
+
+        on that port, over that protocol". `vmId`/`vpcId`/`tunnelId` select by
+
+        identity (the VM however it is addressed); `cidr`/`public` select by
+
+        address. Unknown fields
+
+        are rejected rather than ignored: a matcher is a security statement, and a
+
+        typo''d `porrt: 22` that quietly became "every port" is the wrong failure.'
+      properties:
+        cidr:
+          type:
+          - string
+          - 'null'
+          description: An address range, IPv4 or IPv6, in canonical `network/prefix` form.
+        port:
+          type:
+          - integer
+          - 'null'
+          format: int32
+          description: A single port, 1–65535. Requires `protocol`.
+          minimum: 0
+        protocol:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/FirewallProtocol'
+        public:
+          type:
+          - boolean
+          - 'null'
+          description: 'Every publicly routable address, whoever owns it — including another
+
+            Freestyle VM reached at its public address. Only `true` is meaningful;
+
+            omit the field otherwise. Not combined with `vmId` or `vpcId`.'
+        tunnelId:
+          type:
+          - string
+          - 'null'
+          description: 'Whatever is on the far side of one tunnel — the client that dials it,
+
+            and any remote range routed over it. Tunnels have no slug, so this is a
+
+            tunnel id: `tun-…`, or `wg-…` for one carried over from the per-VPC VPN
+
+            records tunnels replaced.'
+        vmId:
+          type:
+          - string
+          - 'null'
+          description: A single VM, by id or by your slug for it. Answers hold its id.
+        vpcId:
+          type:
+          - string
+          - 'null'
+          description: 'Everything on one private network, by id or by your slug for it.
+
+            Answers hold its id.'
+      additionalProperties: false
+    HttpPathMatch:
+      type: object
+      description: Exact request path. Prefix and regex matching are not supported yet.
+      required:
+      - exact
+      properties:
+        exact:
+          type: string
+      additionalProperties: false
+    UpdateVmNetworksRequest:
+      type: object
+      description: 'The desired network set for `PUT /vms/{vmIdOrSlug}/networks`. Declarative:
+
+        what is listed is attached, what is absent is detached.'
+      properties:
+        networks:
+          type: array
+          items:
+            $ref: '#/components/schemas/AttachNetwork'
+          description: 'At most one network is accepted today. An empty list detaches the VM.
+
+            Also accepted as `vpcs`, the name the rest of the API uses.'
+    TlsAction:
+      type: string
+      description: 'What a rule does with the named session it matches.
+
+
+        Only `allow` exists today, and it is required on every rule rather than
+
+        defaulted: a default would mean that the day `deny` arrives, every rule
+
+        written before it silently acquires an action it never stated.'
+      enum:
+      - allow
+    FirewallSpec:
+      type: object
+      description: 'The `firewall` block of a create: rules created with the resource and
+
+        deleted with it. Inside it, an endpoint with no identity means the resource
+
+        being created — which is how a rule names something whose id does not exist
+
+        yet.'
+      properties:
+        rules:
+          type: array
+          items:
+            $ref: '#/components/schemas/CreateFirewallRuleRequest'
+      additionalProperties: false
+    CreateTlsRuleRequest:
+      type: object
+      required:
+      - action
+      - domain
+      properties:
+        action:
+          $ref: '#/components/schemas/TlsAction'
+          description: Required, and `allow` is the only accepted value.
+        description:
+          type:
+          - string
+          - 'null'
+          description: A free-form note, up to 1024 characters.
+        destination:
+          $ref: '#/components/schemas/TlsEndpoint'
+        domain:
+          type: string
+          description: 'The name the session is addressed to: exact, `*.suffix`, or `*`.'
+        forwardAuth:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/TlsForwardAuthReference'
+            description: Run this reusable authorization check before forwarding to the VM.
+        match:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/HttpRequestMatch'
+            description: 'Vercel-style method/exact-path selector for HTTP egress transforms.
+
+              Non-matching requests pass through without any transform.'
+        protocol:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/TlsProtocolDocumented'
+            description: 'How the edge treats the bytes. Optional: inferred from `transform` when
+
+              one is present, and `tcp` (opaque) otherwise.'
+        source:
+          $ref: '#/components/schemas/TlsEndpoint'
+        transform:
+          type: array
+          items:
+            $ref: '#/components/schemas/TlsTransformDocumented'
+          description: Rewrites applied in flight, in order. Secrets here are write-only.
+      additionalProperties: false
+    ResizeVmRequest:
+      type: object
+      properties:
+        cpu:
+          type:
+          - integer
+          - 'null'
+          format: int32
+          minimum: 0
+        memory:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          description: Memory, MiB.
+          minimum: 0
+        storage:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          description: Disk, MiB. Disks can only grow.
+          minimum: 0
+    MoveOperation:
+      type: object
+      description: JSON Patch 'move' operation representation
+      required:
+      - from
+      - path
+      properties:
+        from:
+          type: string
+          description: 'JSON-Pointer value [RFC6901](https://tools.ietf.org/html/rfc6901) that references a location
+
+            to move value from.'
+        path:
+          type: string
+          description: 'JSON-Pointer value [RFC6901](https://tools.ietf.org/html/rfc6901) that references a location
+
+            within the target document where the operation is performed.'
+    CopyOperation:
+      type: object
+      description: JSON Patch 'copy' operation representation
+      required:
+      - from
+      - path
+      properties:
+        from:
+          type: string
+          description: 'JSON-Pointer value [RFC6901](https://tools.ietf.org/html/rfc6901) that references a location
+
+            to copy value from.'
+        path:
+          type: string
+          description: 'JSON-Pointer value [RFC6901](https://tools.ietf.org/html/rfc6901) that references a location
+
+            within the target document where the operation is performed.'
+    S3Scope:
+      type: object
+      required:
+      - bucket
+      - prefix
+      - operations
+      properties:
+        bucket:
+          type: string
+        operations:
+          type: array
+          items:
+            $ref: '#/components/schemas/S3Operation'
+        prefix:
+          type: string
+          description: Literal UTF-8 key prefix, including a trailing slash for a directory boundary.
+      additionalProperties: false
+    VmPlacement:
+      type: object
+      description: 'Placement constraints for a VM, fixed at create time and honored again
+
+        whenever the platform relocates the VM.'
+      properties:
+        antiAffinity:
+          type: array
+          items:
+            $ref: '#/components/schemas/VmAntiAffinityRule'
+          description: 'Hard rules: the VM will not land on a topology domain already hosting
+
+            a VM matched by any rule''s selector.'
+    JsonPatch:
+      type: array
+      items:
+        $ref: '#/components/schemas/PatchOperation'
+      description: 'Ordered RFC 6902 operations. Values are write-only and read back as `"***"`.
+
+        A rule accepts one patch, with at most 128 operations and 64 KiB of configuration.'
+    S3Credentials:
+      type: object
+      required:
+      - accessKeyId
+      - secretAccessKey
+      properties:
+        accessKeyId:
+          type: string
+        secretAccessKey:
+          type: string
+        sessionToken:
+          type:
+          - string
+          - 'null'
+      additionalProperties: false
+    S3Operation:
+      type: string
+      enum:
+      - GetObject
+      - HeadObject
+      - PutObject
+      - DeleteObject
+      - ListObjects
+      - ListObjectsV2
+      - CreateMultipartUpload
+      - UploadPart
+      - ListParts
+      - CompleteMultipartUpload
+      - AbortMultipartUpload
+      - ListMultipartUploads
+    FirewallAction:
+      type: string
+      description: 'What a rule does with the traffic it matches.
+
+
+        Only `allow` exists today, and it is required on every rule rather than
+
+        defaulted: a default would mean that the day `deny` arrives, every rule
+
+        written before it silently acquires an action it never stated.'
+      enum:
+      - allow
+    NetworkRoute:
+      type: object
+      description: 'An in-guest static route: reach `cidr` via the gateway `via`, which must be
+
+        an address inside the network''s CIDR.'
+      required:
+      - cidr
+      - via
+      properties:
+        cidr:
+          type: string
+        metric:
+          type:
+          - integer
+          - 'null'
+          format: int32
+          description: 'Route priority, as `ip route`''s `metric`. Omit for the platform
+
+            default. Several routes to the same `cidr` at the same metric are one
+
+            multipath route — the guest spreads flows across their gateways —
+
+            while different metrics make a primary and a backup.'
+          minimum: 0
+        via:
+          type: string
+    UpdateVmRequest:
+      type: object
+      properties:
+        autoDeleteSeconds:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          description: 'Seconds of not running before the VM is deleted; -1 removes the window
+
+            (on a plan that caps it, -1 puts you back on the cap rather than off
+
+            it), and 0 makes the VM ephemeral — deleted the moment it stops, or
+
+            right away if it is already stopped.'
+        automaticRestart:
+          type:
+          - boolean
+          - 'null'
+          description: 'Turn automatic restart on or off. Applies to the next failure: this
+
+            neither boots a stopped VM nor stops a running one.'
+        displayName:
+          type:
+          - string
+          - 'null'
+          description: Change the display label; an empty string clears it.
+        idleTimeoutSeconds:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          description: Seconds of network idleness before pause; -1 removes the timeout.
+        maxRunSeconds:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          description: Seconds one run may last before the VM is paused; -1 removes the cap.
+        maxRunTotalSeconds:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          description: 'The lifetime runtime budget in seconds; -1 removes it. Raising this
+
+            past `totalRunSeconds` is how you start a VM that spent its budget.'
+        metadata:
+          type:
+          - object
+          - 'null'
+          description: 'Metadata merged into the VM. Only the keys you send are touched; send an
+
+            empty value to remove one.'
+          additionalProperties:
+            type: string
+          propertyNames:
+            type: string
+        reassignSlug:
+          type: boolean
+          description: 'Take `slug` even if another VM in this account already holds it. The
+
+            slug moves atomically: the current holder keeps running, stays
+
+            addressable by id, and just loses its slug. Without this flag a taken
+
+            slug is a 409 CONFLICT. Requires a non-empty `slug`.'
+        slug:
+          type:
+          - string
+          - 'null'
+          description: Change the slug; an empty string clears it.
+        ttlSeconds:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          description: 'Seconds from creation — not from now — before the VM is deleted; -1
+
+            removes the deadline. A value already in the past deletes it shortly.'
+    CreateVmRequest:
+      type: object
+      required:
+      - firewall
+      properties:
+        autoDeleteSeconds:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          description: 'Delete the VM once it has gone this many seconds without running.
+
+            Every start resets the clock; a running VM is never deleted for this.
+
+            -1 (or omitting this) means never; 0 makes the VM ephemeral — deleted
+
+            the moment it stops.
+
+
+            Some plans cap how long an unused VM is kept. On those, omitting this
+
+            (or sending -1) gets you the cap rather than "keep forever", and asking
+
+            for longer than the cap is a 400.'
+        automaticRestart:
+          type:
+          - boolean
+          - 'null'
+          description: 'Boot the VM again if it stops without you asking it to — the VMM
+
+            crashes, the guest kernel panics, the machine it runs on loses power.
+
+            Defaults to `true`.
+
+
+            It never fights you: shutting the VM down, pausing it, running
+
+            `poweroff` inside it, or hitting an idle timeout all leave it off. This
+
+            only decides who gets the last word when a *failure* stops it.'
+        displayName:
+          type:
+          - string
+          - 'null'
+        firewall:
+          $ref: '#/components/schemas/FirewallSpec'
+          description: 'Firewall rules to create with the VM, and delete with it. An endpoint
+
+            with no identity means the VM being created, so `{ "source": { "public":
+
+            true }, "destination": { "port": 443, "protocol": "tcp" } }` opens
+
+            inbound HTTPS to it.
+
+
+            **Required.** A VM gets nothing implicitly — no outbound Internet, no
+
+            inbound — so a caller that wants either says so here. `{"rules": []}` is
+
+            a legitimate answer: a VM reachable only through a mapped domain or SSH.'
+        idleTimeoutSeconds:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          description: 'Pause the VM after this many seconds without network activity.
+
+            -1 (or omitting this) means never pause for idleness.'
+        maxRunSeconds:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          description: 'Pause the VM once a single run has lasted this many seconds, however
+
+            busy it is. Starting it again gives it a fresh budget — unlike
+
+            `maxRunTotalSeconds`, which never resets. -1 (or omitting this) means
+
+            no cap.'
+        maxRunTotalSeconds:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          description: 'How many seconds this VM may run in total, ever. Spending the budget
+
+            pauses the VM, and every later start is a 409 until you raise this.
+
+            -1 (or omitting this) means no budget.'
+        metadata:
+          type: object
+          description: Up to 64 metadata entries; keys and values are limited to 63 characters.
+          additionalProperties:
+            type: string
+          propertyNames:
+            type: string
+        networks:
+          type: array
+          items:
+            $ref: '#/components/schemas/AttachNetwork'
+          description: 'Put the VM on your private networks. Omit to leave it off them. At most
+
+            one network is accepted today. Also accepted as `vpcs`, the name the
+
+            rest of the API uses.'
+        reassignSlug:
+          type: boolean
+          description: 'Take `slug` even if another VM in this account already holds it. The
+
+            slug moves atomically: the current holder keeps running, stays
+
+            addressable by id, and just loses its slug. Without this flag a taken
+
+            slug is a 409 CONFLICT. Requires `slug`.'
+        slug:
+          type:
+          - string
+          - 'null'
+          description: 'URL-safe identifier, unique within your account: 1–63 chars of
+
+            `[a-z0-9-]`, no leading, trailing, or repeated hyphens.'
+        snapshotId:
+          type:
+          - string
+          - 'null'
+          description: 'Boot from this snapshot: its id, your slug for it, or a public
+
+            `{owner}/{slug}`. Omit for the platform default.'
+        tls:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/TlsSpec'
+            description: 'TLS rules to create with the VM, and delete with it — named sessions the
+
+              VM may serve or open. An endpoint with no identity means the VM being
+
+              created, so `{ "action": "allow", "domain": "app.acme.com", "source":
+
+              { "public": true }, "destination": { "port": 8000 } }` publishes that
+
+              domain to it.
+
+
+              Optional, unlike `firewall`: a TLS rule is a grant layered on top of the
+
+              firewall''s packet decision, never a baseline a VM must state. The created
+
+              rules come back on the response as `tlsRules`, with the ids a later
+
+              delete needs.'
+        ttlSeconds:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          description: 'Delete the VM this many seconds after it is created, whatever it is
+
+            doing at the time. A deadline, not an idle window: nothing resets it.
+
+            -1 (or omitting this) means no deadline.'
+    SnapshotId:
+      type: string
+      description: Identifies a snapshot. Minted as `"sh-<uuid>"`.
+    VmResources:
+      type: object
+      required:
+      - cpu
+      - memory
+      - storage
+      properties:
+        cpu:
+          type: integer
+          format: int32
+          description: vCPU count.
+          minimum: 0
+        memory:
+          type: integer
+          format: int64
+          description: Memory, MiB.
+          minimum: 0
+        storage:
+          type: integer
+          format: int64
+          description: Disk, MiB.
+          minimum: 0
+    VmNetwork:
+      type: object
+      description: A VM's place on a private network.
+      required:
+      - vpc
+      properties:
+        cidr:
+          type:
+          - string
+          - 'null'
+          description: The network's CIDR, alongside `ipv4`.
+        cidrV6:
+          type:
+          - string
+          - 'null'
+          description: The network's IPv6 CIDR, alongside `ipv6`.
+        ipv4:
+          type:
+          - string
+          - 'null'
+          description: 'The VM''s IPv4 address inside the network; absent when the member opted
+
+            out of IPv4, or the network has no IPv4 CIDR.'
+        ipv6:
+          type:
+          - string
+          - 'null'
+          description: The VM's IPv6 address, when the network has an IPv6 CIDR.
+        routes:
+          type: array
+          items:
+            $ref: '#/components/schemas/NetworkRoute'
+        vpc:
+          $ref: '#/components/schemas/VpcId'
+          description: 'Deprecated: the network''s id under its old name. Read `vpcId`.'
+        vpcDisplayName:
+          type:
+          - string
+          - 'null'
+          description: The network's display name now, under the same rules.
+        vpcId:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/VpcId'
+            description: 'The network''s id, under the name the rest of the API uses. Filled on
+
+              the way out.'
+        vpcSlug:
+          type:
+          - string
+          - 'null'
+          description: 'What the network is called *now*. Absent when it has no slug and when
+
+            it is gone, so read against `vpcSlugAtAttach` a renamed network tells
+
+            apart from a deleted one.'
+        vpcSlugAtAttach:
+          type:
+          - string
+          - 'null'
+          description: 'Your slug for the network when the VM was attached to it, if it had one.
+
+
+            A convenience for reading an answer back — `vpc` is the id, and the id is
+
+            what to store or compare. It keeps naming what the VM was attached by
+
+            after a rename, so this is not a way to find the network again.'
+    TlsProtocolDocumented:
+      type: string
+      description: 'How the edge treats the session''s bytes, and therefore which of its front
+
+        doors serves the rule.
+
+
+        `http` (443) and `postgres` (5432) terminate the session, so each pairs with
+
+        the transform kind that speaks it and each needs a certificate for the name.
+
+        `minecraft` (25565) routes on the server address in the client''s handshake
+
+        and then splices — no TLS, so no certificate and no transform.
+
+
+        The other two doors carry a terminating protocol and a splicing one at once,
+
+        and a rule picks which it is. `tcp` shares 443 with `http`: match on SNI,
+
+        splice the bytes, terminate nothing, so your VM''s own certificate answers the
+
+        handshake. `imap` and `imaps` share 993 for mail clients — `imap` terminates
+
+        on a certificate issued for the name and forwards plain IMAP to the port your
+
+        server listens on (143 by default), `imaps` splices to a server holding its
+
+        own certificate on 993. All three splicing shapes are public ingress only.
+
+
+        `socks5` (1080) goes the other way and is the only egress-only protocol. Your
+
+        VM opens SOCKS5 to the platform edge with no authentication, names its own
+
+        destination inside the request, and the edge opens the session onward through
+
+        your proxy provider using the credentials a `socks5` transform carries — so
+
+        the workload can use the subscription without ever holding it. Nothing is
+
+        terminated: your TLS runs end to end to the real origin. The rule''s `domain`
+
+        is an allow-list of destinations rather than a name anything resolves, which
+
+        is why `*` is allowed here and refused everywhere else.'
+      enum:
+      - tcp
+      - http
+      - postgres
+      - minecraft
+      - imap
+      - imaps
+      - socks5
+    TestOperation:
+      type: object
+      description: JSON Patch 'test' operation representation
+      required:
+      - path
+      - value
+      properties:
+        path:
+          type: string
+          description: 'JSON-Pointer value [RFC6901](https://tools.ietf.org/html/rfc6901) that references a location
+
+            within the target document where the operation is performed.'
+        value:
+          description: Value to test against.
+    AddOperation:
+      type: object
+      description: JSON Patch 'add' operation representation
+      required:
+      - path
+      - value
+      properties:
+        path:
+          type: string
+          description: 'JSON-Pointer value [RFC6901](https://tools.ietf.org/html/rfc6901) that references a location
+
+            within the target document where the operation is performed.'
+        value:
+          description: Value to add to the target location.
+    TlsSpec:
+      type: object
+      description: 'The `tls` block of a VM create: rules created with the VM and deleted with
+
+        it. Inside it, an endpoint with no identity means the VM being created —
+
+        which is how a rule names a VM whose id does not exist yet.'
+      properties:
+        rules:
+          type: array
+          items:
+            $ref: '#/components/schemas/CreateTlsRuleRequest'
+      additionalProperties: false
+    VmLabelSelector:
+      type: object
+      description: 'Selects VMs by their metadata: a VM matches when its metadata contains
+
+        every `matchLabels` entry. At least 1 and at most 8 entries; keys and
+
+        values are limited to 63 characters, like the metadata they match.'
+      required:
+      - matchLabels
+      properties:
+        matchLabels:
+          type: object
+          additionalProperties:
+            type: string
+          propertyNames:
+            type: string
+    VpcId:
+      type: string
+      description: Identifies a VPC. Minted as `"vpc-<uuid>"`.
+  securitySchemes:
+    apiKey:
+      type: http
+      scheme: bearer
+      description: 'Your Freestyle API key, sent as `Authorization: Bearer <api key>`. Every request needs one unless it is authenticated with an identity access token instead.'
+    identityAccessToken:
+      type: apiKey
+      in: header
+      name: x-freestyle-identity-access-token
+      description: An access token belonging to an identity you created. It reaches only the VMs that identity has been granted, and only their exec and terminal routes. Hand one to an end user instead of your API key.

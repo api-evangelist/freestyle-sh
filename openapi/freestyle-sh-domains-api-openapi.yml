@@ -1,18 +1,11 @@
 openapi: 3.2.0
 info:
-  title: Freestyle Domains API
+  title: Freestyle Sh Domains API
   version: 0.1.0
-  description: Manage custom domains, domain verifications, DNS records, domain mappings, and wildcard SSL certificates for Freestyle Web Deployments and VMs.
-  contact:
-    name: Ben
-    email: ben@freestyle.sh
-  license:
-    name: Closed Source
+  description: 'Operations tagged Domains across 2 of this provider''s published API definitions: freestyle-domains-api-openapi.yml, freestyle-sh-openapi.json. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://api.freestyle.sh
   description: Production
-security:
-- bearerAuth: []
 tags:
 - name: Domains
   description: 'APIs for managing domains. This is only relevant when you want to start to deploy to custom domains.
@@ -62,6 +55,11 @@ paths:
                 properties:
                   message:
                     type: string
+      security:
+      - bearerAuth: []
+    servers:
+    - url: https://api.freestyle.sh
+      description: Production
   /domains/v1/domains:
     get:
       tags:
@@ -145,6 +143,11 @@ paths:
                 properties:
                   message:
                     type: string
+      security:
+      - bearerAuth: []
+    servers:
+    - url: https://api.freestyle.sh
+      description: Production
   /domains/v1/mappings:
     get:
       tags:
@@ -195,6 +198,11 @@ paths:
                   $ref: '#/components/schemas/FreestyleSandboxDomainMapping'
         '401':
           description: Unauthorized
+      security:
+      - bearerAuth: []
+    servers:
+    - url: https://api.freestyle.sh
+      description: Production
   /domains/v1/mappings/{domain}:
     post:
       tags:
@@ -233,6 +241,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Public_DomainMappingError'
+      security:
+      - bearerAuth: []
     delete:
       tags:
       - Domains
@@ -331,6 +341,11 @@ paths:
                   message:
                     type: string
                     description: Human-readable error message
+      security:
+      - bearerAuth: []
+    servers:
+    - url: https://api.freestyle.sh
+      description: Production
   /domains/v1/verifications:
     get:
       tags:
@@ -370,6 +385,8 @@ paths:
                 properties:
                   message:
                     type: string
+      security:
+      - bearerAuth: []
     put:
       tags:
       - Domains
@@ -501,6 +518,8 @@ paths:
                   message:
                     type: string
                     description: Human-readable error message
+      security:
+      - bearerAuth: []
     post:
       tags:
       - Domains
@@ -531,6 +550,8 @@ paths:
                 properties:
                   message:
                     type: string
+      security:
+      - bearerAuth: []
     delete:
       tags:
       - Domains
@@ -570,44 +591,625 @@ paths:
                 properties:
                   message:
                     type: string
+      security:
+      - bearerAuth: []
+    servers:
+    - url: https://api.freestyle.sh
+      description: Production
+  /certificates:
+    get:
+      tags:
+      - Domains
+      description: List your certificates.
+      operationId: list_certificates
+      responses:
+        '200':
+          description: Certificates issued for the account's domains
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListCertificatesResponse'
+      deprecated: true
+      security:
+      - apiKey: []
+      summary: List certificates
+      x-summary-source: derived
+  /certificates/wildcard:
+    post:
+      tags:
+      - Domains
+      description: Request an ongoing `*.domain` certificate. Requires `_acme-challenge.` to be NS-delegated to Freestyle's nameservers, since wildcards can only be proven over DNS.
+      operationId: request_wildcard
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestWildcardRequest'
+        required: true
+      responses:
+        '200':
+          description: Ongoing wildcard certificate requested
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CertificateInfo'
+        '400':
+          description: 'INVALID_DOMAIN: not a valid domain name'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '403':
+          description: 'DOMAIN_NOT_OWNED: you have not verified this domain or a parent of it'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      security:
+      - apiKey: []
+      summary: Request wildcard
+      x-summary-source: derived
+  /domains:
+    get:
+      tags:
+      - Domains
+      description: List the domains you hold — those you verified, and any Freestyle subdomain you have taken by publishing it.
+      operationId: list_domains
+      responses:
+        '200':
+          description: Domains the account holds
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListDomainsResponse'
+      deprecated: true
+      security:
+      - apiKey: []
+      summary: List domains
+      x-summary-source: derived
+  /domains/placeholder:
+    get:
+      tags:
+      - Domains
+      description: The branding your placeholder pages wear. A placeholder page is what a browser sees for a hostname under one of your verified domains that none of your TLS rules serve.
+      operationId: get_placeholder_branding
+      responses:
+        '200':
+          description: Your placeholder branding
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlaceholderBranding'
+        '404':
+          description: 'NOT_FOUND: no branding set; pages carry the Freestyle default'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      security:
+      - apiKey: []
+      summary: Get placeholder branding
+      x-summary-source: derived
+    put:
+      tags:
+      - Domains
+      description: Set the branding for every placeholder page under your verified domains — including domains you verify later. The page keeps its behaviour (a 404 that reloads itself until a route appears); only the logo and the name change. Replaces any earlier setting.
+      operationId: set_placeholder_branding
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SetPlaceholderBrandingRequest'
+        required: true
+      responses:
+        '200':
+          description: Branding saved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlaceholderBranding'
+        '400':
+          description: 'INVALID_REQUEST: the logo URL is not an absolute https URL, or a field is too long'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      security:
+      - apiKey: []
+      summary: Set placeholder branding
+      x-summary-source: derived
+    delete:
+      tags:
+      - Domains
+      description: Remove your placeholder branding. Pages go back to the Freestyle default.
+      operationId: delete_placeholder_branding
+      responses:
+        '204':
+          description: Branding removed
+        '404':
+          description: 'NOT_FOUND: no branding was set'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      security:
+      - apiKey: []
+      summary: Delete placeholder branding
+      x-summary-source: derived
+  /v5/certificates:
+    get:
+      tags:
+      - Domains
+      description: List your certificates.
+      operationId: getV5Certificates
+      responses:
+        '200':
+          description: Certificates issued for the account's domains
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListCertificatesResponse'
+      security:
+      - apiKey: []
+      summary: List certificates
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: list_certificates
+  /v5/certificates/wildcard:
+    post:
+      tags:
+      - Domains
+      description: Request an ongoing `*.domain` certificate. Requires `_acme-challenge.` to be NS-delegated to Freestyle's nameservers, since wildcards can only be proven over DNS.
+      operationId: postV5CertificatesWildcard
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestWildcardRequest'
+        required: true
+      responses:
+        '200':
+          description: Ongoing wildcard certificate requested
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CertificateInfo'
+        '400':
+          description: 'INVALID_DOMAIN: not a valid domain name'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '403':
+          description: 'DOMAIN_NOT_OWNED: you have not verified this domain or a parent of it'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      security:
+      - apiKey: []
+      summary: Request wildcard
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: request_wildcard
+  /v5/domains:
+    get:
+      tags:
+      - Domains
+      description: List the domains you hold — those you verified, and any Freestyle subdomain you have taken by publishing it.
+      operationId: getV5Domains
+      responses:
+        '200':
+          description: Domains the account holds
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListDomainsResponse'
+      security:
+      - apiKey: []
+      summary: List domains
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: list_domains
+  /v5/domains/placeholder:
+    get:
+      tags:
+      - Domains
+      description: The branding your placeholder pages wear. A placeholder page is what a browser sees for a hostname under one of your verified domains that none of your TLS rules serve.
+      operationId: getV5DomainsPlaceholder
+      responses:
+        '200':
+          description: Your placeholder branding
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlaceholderBranding'
+        '404':
+          description: 'NOT_FOUND: no branding set; pages carry the Freestyle default'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      security:
+      - apiKey: []
+      summary: Get placeholder branding
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: get_placeholder_branding
+    put:
+      tags:
+      - Domains
+      description: Set the branding for every placeholder page under your verified domains — including domains you verify later. The page keeps its behaviour (a 404 that reloads itself until a route appears); only the logo and the name change. Replaces any earlier setting.
+      operationId: putV5DomainsPlaceholder
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SetPlaceholderBrandingRequest'
+        required: true
+      responses:
+        '200':
+          description: Branding saved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlaceholderBranding'
+        '400':
+          description: 'INVALID_REQUEST: the logo URL is not an absolute https URL, or a field is too long'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      security:
+      - apiKey: []
+      summary: Set placeholder branding
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: set_placeholder_branding
+    delete:
+      tags:
+      - Domains
+      description: Remove your placeholder branding. Pages go back to the Freestyle default.
+      operationId: deleteV5DomainsPlaceholder
+      responses:
+        '204':
+          description: Branding removed
+        '404':
+          description: 'NOT_FOUND: no branding was set'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      security:
+      - apiKey: []
+      summary: Delete placeholder branding
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: delete_placeholder_branding
+  /v5/verifications:
+    get:
+      tags:
+      - Domains
+      description: List your verification challenges.
+      operationId: list_verifications
+      parameters:
+      - name: state
+        in: query
+        description: 'Narrow to one state. Omit for every challenge the account holds,
+
+          verified records included.'
+        required: false
+        schema:
+          $ref: '#/components/schemas/VerificationState'
+      responses:
+        '200':
+          description: The account's verification challenges
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListVerificationsResponse'
+      security:
+      - apiKey: []
+      summary: List verifications
+      x-summary-source: derived
+    post:
+      tags:
+      - Domains
+      description: Issue a challenge. Publish the returned `verificationCode` as a TXT record at `recordName`, then PUT the verification to complete it.
+      operationId: create_verification
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateVerificationRequest'
+        required: true
+      responses:
+        '200':
+          description: Verification challenge issued
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DomainVerification'
+        '400':
+          description: 'INVALID_DOMAIN: not a valid domain name'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      security:
+      - apiKey: []
+      summary: Create verification
+      x-summary-source: derived
+  /v5/verifications/{domainOrId}:
+    get:
+      tags:
+      - Domains
+      description: Fetch a verification challenge by its id or its domain.
+      operationId: get_verification
+      parameters:
+      - name: domainOrId
+        in: path
+        description: Verification id or the domain under verification
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The pending verification challenge
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DomainVerification'
+        '404':
+          description: 'NOT_FOUND: no verification challenge for the id or domain'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      security:
+      - apiKey: []
+      summary: Get verification
+      x-summary-source: derived
+    put:
+      tags:
+      - Domains
+      description: Check DNS and record ownership. Addressed by id, only that challenge's own code counts, and the result names it. Use this when several people are verifying the same domain.
+      operationId: verify_domain
+      parameters:
+      - name: domainOrId
+        in: path
+        description: Verification id, or the domain to verify
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: TXT record checked; ownership recorded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DomainVerified'
+        '400':
+          description: 'VERIFICATION_FAILED: no TXT record at the challenge''s recordName matches'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '404':
+          description: 'NOT_FOUND: no verification challenge for the id or domain'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      security:
+      - apiKey: []
+      summary: Verify domain
+      x-summary-source: derived
+    delete:
+      tags:
+      - Domains
+      description: Withdraw outstanding challenges; by domain this drops all of them. A challenge that already verified is a permanent record and cannot be deleted.
+      operationId: delete_verification
+      parameters:
+      - name: domainOrId
+        in: path
+        description: Verification id or the domain under verification
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Verification challenge discarded
+        '404':
+          description: 'NOT_FOUND: no verification challenge for the id or domain'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '409':
+          description: 'VERIFICATION_IMMUTABLE: that challenge already verified and is a permanent record'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      security:
+      - apiKey: []
+      summary: Delete verification
+      x-summary-source: derived
+  /verifications:
+    get:
+      tags:
+      - Domains
+      description: List your verification challenges.
+      operationId: getVerifications
+      parameters:
+      - name: state
+        in: query
+        description: 'Narrow to one state. Omit for every challenge the account holds,
+
+          verified records included.'
+        required: false
+        schema:
+          $ref: '#/components/schemas/VerificationState'
+      responses:
+        '200':
+          description: The account's verification challenges
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListVerificationsResponse'
+      deprecated: true
+      security:
+      - apiKey: []
+      summary: List verifications
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: list_verifications
+    post:
+      tags:
+      - Domains
+      description: Issue a challenge. Publish the returned `verificationCode` as a TXT record at `recordName`, then PUT the verification to complete it.
+      operationId: postVerifications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateVerificationRequest'
+        required: true
+      responses:
+        '200':
+          description: Verification challenge issued
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DomainVerification'
+        '400':
+          description: 'INVALID_DOMAIN: not a valid domain name'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      security:
+      - apiKey: []
+      summary: Create verification
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: create_verification
+  /verifications/{domainOrId}:
+    get:
+      tags:
+      - Domains
+      description: Fetch a verification challenge by its id or its domain.
+      operationId: getVerificationsByDomainOrId
+      parameters:
+      - name: domainOrId
+        in: path
+        description: Verification id or the domain under verification
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The pending verification challenge
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DomainVerification'
+        '404':
+          description: 'NOT_FOUND: no verification challenge for the id or domain'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      security:
+      - apiKey: []
+      summary: Get verification
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: get_verification
+    put:
+      tags:
+      - Domains
+      description: Check DNS and record ownership. Addressed by id, only that challenge's own code counts, and the result names it. Use this when several people are verifying the same domain.
+      operationId: putVerificationsByDomainOrId
+      parameters:
+      - name: domainOrId
+        in: path
+        description: Verification id, or the domain to verify
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: TXT record checked; ownership recorded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DomainVerified'
+        '400':
+          description: 'VERIFICATION_FAILED: no TXT record at the challenge''s recordName matches'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '404':
+          description: 'NOT_FOUND: no verification challenge for the id or domain'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      security:
+      - apiKey: []
+      summary: Verify domain
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: verify_domain
+    delete:
+      tags:
+      - Domains
+      description: Withdraw outstanding challenges; by domain this drops all of them. A challenge that already verified is a permanent record and cannot be deleted.
+      operationId: deleteVerificationsByDomainOrId
+      parameters:
+      - name: domainOrId
+        in: path
+        description: Verification id or the domain under verification
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Verification challenge discarded
+        '404':
+          description: 'NOT_FOUND: no verification challenge for the id or domain'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '409':
+          description: 'VERIFICATION_IMMUTABLE: that challenge already verified and is a permanent record'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      security:
+      - apiKey: []
+      summary: Delete verification
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: delete_verification
 components:
   schemas:
-    FreestyleVerifyDomainRequest:
-      oneOf:
-      - type: object
-        required:
-        - domain
-        properties:
-          domain:
-            type: string
-            example: example.com
-      - type: object
-        required:
-        - id
-        properties:
-          id:
-            type: string
-            format: uuid
-            example: 1234-5678-9012-3456
-      description: Verify a domain verification request, can either be done for a domain, or for a specific request
-    CreateDomainMappingSuccess:
-      $ref: '#/components/schemas/FreestyleSandboxDomainMapping'
-    CreateDomainMappingRequest:
-      type: object
-      properties:
-        deploymentId:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/DeploymentId'
-        vmId:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/VmId'
-        vmPort:
-          type:
-          - integer
-          - 'null'
-          format: int32
+    DeploymentId:
+      type: string
+      format: uuid
     DomainVerificationRequest:
       type: object
       required:
@@ -635,11 +1237,120 @@ components:
           type: string
           format: date-time
           example: '1234567890'
+    SuccessfullyDeletedDomainMapping:
+      type: object
+    VerifyDomainSuccess:
+      type: object
+      required:
+      - domain
+      properties:
+        domain:
+          type: string
+    FreestyleVerifyDomainRequest:
+      oneOf:
+      - type: object
+        required:
+        - domain
+        properties:
+          domain:
+            type: string
+            example: example.com
+      - type: object
+        required:
+        - id
+        properties:
+          id:
+            type: string
+            format: uuid
+            example: 1234-5678-9012-3456
+      description: Verify a domain verification request, can either be done for a domain, or for a specific request
+    CreateDomainMappingSuccess:
+      $ref: '#/components/schemas/FreestyleSandboxDomainMapping'
+    FreestyleDomainVerificationRequest:
+      type: object
+      required:
+      - domain
+      properties:
+        domain:
+          type: string
+          description: The domain to create a verification code for
+          example: example.com
+    FreestyleDeleteDomainVerificationRequest:
+      type: object
+      required:
+      - domain
+      - verificationCode
+      properties:
+        domain:
+          type: string
+          description: The domain to create a verification code for
+          example: example.com
+        verificationCode:
+          type: string
+          description: The verification code
     VmId:
       type: string
       description: 'VM ID — always 20 alphanumeric lowercase characters.
 
         New IDs are fully random. Legacy short IDs are right-padded with ''0'' on parse.'
+    CreateDomainMappingRequest:
+      type: object
+      properties:
+        deploymentId:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/DeploymentId'
+        vmId:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/VmId'
+        vmPort:
+          type:
+          - integer
+          - 'null'
+          format: int32
+    Public_DomainMappingError:
+      $ref: '#/components/schemas/Error_DomainMappingError'
+      description: 'Public API error wrapper. Mark public APIs with `Public<T>` to ensure private error
+
+        details aren''t exposed.'
+    FreestyleSandboxDomainMapping:
+      type: object
+      required:
+      - id
+      - domain
+      - ownershipId
+      - createdAt
+      properties:
+        id:
+          type: string
+          format: uuid
+        domain:
+          type: string
+        deploymentId:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/DeploymentId'
+        vmId:
+          type:
+          - string
+          - 'null'
+        vmPort:
+          type:
+          - integer
+          - 'null'
+          format: int32
+        ownershipId:
+          type: string
+          format: uuid
+        createdAt:
+          type: string
+          format: date-time
+        unmappedAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
     Error_DomainMappingError:
       type: object
       description: 'The structure of an error - should rarely be interacted with directly.
@@ -789,83 +1500,219 @@ components:
           additionalProperties: {}
           propertyNames:
             type: string
-    Public_DomainMappingError:
-      $ref: '#/components/schemas/Error_DomainMappingError'
-      description: 'Public API error wrapper. Mark public APIs with `Public<T>` to ensure private error
+    PublicErrorBody:
+      type: object
+      description: 'The shape of every error response: a stable machine-readable `code` and a
 
-        details aren''t exposed.'
-    VerifyDomainSuccess:
+        human-readable `message`. The HTTP status carries the class of failure.
+
+
+        Some errors add fields alongside these two; `code` and `message` are always
+
+        present.'
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: string
+          description: 'A stable identifier for the failure, in `SCREAMING_SNAKE_CASE`. Branch
+
+            on this; `message` is prose and may be reworded at any time.'
+          example: NOT_FOUND
+        message:
+          type: string
+          description: 'A human-readable explanation of what went wrong. A fault inside the
+
+            platform is always reported as `INTERNAL_ERROR` with no further detail.'
+          example: vm vm-1234 not found
+    ListCertificatesResponse:
+      type: object
+      required:
+      - certificates
+      properties:
+        certificates:
+          type: array
+          items:
+            $ref: '#/components/schemas/CertificateInfo'
+    ListDomainsResponse:
+      type: object
+      required:
+      - domains
+      properties:
+        domains:
+          type: array
+          items:
+            $ref: '#/components/schemas/DomainOwnership'
+    ListVerificationsResponse:
+      type: object
+      required:
+      - verifications
+      properties:
+        verifications:
+          type: array
+          items:
+            $ref: '#/components/schemas/DomainVerification'
+    VerificationState:
+      type: string
+      description: 'Where a challenge stands. A challenge is not consumed by success: it
+
+        becomes the durable record of which user proved control.'
+      enum:
+      - pending
+      - verified
+    DomainVerificationId:
+      type: string
+      description: Identifies a domain-verification challenge. Minted as `"dv-<uuid>"`.
+    DomainVerified:
+      type: object
+      description: 'A successful verification: ownership, plus which challenge proved it.
+
+        Several users may hold challenges for one domain, so `verifiedBy` names the
+
+        one whose code was published.'
+      required:
+      - domain
+      - createdAt
+      - verifiedBy
+      properties:
+        createdAt:
+          type: string
+          format: date-time
+        domain:
+          type: string
+        verifiedBy:
+          $ref: '#/components/schemas/DomainVerificationId'
+    RequestWildcardRequest:
       type: object
       required:
       - domain
       properties:
         domain:
           type: string
-    FreestyleDeleteDomainVerificationRequest:
+    CertificateInfo:
       type: object
       required:
       - domain
-      - verificationCode
+      - wildcard
+      - active
+      - notAfter
+      - generation
+      properties:
+        active:
+          type: boolean
+        domain:
+          type: string
+        generation:
+          type: integer
+          format: int64
+        notAfter:
+          type: string
+          format: date-time
+        wildcard:
+          type: boolean
+    SetPlaceholderBrandingRequest:
+      type: object
+      required:
+      - logoUrl
+      properties:
+        logoUrl:
+          type: string
+          description: An https URL of the logo, at most 2048 characters.
+          example: https://cdn.example.com/logo.svg
+        productName:
+          type:
+          - string
+          - 'null'
+          description: 'Named on the page in place of Freestyle, at most 64 characters. Omit
+
+            for logo only.'
+          example: Example Cloud
+    CreateVerificationRequest:
+      type: object
+      required:
+      - domain
       properties:
         domain:
           type: string
-          description: The domain to create a verification code for
-          example: example.com
-        verificationCode:
-          type: string
-          description: The verification code
-    SuccessfullyDeletedDomainMapping:
+    PlaceholderBranding:
       type: object
-    FreestyleSandboxDomainMapping:
+      description: 'What your placeholder pages wear: the edge''s 404 for a hostname under one of
+
+        your verified domains that none of your TLS rules serve.'
+      required:
+      - logoUrl
+      - createdAt
+      - updatedAt
+      properties:
+        createdAt:
+          type: string
+          format: date-time
+        logoUrl:
+          type: string
+          description: An https URL of the logo. The visitor's browser loads it directly.
+        productName:
+          type:
+          - string
+          - 'null'
+          description: Named on the page in place of Freestyle. Null = logo only.
+        updatedAt:
+          type: string
+          format: date-time
+    DomainOwnership:
+      type: object
+      required:
+      - domain
+      - createdAt
+      properties:
+        createdAt:
+          type: string
+          format: date-time
+        domain:
+          type: string
+    DomainVerification:
       type: object
       required:
       - id
       - domain
-      - ownershipId
+      - verificationCode
+      - recordName
+      - state
       - createdAt
       properties:
-        id:
-          type: string
-          format: uuid
-        domain:
-          type: string
-        deploymentId:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/DeploymentId'
-        vmId:
-          type:
-          - string
-          - 'null'
-        vmPort:
-          type:
-          - integer
-          - 'null'
-          format: int32
-        ownershipId:
-          type: string
-          format: uuid
         createdAt:
           type: string
           format: date-time
-        unmappedAt:
+        domain:
+          type: string
+        id:
+          $ref: '#/components/schemas/DomainVerificationId'
+        recordName:
+          type: string
+          description: Place `verificationCode` in a TXT record at this name, then verify.
+        state:
+          $ref: '#/components/schemas/VerificationState'
+        verificationCode:
+          type: string
+        verifiedAt:
           type:
           - string
           - 'null'
           format: date-time
-    FreestyleDomainVerificationRequest:
-      type: object
-      required:
-      - domain
-      properties:
-        domain:
-          type: string
-          description: The domain to create a verification code for
-          example: example.com
-    DeploymentId:
-      type: string
-      format: uuid
+          description: When this challenge proved control; null while pending.
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
+    apiKey:
+      type: http
+      scheme: bearer
+      description: 'Your Freestyle API key, sent as `Authorization: Bearer <api key>`. Every request needs one unless it is authenticated with an identity access token instead.'
+    identityAccessToken:
+      type: apiKey
+      in: header
+      name: x-freestyle-identity-access-token
+      description: An access token belonging to an identity you created. It reaches only the VMs that identity has been granted, and only their exec and terminal routes. Hand one to an end user instead of your API key.
+x-refined-from:
+- freestyle-domains-api-openapi.yml
+- freestyle-sh-openapi.json

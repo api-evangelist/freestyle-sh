@@ -1,0 +1,1001 @@
+openapi: 3.2.0
+info:
+  title: Freestyle Tunnels API
+  description: '# Powerful Virtual Machines
+
+
+    Documentation: freestyle.sh/docs
+
+
+    Freestyle VMs are full Linux virtual machines designed for long running, complex tasks. ## Key Features
+
+
+    - **Instant Startup**: Freestyle VMs provision in milliseconds, with p99s under 400ms. - **Persistence**: Freestyle VMs can run forever, they can be hibernated with their exact memory in place and come back to life weeks later instantly, in that exact state. - **Powerful**: Freestyle VMs go up to 64GB of RAM for public tiers and much further for enterprise. Freestyle does high quality hardware virtualization supporting nested virtualization, FUSE, eBPF, full Linux networking and more. If it can run in an EC2, it can run in a Freestyle VM. - **Cheaply Snapshottable and Branchable**: Freestyle VMs are instantly and cheaply snapshottable (sub 1ms interruption, sub 50ms to snapshot ready). These snapshots can be used to create new VMs in the exact state of the original VM (memory and disk). This enables powerful workflows like branching, cloning, and rapid recovery from failures. ## When to use Freestyle
+
+
+    - **Long Running Agent Tasks**: When you have tasks that take hours, days, weeks or months to run, Freestyle VMs provide a persistent and powerful environment that your agent can work in to completion. - **Failure Prone/Experimental Exploration**: When your tasks involve branching, cloning or need time travel Freestyle VMs are ideal because of their cheap snapshottability and power that makes them great for experiments. - **Complex Coding Problems**: When you are tackling advanced coding problems in research or production codebases, poor virtualization and small sandboxes will not cut it. Freestyle VMs provide the necessary resources and environment to handle these challenges effectively. - **Multi Tenant Usage Patterns**: Freestyle VMs are intentionally built to be used by agent builders with multiple customers. The slug system allows for keying VMs by their user, the identity system allows for granular acccess control and permissioning, and the VPC system allows for multi-tenant network isolation. ## When not to use it
+
+
+    - **"Run AI Code"**: If your exclusively executing short lived Python scripts or other ephemeral tasks the benefits above aren''t relevant. Freestyle VMs should still be benchmarked but there may be alternatives better suited. - **CPU Intensive CI/CD**: Freestyle VMs run on bare metal on data center CPUs. We also oversubscribe host resources. For workloads that require sustained high CPU usage like building the Linux Kernel or mining crypto prefer cloud providers that offer consumer CPU performance. - **Short Lived Tasks**: If your tasks are extremely short lived and do not benefit from persistence or powerful hardware. If your average task takes less than 15 minutes to complete then they are likely cheaply retryable and don''t require the reliability and persistence that Freestyle VMs provide. - **Sole Application Hosting**: Freestyle VMs are designed as workbenches for development, experimentation and task execution. Not for hosting production applications. Hosting a minecraft server for some friends will work great on Freestyle, but we do not offer autoscaling, load balancers or CDNs and we don''t plan to. ## Emerging Use Cases
+
+
+    - **RL Environments**: Freestyle VMs are well-suited for running reinforcement learning environments that require persistent state and complex setups. The ability to snapshot and branch VMs allows researchers to experiment with different strategies and record environment states efficiently. - **Auto Research Climbing**: Freestyle VMs are great for auto research as the snapshotting and fan out allows research agents to explore multiple strategies, review past results and iterate efficiently without ever losing progress.'
+  license:
+    name: ''
+  version: 0.1.0
+security:
+- apiKey: []
+tags:
+- name: Tunnels
+paths:
+  /tunnels:
+    get:
+      tags:
+      - Tunnels
+      description: 'List your tunnels, newest first. Listings never include a private key: one is returned only by create and rotate-key.'
+      operationId: list_tunnels
+      responses:
+        '200':
+          description: Your tunnels
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListTunnelsResponse'
+      deprecated: true
+      summary: List tunnels
+      x-summary-source: derived
+    post:
+      tags:
+      - Tunnels
+      description: 'Create a tunnel, optionally attaching networks in the same call (`vpcs`, all-or-nothing). It lives until you delete it, and its config never changes: save it, bring it up once, and manage which networks it reaches by attaching and detaching them — no config updates, ever. Omit `clientPublicKey` and a keypair is minted for you — the response carries the only copy of the private key you will get.'
+      operationId: create_tunnel
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTunnelRequest'
+        required: true
+      responses:
+        '200':
+          description: Tunnel ready, with any requested networks attached
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreatedTunnel'
+        '400':
+          description: 'BAD_REQUEST: invalid slug, display name, public key, routes, or address'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '404':
+          description: 'NOT_FOUND: a named network does not exist in this account; nothing was created'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '409':
+          description: 'CONFLICT: that slug is already used by another tunnel in your account, or a requested attachment was refused; nothing was created'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: Create tunnel
+      x-summary-source: derived
+  /tunnels/{tunnelIdOrSlug}:
+    get:
+      tags:
+      - Tunnels
+      description: Read one tunnel, with its attached networks. The config comes back with a blank `PrivateKey`; fill in the key you saved at create, or rotate to mint a new one.
+      operationId: get_tunnel
+      parameters:
+      - name: tunnelIdOrSlug
+        in: path
+        description: Tunnel id, or your slug for it
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The tunnel
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tunnel'
+        '404':
+          description: 'NOT_FOUND: no such tunnel in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: Get tunnel
+      x-summary-source: derived
+    delete:
+      tags:
+      - Tunnels
+      description: Delete a tunnel, detaching every network as it goes. This is the only thing that ends one.
+      operationId: delete_tunnel
+      parameters:
+      - name: tunnelIdOrSlug
+        in: path
+        description: Tunnel id, or your slug for it
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Tunnel deleted
+        '404':
+          description: 'NOT_FOUND: no such tunnel in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: Delete tunnel
+      x-summary-source: derived
+    patch:
+      tags:
+      - Tunnels
+      description: 'Rename a tunnel or change its slug. Only the labels move: the keys, addresses, routes and attached networks are untouched, so a connected client sees nothing change and the config you saved keeps working.'
+      operationId: update_tunnel
+      parameters:
+      - name: tunnelIdOrSlug
+        in: path
+        description: Tunnel id, or your slug for it
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTunnelRequest'
+        required: true
+      responses:
+        '200':
+          description: The updated tunnel
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tunnel'
+        '400':
+          description: 'BAD_REQUEST: invalid slug or display name'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '404':
+          description: 'NOT_FOUND: no such tunnel in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '409':
+          description: 'CONFLICT: that slug is already used by another tunnel in your account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: Update tunnel
+      x-summary-source: derived
+  /tunnels/{tunnelIdOrSlug}/rotate-key:
+    post:
+      tags:
+      - Tunnels
+      description: 'Replace a tunnel''s keys, keeping its id and every attached network''s address. Use this if you lost the config or need to revoke one that leaked: the old keys stop working, and the response carries the only copy of the new private key you will get.'
+      operationId: rotate_tunnel_key
+      parameters:
+      - name: tunnelIdOrSlug
+        in: path
+        description: Tunnel id, or your slug for it
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RotateTunnelKeyRequest'
+        required: true
+      responses:
+        '200':
+          description: Keys rotated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreatedTunnel'
+        '400':
+          description: 'BAD_REQUEST: that is not a valid WireGuard public key'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '404':
+          description: 'NOT_FOUND: no such tunnel in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: Rotate tunnel key
+      x-summary-source: derived
+  /tunnels/{tunnelIdOrSlug}/vpcs/{vpcIdOrSlug}:
+    post:
+      tags:
+      - Tunnels
+      description: Attach a private network to a tunnel. The tunnel gains an address inside the network — what that network's VMs see as your address — and a connected client can reach the network immediately, with no config change. Omit `ipv4` and an address is assigned; supply one to pin it. The network's CIDRs must fall inside the tunnel's routes and must not overlap another attached network's.
+      operationId: attach_vpc_to_tunnel
+      parameters:
+      - name: tunnelIdOrSlug
+        in: path
+        description: Tunnel id, or your slug for it
+        required: true
+        schema:
+          type: string
+      - name: vpcIdOrSlug
+        in: path
+        description: VPC id, or your slug for it
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AttachVpcRequest'
+        required: true
+      responses:
+        '200':
+          description: Network attached; the updated tunnel
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tunnel'
+        '400':
+          description: 'BAD_REQUEST: invalid address'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '404':
+          description: 'NOT_FOUND: no such tunnel or network in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '409':
+          description: 'CONFLICT: already attached, that address is already taken, the network''s CIDRs overlap an already-attached network''s, or they fall outside the tunnel''s routes'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: Attach vpc to tunnel
+      x-summary-source: derived
+    delete:
+      tags:
+      - Tunnels
+      description: 'Detach a private network from a tunnel: it stops being reachable and the tunnel''s address inside it is released. The tunnel — and any connected client — carries on untouched.'
+      operationId: detach_vpc_from_tunnel
+      parameters:
+      - name: tunnelIdOrSlug
+        in: path
+        description: Tunnel id, or your slug for it
+        required: true
+        schema:
+          type: string
+      - name: vpcIdOrSlug
+        in: path
+        description: VPC id, or your slug for it
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Network detached; the updated tunnel
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tunnel'
+        '404':
+          description: 'NOT_FOUND: no such tunnel, or the network is not attached'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: Detach vpc from tunnel
+      x-summary-source: derived
+  /v5/tunnels:
+    get:
+      tags:
+      - Tunnels
+      description: 'List your tunnels, newest first. Listings never include a private key: one is returned only by create and rotate-key.'
+      operationId: getV5Tunnels
+      responses:
+        '200':
+          description: Your tunnels
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListTunnelsResponse'
+      summary: List tunnels
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: list_tunnels
+    post:
+      tags:
+      - Tunnels
+      description: 'Create a tunnel, optionally attaching networks in the same call (`vpcs`, all-or-nothing). It lives until you delete it, and its config never changes: save it, bring it up once, and manage which networks it reaches by attaching and detaching them — no config updates, ever. Omit `clientPublicKey` and a keypair is minted for you — the response carries the only copy of the private key you will get.'
+      operationId: postV5Tunnels
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTunnelRequest'
+        required: true
+      responses:
+        '200':
+          description: Tunnel ready, with any requested networks attached
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreatedTunnel'
+        '400':
+          description: 'BAD_REQUEST: invalid slug, display name, public key, routes, or address'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '404':
+          description: 'NOT_FOUND: a named network does not exist in this account; nothing was created'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '409':
+          description: 'CONFLICT: that slug is already used by another tunnel in your account, or a requested attachment was refused; nothing was created'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: Create tunnel
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: create_tunnel
+  /v5/tunnels/{tunnelIdOrSlug}:
+    get:
+      tags:
+      - Tunnels
+      description: Read one tunnel, with its attached networks. The config comes back with a blank `PrivateKey`; fill in the key you saved at create, or rotate to mint a new one.
+      operationId: getV5TunnelsByTunnelIdOrSlug
+      parameters:
+      - name: tunnelIdOrSlug
+        in: path
+        description: Tunnel id, or your slug for it
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The tunnel
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tunnel'
+        '404':
+          description: 'NOT_FOUND: no such tunnel in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: Get tunnel
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: get_tunnel
+    delete:
+      tags:
+      - Tunnels
+      description: Delete a tunnel, detaching every network as it goes. This is the only thing that ends one.
+      operationId: deleteV5TunnelsByTunnelIdOrSlug
+      parameters:
+      - name: tunnelIdOrSlug
+        in: path
+        description: Tunnel id, or your slug for it
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Tunnel deleted
+        '404':
+          description: 'NOT_FOUND: no such tunnel in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: Delete tunnel
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: delete_tunnel
+    patch:
+      tags:
+      - Tunnels
+      description: 'Rename a tunnel or change its slug. Only the labels move: the keys, addresses, routes and attached networks are untouched, so a connected client sees nothing change and the config you saved keeps working.'
+      operationId: patchV5TunnelsByTunnelIdOrSlug
+      parameters:
+      - name: tunnelIdOrSlug
+        in: path
+        description: Tunnel id, or your slug for it
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTunnelRequest'
+        required: true
+      responses:
+        '200':
+          description: The updated tunnel
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tunnel'
+        '400':
+          description: 'BAD_REQUEST: invalid slug or display name'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '404':
+          description: 'NOT_FOUND: no such tunnel in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '409':
+          description: 'CONFLICT: that slug is already used by another tunnel in your account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: Update tunnel
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: update_tunnel
+  /v5/tunnels/{tunnelIdOrSlug}/rotate-key:
+    post:
+      tags:
+      - Tunnels
+      description: 'Replace a tunnel''s keys, keeping its id and every attached network''s address. Use this if you lost the config or need to revoke one that leaked: the old keys stop working, and the response carries the only copy of the new private key you will get.'
+      operationId: postV5TunnelsByTunnelIdOrSlugRotateKey
+      parameters:
+      - name: tunnelIdOrSlug
+        in: path
+        description: Tunnel id, or your slug for it
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RotateTunnelKeyRequest'
+        required: true
+      responses:
+        '200':
+          description: Keys rotated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreatedTunnel'
+        '400':
+          description: 'BAD_REQUEST: that is not a valid WireGuard public key'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '404':
+          description: 'NOT_FOUND: no such tunnel in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: Rotate tunnel key
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: rotate_tunnel_key
+  /v5/tunnels/{tunnelIdOrSlug}/vpcs/{vpcIdOrSlug}:
+    post:
+      tags:
+      - Tunnels
+      description: Attach a private network to a tunnel. The tunnel gains an address inside the network — what that network's VMs see as your address — and a connected client can reach the network immediately, with no config change. Omit `ipv4` and an address is assigned; supply one to pin it. The network's CIDRs must fall inside the tunnel's routes and must not overlap another attached network's.
+      operationId: postV5TunnelsByTunnelIdOrSlugVpcsByVpcIdOrSlug
+      parameters:
+      - name: tunnelIdOrSlug
+        in: path
+        description: Tunnel id, or your slug for it
+        required: true
+        schema:
+          type: string
+      - name: vpcIdOrSlug
+        in: path
+        description: VPC id, or your slug for it
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AttachVpcRequest'
+        required: true
+      responses:
+        '200':
+          description: Network attached; the updated tunnel
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tunnel'
+        '400':
+          description: 'BAD_REQUEST: invalid address'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '404':
+          description: 'NOT_FOUND: no such tunnel or network in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '409':
+          description: 'CONFLICT: already attached, that address is already taken, the network''s CIDRs overlap an already-attached network''s, or they fall outside the tunnel''s routes'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: Attach vpc to tunnel
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: attach_vpc_to_tunnel
+    delete:
+      tags:
+      - Tunnels
+      description: 'Detach a private network from a tunnel: it stops being reachable and the tunnel''s address inside it is released. The tunnel — and any connected client — carries on untouched.'
+      operationId: deleteV5TunnelsByTunnelIdOrSlugVpcsByVpcIdOrSlug
+      parameters:
+      - name: tunnelIdOrSlug
+        in: path
+        description: Tunnel id, or your slug for it
+        required: true
+        schema:
+          type: string
+      - name: vpcIdOrSlug
+        in: path
+        description: VPC id, or your slug for it
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Network detached; the updated tunnel
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tunnel'
+        '404':
+          description: 'NOT_FOUND: no such tunnel, or the network is not attached'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: Detach vpc from tunnel
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: detach_vpc_from_tunnel
+components:
+  schemas:
+    PublicErrorBody:
+      type: object
+      description: 'The shape of every error response: a stable machine-readable `code` and a
+
+        human-readable `message`. The HTTP status carries the class of failure.
+
+
+        Some errors add fields alongside these two; `code` and `message` are always
+
+        present.'
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: string
+          description: 'A stable identifier for the failure, in `SCREAMING_SNAKE_CASE`. Branch
+
+            on this; `message` is prose and may be reworded at any time.'
+          example: NOT_FOUND
+        message:
+          type: string
+          description: 'A human-readable explanation of what went wrong. A fault inside the
+
+            platform is always reported as `INTERNAL_ERROR` with no further detail.'
+          example: vm vm-1234 not found
+    CreateTunnelVpc:
+      type: object
+      description: One network named at create, with the same address choices as an attach.
+      required:
+      - vpc
+      properties:
+        exit:
+          type: boolean
+          description: See the attach request's `exit`.
+        ipv4:
+          type:
+          - string
+          - 'null'
+          description: The address you want inside it; omit to be assigned one.
+        ipv6:
+          type:
+          - string
+          - 'null'
+          description: An explicit IPv6 address instead; only one may be set.
+        remoteCidrs:
+          type: array
+          items:
+            type: string
+          description: 'Ranges behind your client this network may route to; see the attach
+
+            request''s `remoteCidrs`.'
+        vpc:
+          type: string
+          description: 'The network to attach: a VPC id, or your slug for it. Also accepted as
+
+            `vpcId`.'
+    ListTunnelsResponse:
+      type: object
+      required:
+      - tunnels
+      - totalCount
+      properties:
+        totalCount:
+          type: integer
+          minimum: 0
+        tunnels:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tunnel'
+          description: 'Newest first. Listings never carry a private key; the config returned
+
+            here has `PrivateKey` blanked.'
+    RotateTunnelKeyRequest:
+      type: object
+      properties:
+        clientPublicKey:
+          type:
+          - string
+          - 'null'
+          description: 'The public key of a keypair you already hold. Omit to have a fresh one
+
+            minted for you.'
+    UpdateTunnelRequest:
+      type: object
+      properties:
+        displayName:
+          type:
+          - string
+          - 'null'
+          description: An empty string clears it.
+        slug:
+          type:
+          - string
+          - 'null'
+          description: An empty string clears it.
+    CreatedTunnel:
+      allOf:
+      - $ref: '#/components/schemas/Tunnel'
+      - type: object
+        required:
+        - clientPrivateKey
+        properties:
+          clientPrivateKey:
+            type: string
+            description: Returned once. Already embedded in `clientConfig`.
+      description: 'A tunnel plus a client private key. Returned by the two calls that mint a
+
+        keypair — create and rotate-key — and nowhere else: the key is never stored
+
+        and cannot be read back. Empty when you supplied your own public key.'
+    Tunnel:
+      type: object
+      description: 'A tunnel: your WireGuard identity on the platform. It exists until you
+
+        delete it: connect, disconnect and reconnect as often as you like — a
+
+        session is set up on the handshake that needs it, so an idle tunnel costs
+
+        nothing and never expires. A tunnel routes nowhere until you attach a
+
+        private network to it; attach several and one WireGuard interface reaches
+
+        them all.'
+      required:
+      - id
+      - clientConfig
+      - endpointPort
+      - clientPublicKey
+      - serverPublicKey
+      - clientAddressV4
+      - clientAddressV6
+      - routes
+      - attachments
+      - createdAt
+      - updatedAt
+      properties:
+        attachments:
+          type: array
+          items:
+            $ref: '#/components/schemas/TunnelAttachment'
+          description: The private networks on the far side, oldest attachment first.
+        clientAddressV4:
+          type: string
+          description: 'Your fixed addresses inside the tunnel. Only the gateway ever sees
+
+            them: each attached network sees an address inside its own subnet
+
+            instead (`attachments[].address`).'
+        clientAddressV6:
+          type: string
+        clientConfig:
+          type: string
+          description: 'A complete WireGuard config file, fixed for the life of the tunnel:
+
+            attaching and detaching networks never changes it, so bring it up once
+
+            and manage what it reaches through the API. `PrivateKey` is blank
+
+            except on create and rotate-key, the only two responses that mint a
+
+            keypair.'
+        clientPublicKey:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        displayName:
+          type:
+          - string
+          - 'null'
+          description: Your label for this tunnel, if you gave it one.
+        endpointHost:
+          type:
+          - string
+          - 'null'
+          description: Host to dial.
+        endpointPort:
+          type: integer
+          format: int32
+          minimum: 0
+        id:
+          type: string
+          description: 'Deprecated: the tunnel''s id under its old name. Read `tunnelId`.'
+        routes:
+          type: array
+          items:
+            type: string
+          description: 'The ranges your client routes through the tunnel — its `AllowedIPs`,
+
+            fixed at create. A network can only be attached if its CIDRs fall
+
+            inside these.'
+        serverPublicKey:
+          type: string
+          description: The one `[Peer]` public key in your config.
+        slug:
+          type:
+          - string
+          - 'null'
+          description: 'Your handle for this tunnel, if you gave it one. Usable anywhere the id
+
+            is, in place of it.'
+        tunnelId:
+          type:
+          - string
+          - 'null'
+          description: 'The tunnel''s id, under the name the rest of the API uses for it — a
+
+            firewall rule says `tunnelId`, so the tunnel does too.'
+        updatedAt:
+          type: string
+          format: date-time
+    AttachVpcRequest:
+      type: object
+      properties:
+        exit:
+          type: boolean
+          description: 'Make your client this network''s exit — a router members can name as a
+
+            next hop. A VM routes through it with an ordinary NIC route via the
+
+            attachment''s address, and everything it sends the exit — whatever the
+
+            destination — is forwarded to your client, which is expected to NAT it
+
+            onward. Several attachments per network may be exits: members choose
+
+            per route, so two exits and two same-metric routes are a redundant
+
+            pair, and a dead exit stops being ARP-answered so the other takes
+
+            over by itself.'
+        ipv4:
+          type:
+          - string
+          - 'null'
+          description: 'The address you want inside the private network. Omit to be assigned
+
+            one. It must be free: a VM already holding it makes this a conflict,
+
+            and once yours, no VM can be given it.'
+        ipv6:
+          type:
+          - string
+          - 'null'
+          description: 'An explicit IPv6 address, equivalent to passing one in `ipv4`; only one
+
+            may be set.'
+        remoteCidrs:
+          type: array
+          items:
+            type: string
+          description: 'Ranges behind your client that this network routes through the tunnel —
+
+            a site-to-site setup where your client machine forwards for other hosts
+
+            on its side. Hosts inside these ranges keep their real addresses inside
+
+            the network. A range carved out of the network''s own CIDR just works:
+
+            VMs reach it with no configuration, and the range is excluded from VM
+
+            address allocation (it must be free when granted). A range outside the
+
+            network''s CIDRs is reached by giving VMs a route via the attachment''s
+
+            `address`. A range may not straddle the network''s CIDR boundary, nor
+
+            overlap a range another tunnel already grants this network.'
+    TunnelAttachment:
+      type: object
+      description: 'One private network on the far side of a tunnel: the network, your address
+
+        inside it, and the `[Peer]` key that carries it.'
+      required:
+      - vpcId
+      - address
+      - vpcCidr
+      - allowedIps
+      - createdAt
+      properties:
+        address:
+          type: string
+          description: 'Deprecated: the primary address, whichever family. Read `ipv4`/`ipv6`.'
+        allowedIps:
+          type: array
+          items:
+            type: string
+          description: The CIDRs the gateway routes to this network.
+        createdAt:
+          type: string
+          format: date-time
+        exit:
+          type: boolean
+          description: 'Whether this attachment is a network exit: your client forwards for
+
+            destinations that are not its own address, and members route through
+
+            it with an ordinary route via the attachment''s address. Omitted when
+
+            false.'
+        ipv4:
+          type:
+          - string
+          - 'null'
+          description: 'Your IPv4 address inside the private network, absent on a v6-only
+
+            attachment. It belongs to this tunnel for as long as the network stays
+
+            attached, so you can write it into configs and rules.'
+        ipv6:
+          type:
+          - string
+          - 'null'
+          description: Your IPv6 address inside the private network, under the same rules.
+        remoteCidrs:
+          type: array
+          items:
+            type: string
+          description: 'Ranges behind your client that this network routes through the tunnel
+
+            (a site-to-site grant). VMs reach them with an ordinary route via
+
+            `address`. Omitted when the attachment has none.'
+        secondaryAddress:
+          type:
+          - string
+          - 'null'
+          description: 'Deprecated: the second-family address. Read `ipv4`/`ipv6`.'
+        vpcCidr:
+          type: string
+        vpcId:
+          $ref: '#/components/schemas/VpcId'
+    VpcId:
+      type: string
+      description: Identifies a VPC. Minted as `"vpc-<uuid>"`.
+    CreateTunnelRequest:
+      type: object
+      properties:
+        clientPublicKey:
+          type:
+          - string
+          - 'null'
+          description: 'The public key of a keypair you already hold. Omit to have one minted
+
+            for you; supply it and the platform never sees a private key at all.'
+        displayName:
+          type:
+          - string
+          - 'null'
+          description: A free-form label, for telling several tunnels apart.
+        routes:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+          description: 'The ranges your client will route through the tunnel — its
+
+            `AllowedIPs`, fixed for the tunnel''s life so attaching and detaching
+
+            networks never changes your config. Omit for the default
+
+            (`10.0.0.0/8` and `fd00::/8`), which covers every network with
+
+            default addressing. Only networks whose CIDRs fall inside the routes
+
+            can be attached.'
+        slug:
+          type:
+          - string
+          - 'null'
+          description: 'A URL-safe handle, unique within your account: 1–63 chars of
+
+            `[a-z0-9-]`, no leading, trailing, or repeated hyphens. Address the
+
+            tunnel by it instead of by id.'
+        vpcs:
+          type: array
+          items:
+            $ref: '#/components/schemas/CreateTunnelVpc'
+          description: 'Networks to attach in the same call, so one request yields a tunnel
+
+            that already routes somewhere. All-or-nothing: if any attachment is
+
+            refused, nothing is created.'
+  securitySchemes:
+    apiKey:
+      type: http
+      scheme: bearer
+      description: 'Your Freestyle API key, sent as `Authorization: Bearer <api key>`. Every request needs one unless it is authenticated with an identity access token instead.'
+    identityAccessToken:
+      type: apiKey
+      in: header
+      name: x-freestyle-identity-access-token
+      description: An access token belonging to an identity you created. It reaches only the VMs that identity has been granted, and only their exec and terminal routes. Hand one to an end user instead of your API key.

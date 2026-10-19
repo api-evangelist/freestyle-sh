@@ -1,0 +1,176 @@
+openapi: 3.2.0
+info:
+  title: Freestyle Background requests API
+  description: '# Powerful Virtual Machines
+
+
+    Documentation: freestyle.sh/docs
+
+
+    Freestyle VMs are full Linux virtual machines designed for long running, complex tasks. ## Key Features
+
+
+    - **Instant Startup**: Freestyle VMs provision in milliseconds, with p99s under 400ms. - **Persistence**: Freestyle VMs can run forever, they can be hibernated with their exact memory in place and come back to life weeks later instantly, in that exact state. - **Powerful**: Freestyle VMs go up to 64GB of RAM for public tiers and much further for enterprise. Freestyle does high quality hardware virtualization supporting nested virtualization, FUSE, eBPF, full Linux networking and more. If it can run in an EC2, it can run in a Freestyle VM. - **Cheaply Snapshottable and Branchable**: Freestyle VMs are instantly and cheaply snapshottable (sub 1ms interruption, sub 50ms to snapshot ready). These snapshots can be used to create new VMs in the exact state of the original VM (memory and disk). This enables powerful workflows like branching, cloning, and rapid recovery from failures. ## When to use Freestyle
+
+
+    - **Long Running Agent Tasks**: When you have tasks that take hours, days, weeks or months to run, Freestyle VMs provide a persistent and powerful environment that your agent can work in to completion. - **Failure Prone/Experimental Exploration**: When your tasks involve branching, cloning or need time travel Freestyle VMs are ideal because of their cheap snapshottability and power that makes them great for experiments. - **Complex Coding Problems**: When you are tackling advanced coding problems in research or production codebases, poor virtualization and small sandboxes will not cut it. Freestyle VMs provide the necessary resources and environment to handle these challenges effectively. - **Multi Tenant Usage Patterns**: Freestyle VMs are intentionally built to be used by agent builders with multiple customers. The slug system allows for keying VMs by their user, the identity system allows for granular acccess control and permissioning, and the VPC system allows for multi-tenant network isolation. ## When not to use it
+
+
+    - **"Run AI Code"**: If your exclusively executing short lived Python scripts or other ephemeral tasks the benefits above aren''t relevant. Freestyle VMs should still be benchmarked but there may be alternatives better suited. - **CPU Intensive CI/CD**: Freestyle VMs run on bare metal on data center CPUs. We also oversubscribe host resources. For workloads that require sustained high CPU usage like building the Linux Kernel or mining crypto prefer cloud providers that offer consumer CPU performance. - **Short Lived Tasks**: If your tasks are extremely short lived and do not benefit from persistence or powerful hardware. If your average task takes less than 15 minutes to complete then they are likely cheaply retryable and don''t require the reliability and persistence that Freestyle VMs provide. - **Sole Application Hosting**: Freestyle VMs are designed as workbenches for development, experimentation and task execution. Not for hosting production applications. Hosting a minecraft server for some friends will work great on Freestyle, but we do not offer autoscaling, load balancers or CDNs and we don''t plan to. ## Emerging Use Cases
+
+
+    - **RL Environments**: Freestyle VMs are well-suited for running reinforcement learning environments that require persistent state and complex setups. The ability to snapshot and branch VMs allows researchers to experiment with different strategies and record environment states efficiently. - **Auto Research Climbing**: Freestyle VMs are great for auto research as the snapshotting and fan out allows research agents to explore multiple strategies, review past results and iterate efficiently without ever losing progress.'
+  license:
+    name: ''
+  version: 0.1.0
+security:
+- apiKey: []
+tags:
+- name: Background requests
+  description: 'Run any call server-side and poll for its result: send `x-freestyle-background-after-secs: ` on the original request, and if it outlives that window you get a `202` with a request id to poll here. The work is never cancelled by the client disconnecting.'
+paths:
+  /background-requests/{requestId}:
+    get:
+      tags:
+      - Background requests
+      summary: Poll a background request
+      description: 'A request started with the `x-freestyle-background-after-secs` header
+
+        answers `202 Accepted` with a `requestId` once that many seconds elapse;
+
+        poll this route with it. While the request is still running this answers
+
+        `202` again; once it finishes, the request''s own response — its status,
+
+        headers, and body, success or error — is returned exactly as the original
+
+        call would have. Results expire ten minutes after completion; a result
+
+        that was delivered inline (the original call returned before the window
+
+        elapsed) is not kept here.'
+      operationId: get_background_request
+      parameters:
+      - name: requestId
+        in: path
+        description: The id from the 202's `requestId` field / `x-freestyle-background-request-id` header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The finished request's own response (any status the original call could produce, replayed verbatim)
+        '202':
+          description: Still running; poll again
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackgroundRequestPending'
+        '404':
+          description: Unknown id, expired result, or another account's request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+  /v5/background-requests/{requestId}:
+    get:
+      tags:
+      - Background requests
+      summary: Poll a background request
+      description: 'A request started with the `x-freestyle-background-after-secs` header
+
+        answers `202 Accepted` with a `requestId` once that many seconds elapse;
+
+        poll this route with it. While the request is still running this answers
+
+        `202` again; once it finishes, the request''s own response — its status,
+
+        headers, and body, success or error — is returned exactly as the original
+
+        call would have. Results expire ten minutes after completion; a result
+
+        that was delivered inline (the original call returned before the window
+
+        elapsed) is not kept here.'
+      operationId: getV5BackgroundRequestsByRequestId
+      parameters:
+      - name: requestId
+        in: path
+        description: The id from the 202's `requestId` field / `x-freestyle-background-request-id` header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The finished request's own response (any status the original call could produce, replayed verbatim)
+        '202':
+          description: Still running; poll again
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackgroundRequestPending'
+        '404':
+          description: Unknown id, expired result, or another account's request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      x-operation-id-source: normalized
+      x-operation-id-original: get_background_request
+components:
+  schemas:
+    PublicErrorBody:
+      type: object
+      description: 'The shape of every error response: a stable machine-readable `code` and a
+
+        human-readable `message`. The HTTP status carries the class of failure.
+
+
+        Some errors add fields alongside these two; `code` and `message` are always
+
+        present.'
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: string
+          description: 'A stable identifier for the failure, in `SCREAMING_SNAKE_CASE`. Branch
+
+            on this; `message` is prose and may be reworded at any time.'
+          example: NOT_FOUND
+        message:
+          type: string
+          description: 'A human-readable explanation of what went wrong. A fault inside the
+
+            platform is always reported as `INTERNAL_ERROR` with no further detail.'
+          example: vm vm-1234 not found
+    BackgroundRequestPending:
+      type: object
+      description: Still-running poll answer (`202`).
+      required:
+      - requestId
+      - status
+      properties:
+        requestId:
+          $ref: '#/components/schemas/BackgroundRequestId'
+        status:
+          type: string
+          description: Always `pending`.
+          example: pending
+    BackgroundRequestId:
+      type: string
+      description: 'Identifies a backgrounded public-API request (the handle a client
+
+        polls `/background-requests/{id}` with). Minted as `"bgr-<uuid>"`.'
+  securitySchemes:
+    apiKey:
+      type: http
+      scheme: bearer
+      description: 'Your Freestyle API key, sent as `Authorization: Bearer <api key>`. Every request needs one unless it is authenticated with an identity access token instead.'
+    identityAccessToken:
+      type: apiKey
+      in: header
+      name: x-freestyle-identity-access-token
+      description: An access token belonging to an identity you created. It reaches only the VMs that identity has been granted, and only their exec and terminal routes. Hand one to an end user instead of your API key.

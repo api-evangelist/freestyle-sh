@@ -1,0 +1,959 @@
+openapi: 3.2.0
+info:
+  title: Freestyle Identities API
+  description: '# Powerful Virtual Machines
+
+
+    Documentation: freestyle.sh/docs
+
+
+    Freestyle VMs are full Linux virtual machines designed for long running, complex tasks. ## Key Features
+
+
+    - **Instant Startup**: Freestyle VMs provision in milliseconds, with p99s under 400ms. - **Persistence**: Freestyle VMs can run forever, they can be hibernated with their exact memory in place and come back to life weeks later instantly, in that exact state. - **Powerful**: Freestyle VMs go up to 64GB of RAM for public tiers and much further for enterprise. Freestyle does high quality hardware virtualization supporting nested virtualization, FUSE, eBPF, full Linux networking and more. If it can run in an EC2, it can run in a Freestyle VM. - **Cheaply Snapshottable and Branchable**: Freestyle VMs are instantly and cheaply snapshottable (sub 1ms interruption, sub 50ms to snapshot ready). These snapshots can be used to create new VMs in the exact state of the original VM (memory and disk). This enables powerful workflows like branching, cloning, and rapid recovery from failures. ## When to use Freestyle
+
+
+    - **Long Running Agent Tasks**: When you have tasks that take hours, days, weeks or months to run, Freestyle VMs provide a persistent and powerful environment that your agent can work in to completion. - **Failure Prone/Experimental Exploration**: When your tasks involve branching, cloning or need time travel Freestyle VMs are ideal because of their cheap snapshottability and power that makes them great for experiments. - **Complex Coding Problems**: When you are tackling advanced coding problems in research or production codebases, poor virtualization and small sandboxes will not cut it. Freestyle VMs provide the necessary resources and environment to handle these challenges effectively. - **Multi Tenant Usage Patterns**: Freestyle VMs are intentionally built to be used by agent builders with multiple customers. The slug system allows for keying VMs by their user, the identity system allows for granular acccess control and permissioning, and the VPC system allows for multi-tenant network isolation. ## When not to use it
+
+
+    - **"Run AI Code"**: If your exclusively executing short lived Python scripts or other ephemeral tasks the benefits above aren''t relevant. Freestyle VMs should still be benchmarked but there may be alternatives better suited. - **CPU Intensive CI/CD**: Freestyle VMs run on bare metal on data center CPUs. We also oversubscribe host resources. For workloads that require sustained high CPU usage like building the Linux Kernel or mining crypto prefer cloud providers that offer consumer CPU performance. - **Short Lived Tasks**: If your tasks are extremely short lived and do not benefit from persistence or powerful hardware. If your average task takes less than 15 minutes to complete then they are likely cheaply retryable and don''t require the reliability and persistence that Freestyle VMs provide. - **Sole Application Hosting**: Freestyle VMs are designed as workbenches for development, experimentation and task execution. Not for hosting production applications. Hosting a minecraft server for some friends will work great on Freestyle, but we do not offer autoscaling, load balancers or CDNs and we don''t plan to. ## Emerging Use Cases
+
+
+    - **RL Environments**: Freestyle VMs are well-suited for running reinforcement learning environments that require persistent state and complex setups. The ability to snapshot and branch VMs allows researchers to experiment with different strategies and record environment states efficiently. - **Auto Research Climbing**: Freestyle VMs are great for auto research as the snapshotting and fan out allows research agents to explore multiple strategies, review past results and iterate efficiently without ever losing progress.'
+  license:
+    name: ''
+  version: 0.1.0
+security:
+- apiKey: []
+tags:
+- name: Identities
+  description: 'Scoped access for your end users: identities, tokens, and per-VM grants'
+paths:
+  /identities:
+    get:
+      tags:
+      - Identities
+      description: List your identities.
+      operationId: list_identities
+      parameters:
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int64
+          minimum: 0
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int64
+          minimum: 0
+      - name: includeManaged
+        in: query
+        required: false
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: The caller account's identities
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListIdentities'
+        '401':
+          description: 'MISSING_ACCOUNT_CONTEXT: no account resolved for this credential'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: List identities
+      x-summary-source: derived
+    post:
+      tags:
+      - Identities
+      description: Create an identity.
+      operationId: create_identity
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateIdentityBody'
+        required: true
+      responses:
+        '200':
+          description: Identity created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FreestyleIdentity'
+        '401':
+          description: 'MISSING_ACCOUNT_CONTEXT: no account resolved for this credential'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: Create identity
+      x-summary-source: derived
+  /identities/{identity_id}:
+    get:
+      tags:
+      - Identities
+      description: Fetch an identity.
+      operationId: describe_identity
+      parameters:
+      - name: identity_id
+        in: path
+        description: Identity id
+        required: true
+        schema:
+          $ref: '#/components/schemas/IdentityId'
+      responses:
+        '200':
+          description: Identity detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FreestyleIdentityInfo'
+        '404':
+          description: 'IDENTITY_NOT_FOUND: no such identity in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: Describe identity
+      x-summary-source: derived
+    delete:
+      tags:
+      - Identities
+      description: Delete an identity, along with its tokens and grants.
+      operationId: delete_identity
+      parameters:
+      - name: identity_id
+        in: path
+        description: Identity id
+        required: true
+        schema:
+          $ref: '#/components/schemas/IdentityId'
+      responses:
+        '204':
+          description: Identity deleted
+        '400':
+          description: 'MANAGED_IDENTITY_DELETE: managed identities cannot be deleted'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: Delete identity
+      x-summary-source: derived
+  /identities/{identity_id}/permissions/vm:
+    get:
+      tags:
+      - Identities
+      description: List the VMs an identity has been granted access to.
+      operationId: list_vm_permissions
+      parameters:
+      - name: identity_id
+        in: path
+        description: Identity id
+        required: true
+        schema:
+          $ref: '#/components/schemas/IdentityId'
+      responses:
+        '200':
+          description: The identity's VM permission grants
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/VmPermission'
+      deprecated: true
+      summary: List vm permissions
+      x-summary-source: derived
+    post:
+      tags:
+      - Identities
+      description: Grant an identity access to a VM.
+      operationId: grant_vm_permission
+      parameters:
+      - name: identity_id
+        in: path
+        description: Identity id
+        required: true
+        schema:
+          $ref: '#/components/schemas/IdentityId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GrantVmPermissionBody'
+        required: true
+      responses:
+        '200':
+          description: VM permission granted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VmPermission'
+        '401':
+          description: 'MISSING_ACCOUNT_CONTEXT: no account resolved for this credential'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: Grant vm permission
+      x-summary-source: derived
+  /identities/{identity_id}/permissions/vm/{vm_id}:
+    get:
+      tags:
+      - Identities
+      description: Fetch an identity's grant on a VM.
+      operationId: describe_vm_permission
+      parameters:
+      - name: identity_id
+        in: path
+        description: Identity id
+        required: true
+        schema:
+          $ref: '#/components/schemas/IdentityId'
+      - name: vm_id
+        in: path
+        description: VM id
+        required: true
+        schema:
+          $ref: '#/components/schemas/VmId'
+      responses:
+        '200':
+          description: VM permission detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VmPermission'
+        '404':
+          description: 'VM_PERMISSION_NOT_FOUND: that identity has no grant on that VM'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: Describe vm permission
+      x-summary-source: derived
+    delete:
+      tags:
+      - Identities
+      description: Revoke an identity's access to a VM.
+      operationId: revoke_vm_permission
+      parameters:
+      - name: identity_id
+        in: path
+        description: Identity id
+        required: true
+        schema:
+          $ref: '#/components/schemas/IdentityId'
+      - name: vm_id
+        in: path
+        description: VM id
+        required: true
+        schema:
+          $ref: '#/components/schemas/VmId'
+      responses:
+        '204':
+          description: VM permission revoked
+      deprecated: true
+      summary: Revoke vm permission
+      x-summary-source: derived
+    patch:
+      tags:
+      - Identities
+      description: Change which Linux users an identity may act as on a VM.
+      operationId: update_vm_allowed_linux_users
+      parameters:
+      - name: identity_id
+        in: path
+        description: Identity id
+        required: true
+        schema:
+          $ref: '#/components/schemas/IdentityId'
+      - name: vm_id
+        in: path
+        description: VM id
+        required: true
+        schema:
+          $ref: '#/components/schemas/VmId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAllowedLinuxUsersBody'
+        required: true
+      responses:
+        '200':
+          description: Allowed Linux users updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VmPermission'
+        '404':
+          description: 'VM_PERMISSION_NOT_FOUND: that identity has no grant on that VM'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: Update vm allowed linux users
+      x-summary-source: derived
+  /identities/{identity_id}/tokens:
+    get:
+      tags:
+      - Identities
+      description: List an identity's access tokens.
+      operationId: list_access_tokens
+      parameters:
+      - name: identity_id
+        in: path
+        description: Identity id
+        required: true
+        schema:
+          $ref: '#/components/schemas/IdentityId'
+      responses:
+        '200':
+          description: The identity's access tokens (ids only)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AccessTokenInfo'
+      deprecated: true
+      summary: List access tokens
+      x-summary-source: derived
+    post:
+      tags:
+      - Identities
+      description: Mint an access token for an identity.
+      operationId: create_access_token
+      parameters:
+      - name: identity_id
+        in: path
+        description: Identity id
+        required: true
+        schema:
+          $ref: '#/components/schemas/IdentityId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+              - type: 'null'
+              - $ref: '#/components/schemas/CreateAccessTokenOptions'
+      responses:
+        '200':
+          description: Access token created (returned once, in full)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreatedToken'
+      deprecated: true
+      summary: Create access token
+      x-summary-source: derived
+  /identities/{identity_id}/tokens/{token_id}:
+    delete:
+      tags:
+      - Identities
+      description: Revoke an identity's access token.
+      operationId: revoke_access_token
+      parameters:
+      - name: identity_id
+        in: path
+        description: Identity id
+        required: true
+        schema:
+          $ref: '#/components/schemas/IdentityId'
+      - name: token_id
+        in: path
+        description: Access token id
+        required: true
+        schema:
+          $ref: '#/components/schemas/IdentityTokenId'
+      responses:
+        '204':
+          description: Access token revoked
+      deprecated: true
+      summary: Revoke access token
+      x-summary-source: derived
+  /v5/identities:
+    get:
+      tags:
+      - Identities
+      description: List your identities.
+      operationId: getV5Identities
+      parameters:
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int64
+          minimum: 0
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int64
+          minimum: 0
+      - name: includeManaged
+        in: query
+        required: false
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: The caller account's identities
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListIdentities'
+        '401':
+          description: 'MISSING_ACCOUNT_CONTEXT: no account resolved for this credential'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: List identities
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: list_identities
+    post:
+      tags:
+      - Identities
+      description: Create an identity.
+      operationId: postV5Identities
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateIdentityBody'
+        required: true
+      responses:
+        '200':
+          description: Identity created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FreestyleIdentity'
+        '401':
+          description: 'MISSING_ACCOUNT_CONTEXT: no account resolved for this credential'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: Create identity
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: create_identity
+  /v5/identities/{identity_id}:
+    get:
+      tags:
+      - Identities
+      description: Fetch an identity.
+      operationId: getV5IdentitiesByIdentityId
+      parameters:
+      - name: identity_id
+        in: path
+        description: Identity id
+        required: true
+        schema:
+          $ref: '#/components/schemas/IdentityId'
+      responses:
+        '200':
+          description: Identity detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FreestyleIdentityInfo'
+        '404':
+          description: 'IDENTITY_NOT_FOUND: no such identity in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: Describe identity
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: describe_identity
+    delete:
+      tags:
+      - Identities
+      description: Delete an identity, along with its tokens and grants.
+      operationId: deleteV5IdentitiesByIdentityId
+      parameters:
+      - name: identity_id
+        in: path
+        description: Identity id
+        required: true
+        schema:
+          $ref: '#/components/schemas/IdentityId'
+      responses:
+        '204':
+          description: Identity deleted
+        '400':
+          description: 'MANAGED_IDENTITY_DELETE: managed identities cannot be deleted'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: Delete identity
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: delete_identity
+  /v5/identities/{identity_id}/permissions/vm:
+    get:
+      tags:
+      - Identities
+      description: List the VMs an identity has been granted access to.
+      operationId: getV5IdentitiesByIdentityIdPermissionsVm
+      parameters:
+      - name: identity_id
+        in: path
+        description: Identity id
+        required: true
+        schema:
+          $ref: '#/components/schemas/IdentityId'
+      responses:
+        '200':
+          description: The identity's VM permission grants
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/VmPermission'
+      summary: List vm permissions
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: list_vm_permissions
+    post:
+      tags:
+      - Identities
+      description: Grant an identity access to a VM.
+      operationId: postV5IdentitiesByIdentityIdPermissionsVm
+      parameters:
+      - name: identity_id
+        in: path
+        description: Identity id
+        required: true
+        schema:
+          $ref: '#/components/schemas/IdentityId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GrantVmPermissionBody'
+        required: true
+      responses:
+        '200':
+          description: VM permission granted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VmPermission'
+        '401':
+          description: 'MISSING_ACCOUNT_CONTEXT: no account resolved for this credential'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: Grant vm permission
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: grant_vm_permission
+  /v5/identities/{identity_id}/permissions/vm/{vm_id}:
+    get:
+      tags:
+      - Identities
+      description: Fetch an identity's grant on a VM.
+      operationId: getV5IdentitiesByIdentityIdPermissionsVmByVmId
+      parameters:
+      - name: identity_id
+        in: path
+        description: Identity id
+        required: true
+        schema:
+          $ref: '#/components/schemas/IdentityId'
+      - name: vm_id
+        in: path
+        description: VM id
+        required: true
+        schema:
+          $ref: '#/components/schemas/VmId'
+      responses:
+        '200':
+          description: VM permission detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VmPermission'
+        '404':
+          description: 'VM_PERMISSION_NOT_FOUND: that identity has no grant on that VM'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: Describe vm permission
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: describe_vm_permission
+    delete:
+      tags:
+      - Identities
+      description: Revoke an identity's access to a VM.
+      operationId: deleteV5IdentitiesByIdentityIdPermissionsVmByVmId
+      parameters:
+      - name: identity_id
+        in: path
+        description: Identity id
+        required: true
+        schema:
+          $ref: '#/components/schemas/IdentityId'
+      - name: vm_id
+        in: path
+        description: VM id
+        required: true
+        schema:
+          $ref: '#/components/schemas/VmId'
+      responses:
+        '204':
+          description: VM permission revoked
+      summary: Revoke vm permission
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: revoke_vm_permission
+    patch:
+      tags:
+      - Identities
+      description: Change which Linux users an identity may act as on a VM.
+      operationId: patchV5IdentitiesByIdentityIdPermissionsVmByVmId
+      parameters:
+      - name: identity_id
+        in: path
+        description: Identity id
+        required: true
+        schema:
+          $ref: '#/components/schemas/IdentityId'
+      - name: vm_id
+        in: path
+        description: VM id
+        required: true
+        schema:
+          $ref: '#/components/schemas/VmId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAllowedLinuxUsersBody'
+        required: true
+      responses:
+        '200':
+          description: Allowed Linux users updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VmPermission'
+        '404':
+          description: 'VM_PERMISSION_NOT_FOUND: that identity has no grant on that VM'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: Update vm allowed linux users
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: update_vm_allowed_linux_users
+  /v5/identities/{identity_id}/tokens:
+    get:
+      tags:
+      - Identities
+      description: List an identity's access tokens.
+      operationId: getV5IdentitiesByIdentityIdTokens
+      parameters:
+      - name: identity_id
+        in: path
+        description: Identity id
+        required: true
+        schema:
+          $ref: '#/components/schemas/IdentityId'
+      responses:
+        '200':
+          description: The identity's access tokens (ids only)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AccessTokenInfo'
+      summary: List access tokens
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: list_access_tokens
+    post:
+      tags:
+      - Identities
+      description: Mint an access token for an identity.
+      operationId: postV5IdentitiesByIdentityIdTokens
+      parameters:
+      - name: identity_id
+        in: path
+        description: Identity id
+        required: true
+        schema:
+          $ref: '#/components/schemas/IdentityId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+              - type: 'null'
+              - $ref: '#/components/schemas/CreateAccessTokenOptions'
+      responses:
+        '200':
+          description: Access token created (returned once, in full)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreatedToken'
+      summary: Create access token
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: create_access_token
+  /v5/identities/{identity_id}/tokens/{token_id}:
+    delete:
+      tags:
+      - Identities
+      description: Revoke an identity's access token.
+      operationId: deleteV5IdentitiesByIdentityIdTokensByTokenId
+      parameters:
+      - name: identity_id
+        in: path
+        description: Identity id
+        required: true
+        schema:
+          $ref: '#/components/schemas/IdentityId'
+      - name: token_id
+        in: path
+        description: Access token id
+        required: true
+        schema:
+          $ref: '#/components/schemas/IdentityTokenId'
+      responses:
+        '204':
+          description: Access token revoked
+      summary: Revoke access token
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: revoke_access_token
+components:
+  schemas:
+    UpdateAllowedLinuxUsersBody:
+      type: object
+      properties:
+        allowedLinuxUsers:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+          description: The new allowed-Linux-users list; null grants unrestricted access.
+    CreateIdentityBody:
+      type: object
+      properties:
+        managed:
+          type: boolean
+          description: 'Create a managed identity. Managed identities cannot be deleted through
+
+            the public surface.'
+    AccountId:
+      type: string
+      description: 'Identifies an account. New accounts are minted by the identity
+
+        service''s registry as `"acct-<uuid>"`; accounts created before the
+
+        prefix era are bare UUID strings, and the built-in `freestyle`
+
+        infrastructure account is the literal `"freestyle"`. All three forms
+
+        are equally valid ids: the prefix is a minting convention, not a
+
+        format requirement.'
+    IdentityTokenId:
+      type: string
+      description: Identifies an identity access token row. Minted as `"tok-<uuid>"`.
+    ListIdentities:
+      type: object
+      required:
+      - identities
+      - total
+      properties:
+        identities:
+          type: array
+          items:
+            $ref: '#/components/schemas/FreestyleIdentity'
+        total:
+          type: integer
+          format: int64
+          minimum: 0
+    CreatedToken:
+      type: object
+      required:
+      - id
+      - token
+      properties:
+        expiresAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        id:
+          $ref: '#/components/schemas/IdentityTokenId'
+        token:
+          type: string
+    VmPermission:
+      type: object
+      required:
+      - id
+      - identityId
+      - vmId
+      - grantedAt
+      - grantedBy
+      properties:
+        allowedLinuxUsers:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+        grantedAt:
+          type: string
+          format: date-time
+        grantedBy:
+          $ref: '#/components/schemas/AccountId'
+        id:
+          $ref: '#/components/schemas/VmPermissionId'
+        identityId:
+          $ref: '#/components/schemas/IdentityId'
+        vmId:
+          $ref: '#/components/schemas/VmId'
+    VmPermissionId:
+      type: string
+      description: Identifies a VM-permission grant row. Minted as `"vmp-<uuid>"`.
+    PublicErrorBody:
+      type: object
+      description: 'The shape of every error response: a stable machine-readable `code` and a
+
+        human-readable `message`. The HTTP status carries the class of failure.
+
+
+        Some errors add fields alongside these two; `code` and `message` are always
+
+        present.'
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: string
+          description: 'A stable identifier for the failure, in `SCREAMING_SNAKE_CASE`. Branch
+
+            on this; `message` is prose and may be reworded at any time.'
+          example: NOT_FOUND
+        message:
+          type: string
+          description: 'A human-readable explanation of what went wrong. A fault inside the
+
+            platform is always reported as `INTERNAL_ERROR` with no further detail.'
+          example: vm vm-1234 not found
+    GrantVmPermissionBody:
+      type: object
+      required:
+      - vmId
+      properties:
+        allowedLinuxUsers:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+          description: 'Restrict the grant to these Linux users; omit (or null) for
+
+            unrestricted access.'
+        vmId:
+          $ref: '#/components/schemas/VmId'
+    CreateAccessTokenOptions:
+      type: object
+      properties:
+        expiresAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: RFC 3339 deadline; omitted or null means the token never expires.
+    AccessTokenInfo:
+      type: object
+      required:
+      - id
+      properties:
+        expiresAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        id:
+          $ref: '#/components/schemas/IdentityTokenId'
+    FreestyleIdentityInfo:
+      type: object
+      required:
+      - id
+      - accountId
+      - managed
+      properties:
+        accountId:
+          $ref: '#/components/schemas/AccountId'
+        id:
+          $ref: '#/components/schemas/IdentityId'
+        managed:
+          type: boolean
+    VmId:
+      type: string
+      description: Identifies a VM. Minted as `"vm-<uuid>"`.
+    IdentityId:
+      type: string
+      description: 'Identifies an identity (the auth principal under an account). Minted
+
+        as `"idn-<uuid>"`.'
+    FreestyleIdentity:
+      type: object
+      required:
+      - id
+      - managed
+      properties:
+        id:
+          $ref: '#/components/schemas/IdentityId'
+        managed:
+          type: boolean
+  securitySchemes:
+    apiKey:
+      type: http
+      scheme: bearer
+      description: 'Your Freestyle API key, sent as `Authorization: Bearer <api key>`. Every request needs one unless it is authenticated with an identity access token instead.'
+    identityAccessToken:
+      type: apiKey
+      in: header
+      name: x-freestyle-identity-access-token
+      description: An access token belonging to an identity you created. It reaches only the VMs that identity has been granted, and only their exec and terminal routes. Hand one to an end user instead of your API key.

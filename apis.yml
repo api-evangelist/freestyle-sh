@@ -577,18 +577,18 @@ apis:
     url: https://docs.freestyle.sh/v2/serverless/deployments/guides/vite
   - type: Documentation
     url: https://docs.freestyle.sh/v2/serverless/deployments/guides/static
-- aid: freestyle-sh:freestyle-sh-vm-api
-  name: Freestyle VM API
+- aid: freestyle-sh:freestyle-sh-web-api
+  name: Freestyle Web API
   description: >-
-    APIs for managing lightweight virtual machines (VMs) to run your code in isolated environments.
+    APIs for deploying websites. We handle node modules caching, scaling, certificates and the whole end
+    to end process. Send the code using the [deploy](#tag/web/POST/web/v1/deploy) endpoint, and you'll
+    get a full hosted website back. Works with any TypeScript or JavaScript codebase.
   humanURL: https://docs.freestyle.sh/v2/vms/about
   tags:
-  - vm
-  tags_raw:
-  - VM
+  - Web
   properties:
   - type: OpenAPI
-    url: openapi/freestyle-sh-vm-api-openapi.yml
+    url: openapi/freestyle-sh-web-api-openapi.yml
   - type: Documentation
     url: https://docs.freestyle.sh/v2/vms/about
   - type: Documentation
@@ -643,18 +643,585 @@ apis:
     url: https://docs.freestyle.sh/v2/serverless/deployments/guides/vite
   - type: Documentation
     url: https://docs.freestyle.sh/v2/serverless/deployments/guides/static
-- aid: freestyle-sh:freestyle-sh-web-api
-  name: Freestyle Web API
+- aid: freestyle-sh:freestyle-sh-background-requests-api
+  name: Freestyle Background requests API
   description: >-
-    APIs for deploying websites. We handle node modules caching, scaling, certificates and the whole end
-    to end process. Send the code using the [deploy](#tag/web/POST/web/v1/deploy) endpoint, and you'll
-    get a full hosted website back. Works with any TypeScript or JavaScript codebase.
+    Run any call server-side and poll for its result: send `x-freestyle-background-after-secs: <n>` on
+    the original request, and if it outlives that window you get a `202` with a request id to poll here.
+    The work is never cancelled by the client disconnecting.
   humanURL: https://docs.freestyle.sh/v2/vms/about
   tags:
-  - Web
+  - Background requests
   properties:
   - type: OpenAPI
-    url: openapi/freestyle-sh-web-api-openapi.yml
+    url: openapi/freestyle-sh-background-requests-api-openapi.yml
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/vms/about
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/vms/lifecycle
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/vms/configuration
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/vms/templates-snapshots
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/vms/ssh-access
+  - type: JSONSchema
+    url: json-schema/freestyle-vm-schema.json
+  - type: JSONLD
+    url: json-ld/freestyle-sh-context.jsonld
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/git/about
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/git/repos
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/git/search
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/git/hooks
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/git/github-sync
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/git/advanced/database-api
+  - type: JSONSchema
+    url: json-schema/freestyle-repository-schema.json
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/about
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/domains
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/domains/deploy-to-custom-domain
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/runs/about
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/runs/code-playground
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/runs/egress
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/runs/errors
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/deployments/about
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/deployments/configuration
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/deployments/cron-jobs
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/deployments/guides/nextjs
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/deployments/guides/vite
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/deployments/guides/static
+- aid: freestyle-sh:freestyle-sh-filesystem-api
+  name: Freestyle Filesystem API
+  description: Read and write files inside a running VM
+  humanURL: https://docs.freestyle.sh/v2/vms/about
+  tags:
+  - Filesystem
+  properties:
+  - type: OpenAPI
+    url: openapi/freestyle-sh-filesystem-api-openapi.yml
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/vms/about
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/vms/lifecycle
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/vms/configuration
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/vms/templates-snapshots
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/vms/ssh-access
+  - type: JSONSchema
+    url: json-schema/freestyle-vm-schema.json
+  - type: JSONLD
+    url: json-ld/freestyle-sh-context.jsonld
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/git/about
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/git/repos
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/git/search
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/git/hooks
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/git/github-sync
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/git/advanced/database-api
+  - type: JSONSchema
+    url: json-schema/freestyle-repository-schema.json
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/about
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/domains
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/domains/deploy-to-custom-domain
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/runs/about
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/runs/code-playground
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/runs/egress
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/runs/errors
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/deployments/about
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/deployments/configuration
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/deployments/cron-jobs
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/deployments/guides/nextjs
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/deployments/guides/vite
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/deployments/guides/static
+- aid: freestyle-sh:freestyle-sh-firewall-api
+  name: Freestyle Firewall API
+  description: The Firewall API from Freestyle — 6 operation(s) for firewall.
+  humanURL: https://docs.freestyle.sh/v2/vms/about
+  tags:
+  - Firewall
+  properties:
+  - type: OpenAPI
+    url: openapi/freestyle-sh-firewall-api-openapi.yml
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/vms/about
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/vms/lifecycle
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/vms/configuration
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/vms/templates-snapshots
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/vms/ssh-access
+  - type: JSONSchema
+    url: json-schema/freestyle-vm-schema.json
+  - type: JSONLD
+    url: json-ld/freestyle-sh-context.jsonld
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/git/about
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/git/repos
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/git/search
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/git/hooks
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/git/github-sync
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/git/advanced/database-api
+  - type: JSONSchema
+    url: json-schema/freestyle-repository-schema.json
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/about
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/domains
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/domains/deploy-to-custom-domain
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/runs/about
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/runs/code-playground
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/runs/egress
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/runs/errors
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/deployments/about
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/deployments/configuration
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/deployments/cron-jobs
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/deployments/guides/nextjs
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/deployments/guides/vite
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/deployments/guides/static
+- aid: freestyle-sh:freestyle-sh-hardware-api
+  name: Freestyle Hardware API
+  description: The Hardware API from Freestyle — 4 operation(s) for hardware.
+  humanURL: https://docs.freestyle.sh/v2/vms/about
+  tags:
+  - Hardware
+  properties:
+  - type: OpenAPI
+    url: openapi/freestyle-sh-hardware-api-openapi.yml
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/vms/about
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/vms/lifecycle
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/vms/configuration
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/vms/templates-snapshots
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/vms/ssh-access
+  - type: JSONSchema
+    url: json-schema/freestyle-vm-schema.json
+  - type: JSONLD
+    url: json-ld/freestyle-sh-context.jsonld
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/git/about
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/git/repos
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/git/search
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/git/hooks
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/git/github-sync
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/git/advanced/database-api
+  - type: JSONSchema
+    url: json-schema/freestyle-repository-schema.json
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/about
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/domains
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/domains/deploy-to-custom-domain
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/runs/about
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/runs/code-playground
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/runs/egress
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/runs/errors
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/deployments/about
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/deployments/configuration
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/deployments/cron-jobs
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/deployments/guides/nextjs
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/deployments/guides/vite
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/deployments/guides/static
+- aid: freestyle-sh:freestyle-sh-identities-api
+  name: Freestyle Identities API
+  description: 'Scoped access for your end users: identities, tokens, and per-VM grants'
+  humanURL: https://docs.freestyle.sh/v2/vms/about
+  tags:
+  - Identities
+  properties:
+  - type: OpenAPI
+    url: openapi/freestyle-sh-identities-api-openapi.yml
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/vms/about
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/vms/lifecycle
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/vms/configuration
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/vms/templates-snapshots
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/vms/ssh-access
+  - type: JSONSchema
+    url: json-schema/freestyle-vm-schema.json
+  - type: JSONLD
+    url: json-ld/freestyle-sh-context.jsonld
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/git/about
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/git/repos
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/git/search
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/git/hooks
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/git/github-sync
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/git/advanced/database-api
+  - type: JSONSchema
+    url: json-schema/freestyle-repository-schema.json
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/about
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/domains
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/domains/deploy-to-custom-domain
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/runs/about
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/runs/code-playground
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/runs/egress
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/runs/errors
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/deployments/about
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/deployments/configuration
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/deployments/cron-jobs
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/deployments/guides/nextjs
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/deployments/guides/vite
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/deployments/guides/static
+- aid: freestyle-sh:freestyle-sh-snapshots-api
+  name: Freestyle Snapshots API
+  description: Capture a VM's exact state, memory and disk, and boot new VMs from it
+  humanURL: https://docs.freestyle.sh/v2/vms/about
+  tags:
+  - Snapshots
+  properties:
+  - type: OpenAPI
+    url: openapi/freestyle-sh-snapshots-api-openapi.yml
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/vms/about
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/vms/lifecycle
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/vms/configuration
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/vms/templates-snapshots
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/vms/ssh-access
+  - type: JSONSchema
+    url: json-schema/freestyle-vm-schema.json
+  - type: JSONLD
+    url: json-ld/freestyle-sh-context.jsonld
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/git/about
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/git/repos
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/git/search
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/git/hooks
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/git/github-sync
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/git/advanced/database-api
+  - type: JSONSchema
+    url: json-schema/freestyle-repository-schema.json
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/about
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/domains
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/domains/deploy-to-custom-domain
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/runs/about
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/runs/code-playground
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/runs/egress
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/runs/errors
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/deployments/about
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/deployments/configuration
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/deployments/cron-jobs
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/deployments/guides/nextjs
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/deployments/guides/vite
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/deployments/guides/static
+- aid: freestyle-sh:freestyle-sh-tls-api
+  name: Freestyle TLS API
+  description: The TLS API from Freestyle — 8 operation(s) for tls.
+  humanURL: https://docs.freestyle.sh/v2/vms/about
+  tags:
+  - TLS
+  properties:
+  - type: OpenAPI
+    url: openapi/freestyle-sh-tls-api-openapi.yml
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/vms/about
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/vms/lifecycle
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/vms/configuration
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/vms/templates-snapshots
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/vms/ssh-access
+  - type: JSONSchema
+    url: json-schema/freestyle-vm-schema.json
+  - type: JSONLD
+    url: json-ld/freestyle-sh-context.jsonld
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/git/about
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/git/repos
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/git/search
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/git/hooks
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/git/github-sync
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/git/advanced/database-api
+  - type: JSONSchema
+    url: json-schema/freestyle-repository-schema.json
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/about
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/domains
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/domains/deploy-to-custom-domain
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/runs/about
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/runs/code-playground
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/runs/egress
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/runs/errors
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/deployments/about
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/deployments/configuration
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/deployments/cron-jobs
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/deployments/guides/nextjs
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/deployments/guides/vite
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/deployments/guides/static
+- aid: freestyle-sh:freestyle-sh-tunnels-api
+  name: Freestyle Tunnels API
+  description: The Tunnels API from Freestyle — 8 operation(s) for tunnels.
+  humanURL: https://docs.freestyle.sh/v2/vms/about
+  tags:
+  - Tunnels
+  properties:
+  - type: OpenAPI
+    url: openapi/freestyle-sh-tunnels-api-openapi.yml
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/vms/about
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/vms/lifecycle
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/vms/configuration
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/vms/templates-snapshots
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/vms/ssh-access
+  - type: JSONSchema
+    url: json-schema/freestyle-vm-schema.json
+  - type: JSONLD
+    url: json-ld/freestyle-sh-context.jsonld
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/git/about
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/git/repos
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/git/search
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/git/hooks
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/git/github-sync
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/git/advanced/database-api
+  - type: JSONSchema
+    url: json-schema/freestyle-repository-schema.json
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/about
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/domains
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/domains/deploy-to-custom-domain
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/runs/about
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/runs/code-playground
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/runs/egress
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/runs/errors
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/deployments/about
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/deployments/configuration
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/deployments/cron-jobs
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/deployments/guides/nextjs
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/deployments/guides/vite
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/deployments/guides/static
+- aid: freestyle-sh:freestyle-sh-vms-api
+  name: Freestyle VMs API
+  description: Boot, control, and run commands in your VMs
+  humanURL: https://docs.freestyle.sh/v2/vms/about
+  tags:
+  - VMs
+  properties:
+  - type: OpenAPI
+    url: openapi/freestyle-sh-vms-api-openapi.yml
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/vms/about
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/vms/lifecycle
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/vms/configuration
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/vms/templates-snapshots
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/vms/ssh-access
+  - type: JSONSchema
+    url: json-schema/freestyle-vm-schema.json
+  - type: JSONLD
+    url: json-ld/freestyle-sh-context.jsonld
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/git/about
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/git/repos
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/git/search
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/git/hooks
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/git/github-sync
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/git/advanced/database-api
+  - type: JSONSchema
+    url: json-schema/freestyle-repository-schema.json
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/about
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/domains
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/domains/deploy-to-custom-domain
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/runs/about
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/runs/code-playground
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/runs/egress
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/runs/errors
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/deployments/about
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/deployments/configuration
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/deployments/cron-jobs
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/deployments/guides/nextjs
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/deployments/guides/vite
+  - type: Documentation
+    url: https://docs.freestyle.sh/v2/serverless/deployments/guides/static
+- aid: freestyle-sh:freestyle-sh-vpcs-api
+  name: Freestyle VPCs API
+  description: Private networks your VMs can share
+  humanURL: https://docs.freestyle.sh/v2/vms/about
+  tags:
+  - VPCs
+  properties:
+  - type: OpenAPI
+    url: openapi/freestyle-sh-vpcs-api-openapi.yml
   - type: Documentation
     url: https://docs.freestyle.sh/v2/vms/about
   - type: Documentation

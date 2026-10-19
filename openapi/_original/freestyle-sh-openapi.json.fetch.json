@@ -1,0 +1,12 @@
+{
+ "url": "https://www.freestyle.sh/openapi.json",
+ "final": "https://www.freestyle.sh/openapi.json",
+ "status": 200,
+ "content_type": "application/json",
+ "bytes": 246943,
+ "sha256": "169c71ad82f37e55b4cc89c2fc7f5b1d55ab3c7ab48a74eb6d4523afd45f9545",
+ "fetched_at": "2026-10-19",
+ "fetched_by": "APIEvangelist-Harvest/1.0 (+https://apievangelist.com)",
+ "match": "byte-identical",
+ "note": "re-archived: the provider's current document replaced a stale archive (roadmap#793); the old files are in openapi/_superseded/2026-10-19-stale"
+}

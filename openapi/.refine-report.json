@@ -7,7 +7,7 @@
     "_original/freestyle-git-api-openapi.yml",
     "_original/freestyle-identity-api-openapi.yml",
     "_original/freestyle-observability-api-openapi.yml",
-    "_original/freestyle-vm-api-openapi.yml",
+    "_original/freestyle-sh-openapi.json",
     "_original/freestyle-web-api-openapi.yml"
   ],
   "outputs": [
@@ -20,7 +20,16 @@
     "freestyle-sh-auth-api-openapi.yml",
     "freestyle-sh-identity-api-openapi.yml",
     "freestyle-sh-observability-api-openapi.yml",
-    "freestyle-sh-vm-api-openapi.yml",
+    "freestyle-sh-background-requests-api-openapi.yml",
+    "freestyle-sh-filesystem-api-openapi.yml",
+    "freestyle-sh-firewall-api-openapi.yml",
+    "freestyle-sh-hardware-api-openapi.yml",
+    "freestyle-sh-identities-api-openapi.yml",
+    "freestyle-sh-snapshots-api-openapi.yml",
+    "freestyle-sh-tls-api-openapi.yml",
+    "freestyle-sh-tunnels-api-openapi.yml",
+    "freestyle-sh-vms-api-openapi.yml",
+    "freestyle-sh-vpcs-api-openapi.yml",
     "freestyle-sh-web-api-openapi.yml"
   ],
   "archived": [],
@@ -36,9 +45,14 @@
     "freestyle-identity-api-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
     "freestyle-identity-api-openapi.yml: declared missing tag: Auth",
     "freestyle-observability-api-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
-    "freestyle-vm-api-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "freestyle-sh-openapi.json: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "freestyle-sh-openapi.json: declared missing tag: Firewall",
+    "freestyle-sh-openapi.json: declared missing tag: Hardware",
+    "freestyle-sh-openapi.json: declared missing tag: TLS",
+    "freestyle-sh-openapi.json: declared missing tag: Tunnels",
     "freestyle-web-api-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
-    "apis.yml register: already-registered"
+    "tag 'Domains' spans 2 source specs (freestyle-domains-api-openapi.yml, freestyle-sh-openapi.json): per-path servers applied",
+    "apis.yml register: written (+10 apis, 20 total)"
   ],
   "skipped": [
     "freestyle-sh-auth-api-openapi.yml: previously refined output, superseded by openapi/_original/",
@@ -50,7 +64,6 @@
     "freestyle-sh-git-api-openapi.yml: previously refined output, superseded by openapi/_original/",
     "freestyle-sh-identity-api-openapi.yml: previously refined output, superseded by openapi/_original/",
     "freestyle-sh-observability-api-openapi.yml: previously refined output, superseded by openapi/_original/",
-    "freestyle-sh-vm-api-openapi.yml: previously refined output, superseded by openapi/_original/",
     "freestyle-sh-web-api-openapi.yml: previously refined output, superseded by openapi/_original/"
   ]
 }

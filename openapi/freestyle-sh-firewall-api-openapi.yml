@@ -1,0 +1,692 @@
+openapi: 3.2.0
+info:
+  title: Freestyle Firewall API
+  description: '# Powerful Virtual Machines
+
+
+    Documentation: freestyle.sh/docs
+
+
+    Freestyle VMs are full Linux virtual machines designed for long running, complex tasks. ## Key Features
+
+
+    - **Instant Startup**: Freestyle VMs provision in milliseconds, with p99s under 400ms. - **Persistence**: Freestyle VMs can run forever, they can be hibernated with their exact memory in place and come back to life weeks later instantly, in that exact state. - **Powerful**: Freestyle VMs go up to 64GB of RAM for public tiers and much further for enterprise. Freestyle does high quality hardware virtualization supporting nested virtualization, FUSE, eBPF, full Linux networking and more. If it can run in an EC2, it can run in a Freestyle VM. - **Cheaply Snapshottable and Branchable**: Freestyle VMs are instantly and cheaply snapshottable (sub 1ms interruption, sub 50ms to snapshot ready). These snapshots can be used to create new VMs in the exact state of the original VM (memory and disk). This enables powerful workflows like branching, cloning, and rapid recovery from failures. ## When to use Freestyle
+
+
+    - **Long Running Agent Tasks**: When you have tasks that take hours, days, weeks or months to run, Freestyle VMs provide a persistent and powerful environment that your agent can work in to completion. - **Failure Prone/Experimental Exploration**: When your tasks involve branching, cloning or need time travel Freestyle VMs are ideal because of their cheap snapshottability and power that makes them great for experiments. - **Complex Coding Problems**: When you are tackling advanced coding problems in research or production codebases, poor virtualization and small sandboxes will not cut it. Freestyle VMs provide the necessary resources and environment to handle these challenges effectively. - **Multi Tenant Usage Patterns**: Freestyle VMs are intentionally built to be used by agent builders with multiple customers. The slug system allows for keying VMs by their user, the identity system allows for granular acccess control and permissioning, and the VPC system allows for multi-tenant network isolation. ## When not to use it
+
+
+    - **"Run AI Code"**: If your exclusively executing short lived Python scripts or other ephemeral tasks the benefits above aren''t relevant. Freestyle VMs should still be benchmarked but there may be alternatives better suited. - **CPU Intensive CI/CD**: Freestyle VMs run on bare metal on data center CPUs. We also oversubscribe host resources. For workloads that require sustained high CPU usage like building the Linux Kernel or mining crypto prefer cloud providers that offer consumer CPU performance. - **Short Lived Tasks**: If your tasks are extremely short lived and do not benefit from persistence or powerful hardware. If your average task takes less than 15 minutes to complete then they are likely cheaply retryable and don''t require the reliability and persistence that Freestyle VMs provide. - **Sole Application Hosting**: Freestyle VMs are designed as workbenches for development, experimentation and task execution. Not for hosting production applications. Hosting a minecraft server for some friends will work great on Freestyle, but we do not offer autoscaling, load balancers or CDNs and we don''t plan to. ## Emerging Use Cases
+
+
+    - **RL Environments**: Freestyle VMs are well-suited for running reinforcement learning environments that require persistent state and complex setups. The ability to snapshot and branch VMs allows researchers to experiment with different strategies and record environment states efficiently. - **Auto Research Climbing**: Freestyle VMs are great for auto research as the snapshotting and fan out allows research agents to explore multiple strategies, review past results and iterate efficiently without ever losing progress.'
+  license:
+    name: ''
+  version: 0.1.0
+security:
+- apiKey: []
+tags:
+- name: Firewall
+paths:
+  /firewall/evaluate:
+    post:
+      tags:
+      - Firewall
+      description: 'Ask whether a connection would be allowed by your rules, without changing anything. Useful for checking a rule set before you rely on it. Traffic Freestyle itself delivers — a mapped domain, the SSH proxy — answers `allowedByPlatform`: it is allowed whatever your rules say, and no rule can block it. Outbound mail answers `deniedByPlatform`: a connection to a mail port on the public Internet is closed whatever your rules say, and goes through an `smtp` TLS rule instead.'
+      operationId: evaluate_firewall
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TrafficDescription'
+        required: true
+      responses:
+        '200':
+          description: The decision, and what produced it
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FirewallDecision'
+        '400':
+          description: 'BAD_REQUEST: the traffic description is not well formed'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: Evaluate firewall
+      x-summary-source: derived
+  /firewall/rules:
+    get:
+      tags:
+      - Firewall
+      description: List your firewall rules, newest first. Filter by `vmId` to get the rules that apply to one VM — those naming it, plus those naming a private network it is attached to — or by `vpcId`/`tunnelId` for the rules naming one of those.
+      operationId: list_firewall_rules
+      parameters:
+      - name: vmId
+        in: query
+        description: 'Rules that apply to this VM: those naming it, plus those naming a
+
+          private network it is attached to. Its id, or your slug for it.'
+        required: false
+        schema:
+          type: string
+      - name: vpcId
+        in: query
+        description: Rules naming this private network. Its id, or your slug for it.
+        required: false
+        schema:
+          type: string
+      - name: tunnelId
+        in: query
+        description: Rules naming this tunnel, by its id.
+        required: false
+        schema:
+          type: string
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+      responses:
+        '200':
+          description: The account's firewall rules
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListFirewallRulesResponse'
+        '404':
+          description: 'NOT_FOUND: a `vmId`, `vpcId`, or `tunnelId` filter names something that does not exist in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: List firewall rules
+      x-summary-source: derived
+    post:
+      tags:
+      - Firewall
+      description: 'Allow traffic from one place to another. Both `source` and `destination` are matchers whose fields intersect; use `public: true` for the public Internet. A rule naming a VM, a private network, or a tunnel is deleted automatically when that resource is.'
+      operationId: create_firewall_rule
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateFirewallRuleRequest'
+        required: true
+      responses:
+        '200':
+          description: Rule created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FirewallRule'
+        '400':
+          description: 'BAD_REQUEST: an unknown field, a matcher that identifies nothing, a port without a protocol, or a malformed CIDR'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '404':
+          description: 'NOT_FOUND: the rule names a VM, network, or tunnel that does not exist in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '409':
+          description: 'CONFLICT: your account is at its firewall rule limit'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: Create firewall rule
+      x-summary-source: derived
+  /firewall/rules/{ruleId}:
+    get:
+      tags:
+      - Firewall
+      description: Fetch one firewall rule.
+      operationId: get_firewall_rule
+      parameters:
+      - name: ruleId
+        in: path
+        description: Firewall rule id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The rule
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FirewallRule'
+        '404':
+          description: 'NOT_FOUND: no such rule in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: Get firewall rule
+      x-summary-source: derived
+    delete:
+      tags:
+      - Firewall
+      description: Delete a firewall rule. The resources it named are untouched — the dependency runs one way.
+      operationId: delete_firewall_rule
+      parameters:
+      - name: ruleId
+        in: path
+        description: Firewall rule id
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Rule deleted
+        '404':
+          description: 'NOT_FOUND: no such rule in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: Delete firewall rule
+      x-summary-source: derived
+  /v5/firewall/evaluate:
+    post:
+      tags:
+      - Firewall
+      description: 'Ask whether a connection would be allowed by your rules, without changing anything. Useful for checking a rule set before you rely on it. Traffic Freestyle itself delivers — a mapped domain, the SSH proxy — answers `allowedByPlatform`: it is allowed whatever your rules say, and no rule can block it. Outbound mail answers `deniedByPlatform`: a connection to a mail port on the public Internet is closed whatever your rules say, and goes through an `smtp` TLS rule instead.'
+      operationId: postV5FirewallEvaluate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TrafficDescription'
+        required: true
+      responses:
+        '200':
+          description: The decision, and what produced it
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FirewallDecision'
+        '400':
+          description: 'BAD_REQUEST: the traffic description is not well formed'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: Evaluate firewall
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: evaluate_firewall
+  /v5/firewall/rules:
+    get:
+      tags:
+      - Firewall
+      description: List your firewall rules, newest first. Filter by `vmId` to get the rules that apply to one VM — those naming it, plus those naming a private network it is attached to — or by `vpcId`/`tunnelId` for the rules naming one of those.
+      operationId: getV5FirewallRules
+      parameters:
+      - name: vmId
+        in: query
+        description: 'Rules that apply to this VM: those naming it, plus those naming a
+
+          private network it is attached to. Its id, or your slug for it.'
+        required: false
+        schema:
+          type: string
+      - name: vpcId
+        in: query
+        description: Rules naming this private network. Its id, or your slug for it.
+        required: false
+        schema:
+          type: string
+      - name: tunnelId
+        in: query
+        description: Rules naming this tunnel, by its id.
+        required: false
+        schema:
+          type: string
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+      responses:
+        '200':
+          description: The account's firewall rules
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListFirewallRulesResponse'
+        '404':
+          description: 'NOT_FOUND: a `vmId`, `vpcId`, or `tunnelId` filter names something that does not exist in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: List firewall rules
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: list_firewall_rules
+    post:
+      tags:
+      - Firewall
+      description: 'Allow traffic from one place to another. Both `source` and `destination` are matchers whose fields intersect; use `public: true` for the public Internet. A rule naming a VM, a private network, or a tunnel is deleted automatically when that resource is.'
+      operationId: postV5FirewallRules
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateFirewallRuleRequest'
+        required: true
+      responses:
+        '200':
+          description: Rule created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FirewallRule'
+        '400':
+          description: 'BAD_REQUEST: an unknown field, a matcher that identifies nothing, a port without a protocol, or a malformed CIDR'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '404':
+          description: 'NOT_FOUND: the rule names a VM, network, or tunnel that does not exist in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '409':
+          description: 'CONFLICT: your account is at its firewall rule limit'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: Create firewall rule
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: create_firewall_rule
+  /v5/firewall/rules/{ruleId}:
+    get:
+      tags:
+      - Firewall
+      description: Fetch one firewall rule.
+      operationId: getV5FirewallRulesByRuleId
+      parameters:
+      - name: ruleId
+        in: path
+        description: Firewall rule id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The rule
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FirewallRule'
+        '404':
+          description: 'NOT_FOUND: no such rule in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: Get firewall rule
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: get_firewall_rule
+    delete:
+      tags:
+      - Firewall
+      description: Delete a firewall rule. The resources it named are untouched — the dependency runs one way.
+      operationId: deleteV5FirewallRulesByRuleId
+      parameters:
+      - name: ruleId
+        in: path
+        description: Firewall rule id
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Rule deleted
+        '404':
+          description: 'NOT_FOUND: no such rule in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: Delete firewall rule
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: delete_firewall_rule
+components:
+  schemas:
+    PublicErrorBody:
+      type: object
+      description: 'The shape of every error response: a stable machine-readable `code` and a
+
+        human-readable `message`. The HTTP status carries the class of failure.
+
+
+        Some errors add fields alongside these two; `code` and `message` are always
+
+        present.'
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: string
+          description: 'A stable identifier for the failure, in `SCREAMING_SNAKE_CASE`. Branch
+
+            on this; `message` is prose and may be reworded at any time.'
+          example: NOT_FOUND
+        message:
+          type: string
+          description: 'A human-readable explanation of what went wrong. A fault inside the
+
+            platform is always reported as `INTERNAL_ERROR` with no further detail.'
+          example: vm vm-1234 not found
+    ListFirewallRulesResponse:
+      type: object
+      required:
+      - rules
+      - totalCount
+      properties:
+        rules:
+          type: array
+          items:
+            $ref: '#/components/schemas/FirewallRule'
+          description: Newest first.
+        totalCount:
+          type: integer
+          minimum: 0
+    TrafficDescription:
+      type: object
+      description: A connection to decide about.
+      required:
+      - source
+      - destination
+      properties:
+        destination:
+          $ref: '#/components/schemas/TrafficParty'
+        protocol:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/FirewallProtocol'
+        source:
+          $ref: '#/components/schemas/TrafficParty'
+      additionalProperties: false
+    FirewallRule:
+      type: object
+      description: 'An allowed path through the network, as intent: traffic matching `source`
+
+        may reach `destination`.'
+      required:
+      - id
+      - action
+      - source
+      - destination
+      - createdAt
+      - updatedAt
+      properties:
+        action:
+          $ref: '#/components/schemas/FirewallAction'
+        createdAt:
+          type: string
+          format: date-time
+        dependencies:
+          type: array
+          items:
+            $ref: '#/components/schemas/FirewallDependency'
+          description: 'What this rule depends on. Deleting any of them deletes this rule, so
+
+            no rule is ever left pointing at something that no longer exists.'
+        description:
+          type:
+          - string
+          - 'null'
+        destination:
+          $ref: '#/components/schemas/FirewallEndpoint'
+        id:
+          type: string
+        source:
+          $ref: '#/components/schemas/FirewallEndpoint'
+        updatedAt:
+          type: string
+          format: date-time
+    FirewallDecision:
+      type: object
+      description: 'Why a connection would be allowed, or that it would not.
+
+
+        `outcome` is `allowedByPlatform` (Freestyle''s own ingress, e.g. a mapped
+
+        domain — no rule involved), `allowedByRule` (with the `ruleId` that
+
+        matched), `deniedByPlatform` (with the `reason`, e.g. `outboundMail`, that
+
+        no rule can override), or `denied`.'
+      required:
+      - outcome
+      properties:
+        outcome:
+          type: string
+        reason:
+          type:
+          - string
+          - 'null'
+          description: Which platform policy closed it, on `deniedByPlatform`.
+        ruleId:
+          type:
+          - string
+          - 'null'
+          description: The rule that matched, on `allowedByRule`.
+        side:
+          type:
+          - string
+          - 'null'
+          description: Which end was Freestyle's ingress, on `allowedByPlatform`.
+    FirewallEndpoint:
+      type: object
+      description: 'One end of a rule: which traffic this side matches.
+
+
+        Fields intersect — `{ vpcId, port, protocol }` is "traffic in that network,
+
+        on that port, over that protocol". `vmId`/`vpcId`/`tunnelId` select by
+
+        identity (the VM however it is addressed); `cidr`/`public` select by
+
+        address. Unknown fields
+
+        are rejected rather than ignored: a matcher is a security statement, and a
+
+        typo''d `porrt: 22` that quietly became "every port" is the wrong failure.'
+      properties:
+        cidr:
+          type:
+          - string
+          - 'null'
+          description: An address range, IPv4 or IPv6, in canonical `network/prefix` form.
+        port:
+          type:
+          - integer
+          - 'null'
+          format: int32
+          description: A single port, 1–65535. Requires `protocol`.
+          minimum: 0
+        protocol:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/FirewallProtocol'
+        public:
+          type:
+          - boolean
+          - 'null'
+          description: 'Every publicly routable address, whoever owns it — including another
+
+            Freestyle VM reached at its public address. Only `true` is meaningful;
+
+            omit the field otherwise. Not combined with `vmId` or `vpcId`.'
+        tunnelId:
+          type:
+          - string
+          - 'null'
+          description: 'Whatever is on the far side of one tunnel — the client that dials it,
+
+            and any remote range routed over it. Tunnels have no slug, so this is a
+
+            tunnel id: `tun-…`, or `wg-…` for one carried over from the per-VPC VPN
+
+            records tunnels replaced.'
+        vmId:
+          type:
+          - string
+          - 'null'
+          description: A single VM, by id or by your slug for it. Answers hold its id.
+        vpcId:
+          type:
+          - string
+          - 'null'
+          description: 'Everything on one private network, by id or by your slug for it.
+
+            Answers hold its id.'
+      additionalProperties: false
+    FirewallAction:
+      type: string
+      description: 'What a rule does with the traffic it matches.
+
+
+        Only `allow` exists today, and it is required on every rule rather than
+
+        defaulted: a default would mean that the day `deny` arrives, every rule
+
+        written before it silently acquires an action it never stated.'
+      enum:
+      - allow
+    CreateFirewallRuleRequest:
+      type: object
+      required:
+      - action
+      - source
+      - destination
+      properties:
+        action:
+          $ref: '#/components/schemas/FirewallAction'
+          description: Required, and `allow` is the only accepted value.
+        description:
+          type:
+          - string
+          - 'null'
+          description: A free-form note, up to 1024 characters.
+        destination:
+          $ref: '#/components/schemas/FirewallEndpoint'
+        source:
+          $ref: '#/components/schemas/FirewallEndpoint'
+      additionalProperties: false
+    TrafficParty:
+      type: object
+      description: 'One end of a connection to ask about: everything true about the party, not
+
+        a pattern.'
+      properties:
+        address:
+          type:
+          - string
+          - 'null'
+          description: The address in use, when there is one — what `cidr` rules are tested against.
+        platform:
+          type: boolean
+          description: 'Freestyle''s own ingress — the web proxy serving a mapped domain, or the
+
+            SSH proxy. Always allowed, whatever the rules say.'
+        port:
+          type:
+          - integer
+          - 'null'
+          format: int32
+          minimum: 0
+        public:
+          type: boolean
+          description: 'Whether that address is publicly routable — what `public: true` matches.'
+        tunnelId:
+          type:
+          - string
+          - 'null'
+        vmId:
+          type:
+          - string
+          - 'null'
+        vpcIds:
+          type: array
+          items:
+            type: string
+          description: Every private network this party is on; a rule naming one of them matches.
+      additionalProperties: false
+    FirewallProtocol:
+      type: string
+      description: The transport a matcher is restricted to.
+      enum:
+      - tcp
+      - udp
+      - icmp
+    FirewallDependency:
+      type: object
+      description: 'A resource a rule cannot outlive: deleting it deletes the rule.'
+      required:
+      - kind
+      - id
+      properties:
+        displayName:
+          type:
+          - string
+          - 'null'
+          description: Your label for the named resource, under the same rules as `slug`.
+        id:
+          type: string
+          description: The resource's id.
+        kind:
+          type: string
+          description: '`vm`, `vpc`, or `tunnel` today. New selectors add new kinds.'
+        slug:
+          type:
+          - string
+          - 'null'
+          description: 'Your handle for the named resource, when it has one — so a rule says
+
+            what it points at without a lookup per id.'
+  securitySchemes:
+    apiKey:
+      type: http
+      scheme: bearer
+      description: 'Your Freestyle API key, sent as `Authorization: Bearer <api key>`. Every request needs one unless it is authenticated with an identity access token instead.'
+    identityAccessToken:
+      type: apiKey
+      in: header
+      name: x-freestyle-identity-access-token
+      description: An access token belonging to an identity you created. It reaches only the VMs that identity has been granted, and only their exec and terminal routes. Hand one to an end user instead of your API key.

@@ -1,0 +1,621 @@
+openapi: 3.2.0
+info:
+  title: Freestyle Snapshots API
+  description: '# Powerful Virtual Machines
+
+
+    Documentation: freestyle.sh/docs
+
+
+    Freestyle VMs are full Linux virtual machines designed for long running, complex tasks. ## Key Features
+
+
+    - **Instant Startup**: Freestyle VMs provision in milliseconds, with p99s under 400ms. - **Persistence**: Freestyle VMs can run forever, they can be hibernated with their exact memory in place and come back to life weeks later instantly, in that exact state. - **Powerful**: Freestyle VMs go up to 64GB of RAM for public tiers and much further for enterprise. Freestyle does high quality hardware virtualization supporting nested virtualization, FUSE, eBPF, full Linux networking and more. If it can run in an EC2, it can run in a Freestyle VM. - **Cheaply Snapshottable and Branchable**: Freestyle VMs are instantly and cheaply snapshottable (sub 1ms interruption, sub 50ms to snapshot ready). These snapshots can be used to create new VMs in the exact state of the original VM (memory and disk). This enables powerful workflows like branching, cloning, and rapid recovery from failures. ## When to use Freestyle
+
+
+    - **Long Running Agent Tasks**: When you have tasks that take hours, days, weeks or months to run, Freestyle VMs provide a persistent and powerful environment that your agent can work in to completion. - **Failure Prone/Experimental Exploration**: When your tasks involve branching, cloning or need time travel Freestyle VMs are ideal because of their cheap snapshottability and power that makes them great for experiments. - **Complex Coding Problems**: When you are tackling advanced coding problems in research or production codebases, poor virtualization and small sandboxes will not cut it. Freestyle VMs provide the necessary resources and environment to handle these challenges effectively. - **Multi Tenant Usage Patterns**: Freestyle VMs are intentionally built to be used by agent builders with multiple customers. The slug system allows for keying VMs by their user, the identity system allows for granular acccess control and permissioning, and the VPC system allows for multi-tenant network isolation. ## When not to use it
+
+
+    - **"Run AI Code"**: If your exclusively executing short lived Python scripts or other ephemeral tasks the benefits above aren''t relevant. Freestyle VMs should still be benchmarked but there may be alternatives better suited. - **CPU Intensive CI/CD**: Freestyle VMs run on bare metal on data center CPUs. We also oversubscribe host resources. For workloads that require sustained high CPU usage like building the Linux Kernel or mining crypto prefer cloud providers that offer consumer CPU performance. - **Short Lived Tasks**: If your tasks are extremely short lived and do not benefit from persistence or powerful hardware. If your average task takes less than 15 minutes to complete then they are likely cheaply retryable and don''t require the reliability and persistence that Freestyle VMs provide. - **Sole Application Hosting**: Freestyle VMs are designed as workbenches for development, experimentation and task execution. Not for hosting production applications. Hosting a minecraft server for some friends will work great on Freestyle, but we do not offer autoscaling, load balancers or CDNs and we don''t plan to. ## Emerging Use Cases
+
+
+    - **RL Environments**: Freestyle VMs are well-suited for running reinforcement learning environments that require persistent state and complex setups. The ability to snapshot and branch VMs allows researchers to experiment with different strategies and record environment states efficiently. - **Auto Research Climbing**: Freestyle VMs are great for auto research as the snapshotting and fan out allows research agents to explore multiple strategies, review past results and iterate efficiently without ever losing progress.'
+  license:
+    name: ''
+  version: 0.1.0
+security:
+- apiKey: []
+tags:
+- name: Snapshots
+  description: Capture a VM's exact state, memory and disk, and boot new VMs from it
+paths:
+  /snapshots:
+    get:
+      tags:
+      - Snapshots
+      description: List your snapshots.
+      operationId: list_snapshots
+      parameters:
+      - name: sourceVmId
+        in: query
+        description: Only snapshots taken from this VM.
+        required: false
+        schema:
+          type: string
+      - name: search
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+      responses:
+        '200':
+          description: The account's snapshots
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListSnapshotsResponse'
+      deprecated: true
+      summary: List snapshots
+      x-summary-source: derived
+  /snapshots/{snapshotIdOrSlug}:
+    get:
+      tags:
+      - Snapshots
+      description: Fetch a snapshot by its id or its slug.
+      operationId: get_snapshot
+      parameters:
+      - name: snapshotIdOrSlug
+        in: path
+        description: Snapshot id, your slug, or `{owner}/{slug}` for a public one
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The snapshot
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Snapshot'
+        '404':
+          description: 'NOT_FOUND: no such snapshot'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: Get snapshot
+      x-summary-source: derived
+    delete:
+      tags:
+      - Snapshots
+      description: Delete a snapshot permanently. VMs already created from it are unaffected — a snapshot is a pointer to the data backing them, not the data itself — and its slug is freed immediately.
+      operationId: delete_snapshot
+      parameters:
+      - name: snapshotIdOrSlug
+        in: path
+        description: Snapshot id or your slug for it
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Snapshot deleted
+        '404':
+          description: 'NOT_FOUND: no such snapshot'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '409':
+          description: 'CONFLICT: the snapshot is the platform default'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: Delete snapshot
+      x-summary-source: derived
+    patch:
+      tags:
+      - Snapshots
+      description: Rename a snapshot or change its slug.
+      operationId: update_snapshot
+      parameters:
+      - name: snapshotIdOrSlug
+        in: path
+        description: Snapshot id or your slug for it
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateSnapshotRequest'
+        required: true
+      responses:
+        '200':
+          description: The updated snapshot
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Snapshot'
+        '400':
+          description: 'BAD_REQUEST: invalid slug'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '404':
+          description: 'NOT_FOUND: no such snapshot'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '409':
+          description: 'CONFLICT: that slug is already used by another snapshot in your account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: Update snapshot
+      x-summary-source: derived
+  /v5/snapshots:
+    get:
+      tags:
+      - Snapshots
+      description: List your snapshots.
+      operationId: getV5Snapshots
+      parameters:
+      - name: sourceVmId
+        in: query
+        description: Only snapshots taken from this VM.
+        required: false
+        schema:
+          type: string
+      - name: search
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+      responses:
+        '200':
+          description: The account's snapshots
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListSnapshotsResponse'
+      summary: List snapshots
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: list_snapshots
+  /v5/snapshots/{snapshotIdOrSlug}:
+    get:
+      tags:
+      - Snapshots
+      description: Fetch a snapshot by its id or its slug.
+      operationId: getV5SnapshotsBySnapshotIdOrSlug
+      parameters:
+      - name: snapshotIdOrSlug
+        in: path
+        description: Snapshot id, your slug, or `{owner}/{slug}` for a public one
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The snapshot
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Snapshot'
+        '404':
+          description: 'NOT_FOUND: no such snapshot'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: Get snapshot
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: get_snapshot
+    delete:
+      tags:
+      - Snapshots
+      description: Delete a snapshot permanently. VMs already created from it are unaffected — a snapshot is a pointer to the data backing them, not the data itself — and its slug is freed immediately.
+      operationId: deleteV5SnapshotsBySnapshotIdOrSlug
+      parameters:
+      - name: snapshotIdOrSlug
+        in: path
+        description: Snapshot id or your slug for it
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Snapshot deleted
+        '404':
+          description: 'NOT_FOUND: no such snapshot'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '409':
+          description: 'CONFLICT: the snapshot is the platform default'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: Delete snapshot
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: delete_snapshot
+    patch:
+      tags:
+      - Snapshots
+      description: Rename a snapshot or change its slug.
+      operationId: patchV5SnapshotsBySnapshotIdOrSlug
+      parameters:
+      - name: snapshotIdOrSlug
+        in: path
+        description: Snapshot id or your slug for it
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateSnapshotRequest'
+        required: true
+      responses:
+        '200':
+          description: The updated snapshot
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Snapshot'
+        '400':
+          description: 'BAD_REQUEST: invalid slug'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '404':
+          description: 'NOT_FOUND: no such snapshot'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '409':
+          description: 'CONFLICT: that slug is already used by another snapshot in your account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: Update snapshot
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: update_snapshot
+  /v5/vms/{vmIdOrSlug}/snapshot:
+    post:
+      tags:
+      - Snapshots
+      description: Capture the VM's exact state, memory and disk, so a VM booted from it resumes exactly where this one was. The VM must be running or paused. New snapshots are private. This call returns once the state is captured; VMs can be created from the snapshot immediately.
+      operationId: snapshot_vm
+      parameters:
+      - name: vmIdOrSlug
+        in: path
+        description: VM id, or your slug for it
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSnapshotRequest'
+        required: true
+      responses:
+        '200':
+          description: Snapshot created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SnapshotCreated'
+        '404':
+          description: 'NOT_FOUND: no such VM in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '409':
+          description: 'CONFLICT: the VM is neither running nor paused'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: Snapshot vm
+      x-summary-source: derived
+  /vms/{vmIdOrSlug}/snapshot:
+    post:
+      tags:
+      - Snapshots
+      description: Capture the VM's exact state, memory and disk, so a VM booted from it resumes exactly where this one was. The VM must be running or paused. New snapshots are private. This call returns once the state is captured; VMs can be created from the snapshot immediately.
+      operationId: postVmsByVmIdOrSlugSnapshot
+      parameters:
+      - name: vmIdOrSlug
+        in: path
+        description: VM id, or your slug for it
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSnapshotRequest'
+        required: true
+      responses:
+        '200':
+          description: Snapshot created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SnapshotCreated'
+        '404':
+          description: 'NOT_FOUND: no such VM in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '409':
+          description: 'CONFLICT: the VM is neither running nor paused'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: Snapshot vm
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: snapshot_vm
+components:
+  schemas:
+    PublicErrorBody:
+      type: object
+      description: 'The shape of every error response: a stable machine-readable `code` and a
+
+        human-readable `message`. The HTTP status carries the class of failure.
+
+
+        Some errors add fields alongside these two; `code` and `message` are always
+
+        present.'
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: string
+          description: 'A stable identifier for the failure, in `SCREAMING_SNAKE_CASE`. Branch
+
+            on this; `message` is prose and may be reworded at any time.'
+          example: NOT_FOUND
+        message:
+          type: string
+          description: 'A human-readable explanation of what went wrong. A fault inside the
+
+            platform is always reported as `INTERNAL_ERROR` with no further detail.'
+          example: vm vm-1234 not found
+    ListSnapshotsResponse:
+      type: object
+      required:
+      - snapshots
+      - totalCount
+      properties:
+        snapshots:
+          type: array
+          items:
+            $ref: '#/components/schemas/Snapshot'
+        totalCount:
+          type: integer
+          minimum: 0
+    SnapshotId:
+      type: string
+      description: Identifies a snapshot. Minted as `"sh-<uuid>"`.
+    Snapshot:
+      type: object
+      description: 'A snapshot as its owner sees it. The disk/memory layer tree, replication
+
+        targets, and originating manager are storage internals and are not exposed.'
+      required:
+      - id
+      - createdAt
+      - updatedAt
+      properties:
+        autoDeleteFromPlan:
+          type: boolean
+          description: 'Whether `autoDeleteSeconds` above is your plan''s doing rather than
+
+            yours, under the same rule as on a VM.'
+        autoDeleteSeconds:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          description: 'Delete the snapshot once this long has passed without a VM being
+
+            created from it. Absent means never. Some plans cap this and the cap
+
+            shows up here.'
+          minimum: 0
+        createdAt:
+          type: string
+          format: date-time
+        displayName:
+          type:
+          - string
+          - 'null'
+        id:
+          $ref: '#/components/schemas/SnapshotId'
+        lastUsedAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: 'When a VM was last created from this snapshot. Absent if none ever has
+
+            been — which is not the same as never having been touched, since
+
+            renaming a snapshot is not using it.'
+        public:
+          type: boolean
+          description: Public snapshots are bootable by any account.
+        slug:
+          type:
+          - string
+          - 'null'
+        sourceVmDisplayName:
+          type:
+          - string
+          - 'null'
+          description: The source VM's display name now, under the same rules.
+        sourceVmId:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/VmId'
+        sourceVmSlug:
+          type:
+          - string
+          - 'null'
+          description: 'What the source VM is called *now*; absent when it has no slug and
+
+            when it is gone.'
+        ttlSeconds:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          description: 'Delete the snapshot this long after it was taken, however recently
+
+            anything booted it.'
+          minimum: 0
+        updatedAt:
+          type: string
+          format: date-time
+    UpdateSnapshotRequest:
+      type: object
+      properties:
+        autoDeleteSeconds:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          description: 'Seconds of nothing being created from it before the snapshot is
+
+            deleted; -1 removes the window. On a plan that caps it, -1 puts you
+
+            back on the cap rather than off it.'
+        displayName:
+          type:
+          - string
+          - 'null'
+        slug:
+          type:
+          - string
+          - 'null'
+        ttlSeconds:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          description: 'Seconds from when the snapshot was taken — not from now — before it is
+
+            deleted; -1 removes the deadline.'
+      additionalProperties: false
+    SnapshotCreated:
+      type: object
+      required:
+      - snapshotId
+      - snapshot
+      properties:
+        snapshot:
+          $ref: '#/components/schemas/Snapshot'
+        snapshotId:
+          $ref: '#/components/schemas/SnapshotId'
+        sourceVmId:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/VmId'
+    CreateSnapshotRequest:
+      type: object
+      properties:
+        autoDeleteSeconds:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          description: 'Delete the snapshot once this many seconds pass without a VM being
+
+            created from it. Every create from it resets the clock. -1 (or
+
+            omitting this) means never; some plans cap this, and on those omitting
+
+            it (or sending -1) gets you the cap.'
+        displayName:
+          type:
+          - string
+          - 'null'
+        slug:
+          type:
+          - string
+          - 'null'
+        ttlSeconds:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          description: 'Delete the snapshot this many seconds after it is taken, whatever has
+
+            booted it since. -1 (or omitting this) means no deadline.'
+      additionalProperties: false
+    VmId:
+      type: string
+      description: Identifies a VM. Minted as `"vm-<uuid>"`.
+  securitySchemes:
+    apiKey:
+      type: http
+      scheme: bearer
+      description: 'Your Freestyle API key, sent as `Authorization: Bearer <api key>`. Every request needs one unless it is authenticated with an identity access token instead.'
+    identityAccessToken:
+      type: apiKey
+      in: header
+      name: x-freestyle-identity-access-token
+      description: An access token belonging to an identity you created. It reaches only the VMs that identity has been granted, and only their exec and terminal routes. Hand one to an end user instead of your API key.

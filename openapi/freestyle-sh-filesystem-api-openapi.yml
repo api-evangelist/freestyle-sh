@@ -1,0 +1,1429 @@
+openapi: 3.2.0
+info:
+  title: Freestyle Filesystem API
+  description: '# Powerful Virtual Machines
+
+
+    Documentation: freestyle.sh/docs
+
+
+    Freestyle VMs are full Linux virtual machines designed for long running, complex tasks. ## Key Features
+
+
+    - **Instant Startup**: Freestyle VMs provision in milliseconds, with p99s under 400ms. - **Persistence**: Freestyle VMs can run forever, they can be hibernated with their exact memory in place and come back to life weeks later instantly, in that exact state. - **Powerful**: Freestyle VMs go up to 64GB of RAM for public tiers and much further for enterprise. Freestyle does high quality hardware virtualization supporting nested virtualization, FUSE, eBPF, full Linux networking and more. If it can run in an EC2, it can run in a Freestyle VM. - **Cheaply Snapshottable and Branchable**: Freestyle VMs are instantly and cheaply snapshottable (sub 1ms interruption, sub 50ms to snapshot ready). These snapshots can be used to create new VMs in the exact state of the original VM (memory and disk). This enables powerful workflows like branching, cloning, and rapid recovery from failures. ## When to use Freestyle
+
+
+    - **Long Running Agent Tasks**: When you have tasks that take hours, days, weeks or months to run, Freestyle VMs provide a persistent and powerful environment that your agent can work in to completion. - **Failure Prone/Experimental Exploration**: When your tasks involve branching, cloning or need time travel Freestyle VMs are ideal because of their cheap snapshottability and power that makes them great for experiments. - **Complex Coding Problems**: When you are tackling advanced coding problems in research or production codebases, poor virtualization and small sandboxes will not cut it. Freestyle VMs provide the necessary resources and environment to handle these challenges effectively. - **Multi Tenant Usage Patterns**: Freestyle VMs are intentionally built to be used by agent builders with multiple customers. The slug system allows for keying VMs by their user, the identity system allows for granular acccess control and permissioning, and the VPC system allows for multi-tenant network isolation. ## When not to use it
+
+
+    - **"Run AI Code"**: If your exclusively executing short lived Python scripts or other ephemeral tasks the benefits above aren''t relevant. Freestyle VMs should still be benchmarked but there may be alternatives better suited. - **CPU Intensive CI/CD**: Freestyle VMs run on bare metal on data center CPUs. We also oversubscribe host resources. For workloads that require sustained high CPU usage like building the Linux Kernel or mining crypto prefer cloud providers that offer consumer CPU performance. - **Short Lived Tasks**: If your tasks are extremely short lived and do not benefit from persistence or powerful hardware. If your average task takes less than 15 minutes to complete then they are likely cheaply retryable and don''t require the reliability and persistence that Freestyle VMs provide. - **Sole Application Hosting**: Freestyle VMs are designed as workbenches for development, experimentation and task execution. Not for hosting production applications. Hosting a minecraft server for some friends will work great on Freestyle, but we do not offer autoscaling, load balancers or CDNs and we don''t plan to. ## Emerging Use Cases
+
+
+    - **RL Environments**: Freestyle VMs are well-suited for running reinforcement learning environments that require persistent state and complex setups. The ability to snapshot and branch VMs allows researchers to experiment with different strategies and record environment states efficiently. - **Auto Research Climbing**: Freestyle VMs are great for auto research as the snapshotting and fan out allows research agents to explore multiple strategies, review past results and iterate efficiently without ever losing progress.'
+  license:
+    name: ''
+  version: 0.1.0
+security:
+- apiKey: []
+tags:
+- name: Filesystem
+  description: Read and write files inside a running VM
+paths:
+  /v5/vms/{vmIdOrSlug}/fs/dir:
+    get:
+      tags:
+      - Filesystem
+      description: List the entries of a directory inside the VM.
+      operationId: read_dir
+      parameters:
+      - name: vmIdOrSlug
+        in: path
+        description: VM id, or your slug for it
+        required: true
+        schema:
+          type: string
+      - name: path
+        in: query
+        description: Absolute path inside the guest.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Directory listing
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadDirResponse'
+        '400':
+          description: 'BAD_REQUEST: the path is not absolute, contains `..`, or is over 4096 characters'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '404':
+          description: 'NOT_FOUND: no such VM, or no such path in the guest'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: Read dir
+      x-summary-source: derived
+  /v5/vms/{vmIdOrSlug}/fs/exists:
+    get:
+      tags:
+      - Filesystem
+      description: Check whether a path exists inside the VM.
+      operationId: path_exists
+      parameters:
+      - name: vmIdOrSlug
+        in: path
+        description: VM id, or your slug for it
+        required: true
+        schema:
+          type: string
+      - name: path
+        in: query
+        description: Absolute path inside the guest.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Whether the path exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PathExistsResponse'
+        '400':
+          description: 'BAD_REQUEST: the path is not absolute, contains `..`, or is over 4096 characters'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '404':
+          description: 'NOT_FOUND: no such VM in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: Path exists
+      x-summary-source: derived
+  /v5/vms/{vmIdOrSlug}/fs/mkdir:
+    post:
+      tags:
+      - Filesystem
+      description: Create a directory inside the VM.
+      operationId: make_dir
+      parameters:
+      - name: vmIdOrSlug
+        in: path
+        description: VM id, or your slug for it
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MakeDirRequest'
+        required: true
+      responses:
+        '204':
+          description: Directory created, parents included
+        '400':
+          description: 'BAD_REQUEST: the path is not absolute, contains `..`, or is over 4096 characters'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '404':
+          description: 'NOT_FOUND: no such VM in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: Make dir
+      x-summary-source: derived
+  /v5/vms/{vmIdOrSlug}/fs/read:
+    get:
+      tags:
+      - Filesystem
+      description: 'Read a file from inside the VM. The response body is the file''s raw bytes, streamed from the guest, so there is no size limit and nothing to decode. Send a `Range: bytes=…` header to fetch part of a file — which is also how you resume a download that failed partway.'
+      operationId: read_file
+      parameters:
+      - name: vmIdOrSlug
+        in: path
+        description: VM id, or your slug for it
+        required: true
+        schema:
+          type: string
+      - name: path
+        in: query
+        description: Absolute path inside the guest.
+        required: true
+        schema:
+          type: string
+      - name: Range
+        in: header
+        description: Optional single byte range, e.g. `bytes=0-1048575`
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      responses:
+        '200':
+          description: The file's bytes
+          content:
+            application/octet-stream:
+              schema:
+                type: array
+                items:
+                  type: integer
+                  format: int32
+                  minimum: 0
+        '206':
+          description: The requested byte range
+          content:
+            application/octet-stream:
+              schema:
+                type: array
+                items:
+                  type: integer
+                  format: int32
+                  minimum: 0
+        '400':
+          description: 'BAD_REQUEST: the path is not absolute, contains `..`, or is over 4096 characters'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '404':
+          description: 'NOT_FOUND: no such VM, or no such path in the guest'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '409':
+          description: 'CONFLICT: the VM stopped responding while serving the read (`VM_NON_RESPONSIVE`); safe to retry'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '416':
+          description: 'RANGE_NOT_SATISFIABLE: the range lies outside the file'
+      summary: Read file
+      x-summary-source: derived
+  /v5/vms/{vmIdOrSlug}/fs/remove:
+    delete:
+      tags:
+      - Filesystem
+      description: Delete a file or directory inside the VM.
+      operationId: remove_path
+      parameters:
+      - name: vmIdOrSlug
+        in: path
+        description: VM id, or your slug for it
+        required: true
+        schema:
+          type: string
+      - name: path
+        in: query
+        description: Absolute path inside the guest.
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Path removed
+        '400':
+          description: 'BAD_REQUEST: the path is not absolute, contains `..`, or is over 4096 characters'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '404':
+          description: 'NOT_FOUND: no such VM, or no such path in the guest'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: Remove path
+      x-summary-source: derived
+  /v5/vms/{vmIdOrSlug}/fs/stat:
+    get:
+      tags:
+      - Filesystem
+      description: Fetch metadata for a path inside the VM.
+      operationId: stat_path
+      parameters:
+      - name: vmIdOrSlug
+        in: path
+        description: VM id, or your slug for it
+        required: true
+        schema:
+          type: string
+      - name: path
+        in: query
+        description: Absolute path inside the guest.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Path metadata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FileStat'
+        '400':
+          description: 'BAD_REQUEST: the path is not absolute, contains `..`, or is over 4096 characters'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '404':
+          description: 'NOT_FOUND: no such VM, or no such path in the guest'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: Stat path
+      x-summary-source: derived
+  /v5/vms/{vmIdOrSlug}/fs/uploads:
+    post:
+      tags:
+      - Filesystem
+      description: Start a chunked upload of a large file (up to 16 GiB) into the VM. Send the bytes with `PUT /fs/uploads/{uploadId}`, then finish with `commit`.
+      operationId: begin_upload
+      parameters:
+      - name: vmIdOrSlug
+        in: path
+        description: VM id, or your slug for it
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BeginUploadRequest'
+        required: true
+      responses:
+        '200':
+          description: Session created; upload chunks next
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadSessionStatus'
+        '400':
+          description: 'BAD_REQUEST: invalid path, size over 16 GiB, or malformed sha256'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '404':
+          description: 'NOT_FOUND: no such VM in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '409':
+          description: 'CONFLICT: too many open upload sessions for this VM'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: Begin upload
+      x-summary-source: derived
+  /v5/vms/{vmIdOrSlug}/fs/uploads/{uploadId}:
+    get:
+      tags:
+      - Filesystem
+      description: Fetch an upload session's progress — use `receivedBytes` as the next chunk's offset when resuming after a failed chunk.
+      operationId: upload_status
+      parameters:
+      - name: vmIdOrSlug
+        in: path
+        description: VM id, or your slug for it
+        required: true
+        schema:
+          type: string
+      - name: uploadId
+        in: path
+        description: Upload session id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Session progress
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadSessionStatus'
+        '404':
+          description: 'NOT_FOUND: no such session (sessions expire after an hour idle and do not survive host restarts)'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: Upload status
+      x-summary-source: derived
+    put:
+      tags:
+      - Filesystem
+      description: Append one chunk of raw bytes to an upload session at the given offset. Chunks must arrive in order; on any transport error, re-fetch the session and resume from its `receivedBytes`. Keep chunks small enough to retry cheaply (the SDK uses 16 MiB; the hard cap is 256 MiB).
+      operationId: upload_chunk
+      parameters:
+      - name: vmIdOrSlug
+        in: path
+        description: VM id, or your slug for it
+        required: true
+        schema:
+          type: string
+      - name: uploadId
+        in: path
+        description: Upload session id
+        required: true
+        schema:
+          type: string
+      - name: offset
+        in: query
+        description: 'Byte offset this chunk starts at. Must equal the session''s current
+
+          `receivedBytes`; chunks at an already-received offset are acknowledged
+
+          without rewriting (safe retries), and offsets beyond it are rejected.'
+        required: true
+        schema:
+          type: integer
+          format: int64
+          minimum: 0
+      requestBody:
+        description: The chunk's raw bytes
+        content:
+          application/octet-stream:
+            schema:
+              type: array
+              items:
+                type: integer
+                format: int32
+                minimum: 0
+        required: true
+      responses:
+        '200':
+          description: Chunk stored
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadSessionStatus'
+        '400':
+          description: 'BAD_REQUEST: the chunk overruns the declared size'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '404':
+          description: 'NOT_FOUND: no such session'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '409':
+          description: 'CONFLICT: the offset leaves a gap, or the session is committing'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '413':
+          description: 'PAYLOAD_TOO_LARGE: the chunk exceeds 256 MiB'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: Upload chunk
+      x-summary-source: derived
+    delete:
+      tags:
+      - Filesystem
+      description: Abandon an upload session and free its server-side spool space.
+      operationId: abort_upload
+      parameters:
+      - name: vmIdOrSlug
+        in: path
+        description: VM id, or your slug for it
+        required: true
+        schema:
+          type: string
+      - name: uploadId
+        in: path
+        description: Upload session id
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Session discarded
+        '404':
+          description: 'NOT_FOUND: no such session'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '409':
+          description: 'CONFLICT: the session is committing and cannot be aborted'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: Abort upload
+      x-summary-source: derived
+  /v5/vms/{vmIdOrSlug}/fs/uploads/{uploadId}/commit:
+    post:
+      tags:
+      - Filesystem
+      description: 'Finish an upload: the file is verified (size, and sha256 when declared) and renamed into place inside the guest atomically — the target path never holds a partial file. On success the session is gone; on failure it remains and commit may be retried.'
+      operationId: commit_upload
+      parameters:
+      - name: vmIdOrSlug
+        in: path
+        description: VM id, or your slug for it
+        required: true
+        schema:
+          type: string
+      - name: uploadId
+        in: path
+        description: Upload session id
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: File committed
+        '400':
+          description: 'BAD_REQUEST: not all bytes were uploaded, or the sha256 does not match'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '404':
+          description: 'NOT_FOUND: no such session'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '409':
+          description: 'CONFLICT: a commit is already in progress'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: Commit upload
+      x-summary-source: derived
+  /v5/vms/{vmIdOrSlug}/fs/write:
+    put:
+      tags:
+      - Filesystem
+      description: 'Write a file inside the VM, atomically: the path holds the old file until the new one has arrived intact, never a half-written one.
+
+
+        Send the file as the raw request body (with `?path=`) and it can be as large as 16 GiB — nothing buffers it whole. Send a JSON body instead (up to 32 MiB) when it is easier to type than to upload, as from this page.
+
+
+        This is a single attempt: if the connection drops, the write starts over. To upload something big over a link you do not trust, open an upload session (`POST /fs/uploads`) and send retryable chunks instead.'
+      operationId: write_file
+      parameters:
+      - name: vmIdOrSlug
+        in: path
+        description: VM id, or your slug for it
+        required: true
+        schema:
+          type: string
+      - name: path
+        in: query
+        description: 'Absolute path inside the guest. Required when the body is raw bytes;
+
+          omitted when sending a JSON body, which carries its own `path`.'
+        required: false
+        schema:
+          type: string
+      - name: mode
+        in: query
+        description: 'Final file mode bits (e.g. 493 for `0o755`). Defaults to the target''s
+
+          existing mode, or `0o600` for a new file.'
+        required: false
+        schema:
+          type: integer
+          format: int32
+          minimum: 0
+      - name: sha256
+        in: query
+        description: 'Optional sha256 of the file as 64 hex characters. Supplied, the write is
+
+          rejected unless the received bytes match.'
+        required: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WriteFileRequest'
+          application/octet-stream:
+            schema:
+              type: array
+              items:
+                type: integer
+                format: int32
+                minimum: 0
+        required: true
+      responses:
+        '204':
+          description: File written
+        '400':
+          description: 'BAD_REQUEST: invalid path, malformed body, or a sha256 that does not match the bytes received'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '404':
+          description: 'NOT_FOUND: no such VM in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '409':
+          description: 'CONFLICT: the VM stopped responding around the commit (`VM_NON_RESPONSIVE` — the upload may have committed; read the file back before re-uploading)'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '413':
+          description: 'PAYLOAD_TOO_LARGE: a JSON body over 32 MiB, or a file over 16 GiB'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: Write file
+      x-summary-source: derived
+  /vms/{vmIdOrSlug}/fs/dir:
+    get:
+      tags:
+      - Filesystem
+      description: List the entries of a directory inside the VM.
+      operationId: getVmsByVmIdOrSlugFsDir
+      parameters:
+      - name: vmIdOrSlug
+        in: path
+        description: VM id, or your slug for it
+        required: true
+        schema:
+          type: string
+      - name: path
+        in: query
+        description: Absolute path inside the guest.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Directory listing
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadDirResponse'
+        '400':
+          description: 'BAD_REQUEST: the path is not absolute, contains `..`, or is over 4096 characters'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '404':
+          description: 'NOT_FOUND: no such VM, or no such path in the guest'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: Read dir
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: read_dir
+  /vms/{vmIdOrSlug}/fs/exists:
+    get:
+      tags:
+      - Filesystem
+      description: Check whether a path exists inside the VM.
+      operationId: getVmsByVmIdOrSlugFsExists
+      parameters:
+      - name: vmIdOrSlug
+        in: path
+        description: VM id, or your slug for it
+        required: true
+        schema:
+          type: string
+      - name: path
+        in: query
+        description: Absolute path inside the guest.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Whether the path exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PathExistsResponse'
+        '400':
+          description: 'BAD_REQUEST: the path is not absolute, contains `..`, or is over 4096 characters'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '404':
+          description: 'NOT_FOUND: no such VM in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: Path exists
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: path_exists
+  /vms/{vmIdOrSlug}/fs/mkdir:
+    post:
+      tags:
+      - Filesystem
+      description: Create a directory inside the VM.
+      operationId: postVmsByVmIdOrSlugFsMkdir
+      parameters:
+      - name: vmIdOrSlug
+        in: path
+        description: VM id, or your slug for it
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MakeDirRequest'
+        required: true
+      responses:
+        '204':
+          description: Directory created, parents included
+        '400':
+          description: 'BAD_REQUEST: the path is not absolute, contains `..`, or is over 4096 characters'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '404':
+          description: 'NOT_FOUND: no such VM in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: Make dir
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: make_dir
+  /vms/{vmIdOrSlug}/fs/read:
+    get:
+      tags:
+      - Filesystem
+      description: 'Read a file from inside the VM. The response body is the file''s raw bytes, streamed from the guest, so there is no size limit and nothing to decode. Send a `Range: bytes=…` header to fetch part of a file — which is also how you resume a download that failed partway.'
+      operationId: getVmsByVmIdOrSlugFsRead
+      parameters:
+      - name: vmIdOrSlug
+        in: path
+        description: VM id, or your slug for it
+        required: true
+        schema:
+          type: string
+      - name: path
+        in: query
+        description: Absolute path inside the guest.
+        required: true
+        schema:
+          type: string
+      - name: Range
+        in: header
+        description: Optional single byte range, e.g. `bytes=0-1048575`
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      responses:
+        '200':
+          description: The file's bytes
+          content:
+            application/octet-stream:
+              schema:
+                type: array
+                items:
+                  type: integer
+                  format: int32
+                  minimum: 0
+        '206':
+          description: The requested byte range
+          content:
+            application/octet-stream:
+              schema:
+                type: array
+                items:
+                  type: integer
+                  format: int32
+                  minimum: 0
+        '400':
+          description: 'BAD_REQUEST: the path is not absolute, contains `..`, or is over 4096 characters'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '404':
+          description: 'NOT_FOUND: no such VM, or no such path in the guest'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '409':
+          description: 'CONFLICT: the VM stopped responding while serving the read (`VM_NON_RESPONSIVE`); safe to retry'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '416':
+          description: 'RANGE_NOT_SATISFIABLE: the range lies outside the file'
+      deprecated: true
+      summary: Read file
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: read_file
+  /vms/{vmIdOrSlug}/fs/remove:
+    delete:
+      tags:
+      - Filesystem
+      description: Delete a file or directory inside the VM.
+      operationId: deleteVmsByVmIdOrSlugFsRemove
+      parameters:
+      - name: vmIdOrSlug
+        in: path
+        description: VM id, or your slug for it
+        required: true
+        schema:
+          type: string
+      - name: path
+        in: query
+        description: Absolute path inside the guest.
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Path removed
+        '400':
+          description: 'BAD_REQUEST: the path is not absolute, contains `..`, or is over 4096 characters'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '404':
+          description: 'NOT_FOUND: no such VM, or no such path in the guest'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: Remove path
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: remove_path
+  /vms/{vmIdOrSlug}/fs/stat:
+    get:
+      tags:
+      - Filesystem
+      description: Fetch metadata for a path inside the VM.
+      operationId: getVmsByVmIdOrSlugFsStat
+      parameters:
+      - name: vmIdOrSlug
+        in: path
+        description: VM id, or your slug for it
+        required: true
+        schema:
+          type: string
+      - name: path
+        in: query
+        description: Absolute path inside the guest.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Path metadata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FileStat'
+        '400':
+          description: 'BAD_REQUEST: the path is not absolute, contains `..`, or is over 4096 characters'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '404':
+          description: 'NOT_FOUND: no such VM, or no such path in the guest'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: Stat path
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: stat_path
+  /vms/{vmIdOrSlug}/fs/uploads:
+    post:
+      tags:
+      - Filesystem
+      description: Start a chunked upload of a large file (up to 16 GiB) into the VM. Send the bytes with `PUT /fs/uploads/{uploadId}`, then finish with `commit`.
+      operationId: postVmsByVmIdOrSlugFsUploads
+      parameters:
+      - name: vmIdOrSlug
+        in: path
+        description: VM id, or your slug for it
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BeginUploadRequest'
+        required: true
+      responses:
+        '200':
+          description: Session created; upload chunks next
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadSessionStatus'
+        '400':
+          description: 'BAD_REQUEST: invalid path, size over 16 GiB, or malformed sha256'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '404':
+          description: 'NOT_FOUND: no such VM in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '409':
+          description: 'CONFLICT: too many open upload sessions for this VM'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: Begin upload
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: begin_upload
+  /vms/{vmIdOrSlug}/fs/uploads/{uploadId}:
+    get:
+      tags:
+      - Filesystem
+      description: Fetch an upload session's progress — use `receivedBytes` as the next chunk's offset when resuming after a failed chunk.
+      operationId: getVmsByVmIdOrSlugFsUploadsByUploadId
+      parameters:
+      - name: vmIdOrSlug
+        in: path
+        description: VM id, or your slug for it
+        required: true
+        schema:
+          type: string
+      - name: uploadId
+        in: path
+        description: Upload session id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Session progress
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadSessionStatus'
+        '404':
+          description: 'NOT_FOUND: no such session (sessions expire after an hour idle and do not survive host restarts)'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: Upload status
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: upload_status
+    put:
+      tags:
+      - Filesystem
+      description: Append one chunk of raw bytes to an upload session at the given offset. Chunks must arrive in order; on any transport error, re-fetch the session and resume from its `receivedBytes`. Keep chunks small enough to retry cheaply (the SDK uses 16 MiB; the hard cap is 256 MiB).
+      operationId: putVmsByVmIdOrSlugFsUploadsByUploadId
+      parameters:
+      - name: vmIdOrSlug
+        in: path
+        description: VM id, or your slug for it
+        required: true
+        schema:
+          type: string
+      - name: uploadId
+        in: path
+        description: Upload session id
+        required: true
+        schema:
+          type: string
+      - name: offset
+        in: query
+        description: 'Byte offset this chunk starts at. Must equal the session''s current
+
+          `receivedBytes`; chunks at an already-received offset are acknowledged
+
+          without rewriting (safe retries), and offsets beyond it are rejected.'
+        required: true
+        schema:
+          type: integer
+          format: int64
+          minimum: 0
+      requestBody:
+        description: The chunk's raw bytes
+        content:
+          application/octet-stream:
+            schema:
+              type: array
+              items:
+                type: integer
+                format: int32
+                minimum: 0
+        required: true
+      responses:
+        '200':
+          description: Chunk stored
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadSessionStatus'
+        '400':
+          description: 'BAD_REQUEST: the chunk overruns the declared size'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '404':
+          description: 'NOT_FOUND: no such session'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '409':
+          description: 'CONFLICT: the offset leaves a gap, or the session is committing'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '413':
+          description: 'PAYLOAD_TOO_LARGE: the chunk exceeds 256 MiB'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: Upload chunk
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: upload_chunk
+    delete:
+      tags:
+      - Filesystem
+      description: Abandon an upload session and free its server-side spool space.
+      operationId: deleteVmsByVmIdOrSlugFsUploadsByUploadId
+      parameters:
+      - name: vmIdOrSlug
+        in: path
+        description: VM id, or your slug for it
+        required: true
+        schema:
+          type: string
+      - name: uploadId
+        in: path
+        description: Upload session id
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Session discarded
+        '404':
+          description: 'NOT_FOUND: no such session'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '409':
+          description: 'CONFLICT: the session is committing and cannot be aborted'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: Abort upload
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: abort_upload
+  /vms/{vmIdOrSlug}/fs/uploads/{uploadId}/commit:
+    post:
+      tags:
+      - Filesystem
+      description: 'Finish an upload: the file is verified (size, and sha256 when declared) and renamed into place inside the guest atomically — the target path never holds a partial file. On success the session is gone; on failure it remains and commit may be retried.'
+      operationId: postVmsByVmIdOrSlugFsUploadsByUploadIdCommit
+      parameters:
+      - name: vmIdOrSlug
+        in: path
+        description: VM id, or your slug for it
+        required: true
+        schema:
+          type: string
+      - name: uploadId
+        in: path
+        description: Upload session id
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: File committed
+        '400':
+          description: 'BAD_REQUEST: not all bytes were uploaded, or the sha256 does not match'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '404':
+          description: 'NOT_FOUND: no such session'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '409':
+          description: 'CONFLICT: a commit is already in progress'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: Commit upload
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: commit_upload
+  /vms/{vmIdOrSlug}/fs/write:
+    put:
+      tags:
+      - Filesystem
+      description: 'Write a file inside the VM, atomically: the path holds the old file until the new one has arrived intact, never a half-written one.
+
+
+        Send the file as the raw request body (with `?path=`) and it can be as large as 16 GiB — nothing buffers it whole. Send a JSON body instead (up to 32 MiB) when it is easier to type than to upload, as from this page.
+
+
+        This is a single attempt: if the connection drops, the write starts over. To upload something big over a link you do not trust, open an upload session (`POST /fs/uploads`) and send retryable chunks instead.'
+      operationId: putVmsByVmIdOrSlugFsWrite
+      parameters:
+      - name: vmIdOrSlug
+        in: path
+        description: VM id, or your slug for it
+        required: true
+        schema:
+          type: string
+      - name: path
+        in: query
+        description: 'Absolute path inside the guest. Required when the body is raw bytes;
+
+          omitted when sending a JSON body, which carries its own `path`.'
+        required: false
+        schema:
+          type: string
+      - name: mode
+        in: query
+        description: 'Final file mode bits (e.g. 493 for `0o755`). Defaults to the target''s
+
+          existing mode, or `0o600` for a new file.'
+        required: false
+        schema:
+          type: integer
+          format: int32
+          minimum: 0
+      - name: sha256
+        in: query
+        description: 'Optional sha256 of the file as 64 hex characters. Supplied, the write is
+
+          rejected unless the received bytes match.'
+        required: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WriteFileRequest'
+          application/octet-stream:
+            schema:
+              type: array
+              items:
+                type: integer
+                format: int32
+                minimum: 0
+        required: true
+      responses:
+        '204':
+          description: File written
+        '400':
+          description: 'BAD_REQUEST: invalid path, malformed body, or a sha256 that does not match the bytes received'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '404':
+          description: 'NOT_FOUND: no such VM in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '409':
+          description: 'CONFLICT: the VM stopped responding around the commit (`VM_NON_RESPONSIVE` — the upload may have committed; read the file back before re-uploading)'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '413':
+          description: 'PAYLOAD_TOO_LARGE: a JSON body over 32 MiB, or a file over 16 GiB'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: Write file
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: write_file
+components:
+  schemas:
+    PublicErrorBody:
+      type: object
+      description: 'The shape of every error response: a stable machine-readable `code` and a
+
+        human-readable `message`. The HTTP status carries the class of failure.
+
+
+        Some errors add fields alongside these two; `code` and `message` are always
+
+        present.'
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: string
+          description: 'A stable identifier for the failure, in `SCREAMING_SNAKE_CASE`. Branch
+
+            on this; `message` is prose and may be reworded at any time.'
+          example: NOT_FOUND
+        message:
+          type: string
+          description: 'A human-readable explanation of what went wrong. A fault inside the
+
+            platform is always reported as `INTERNAL_ERROR` with no further detail.'
+          example: vm vm-1234 not found
+    BeginUploadRequest:
+      type: object
+      description: Starts an upload session.
+      required:
+      - path
+      - size
+      properties:
+        mode:
+          type:
+          - integer
+          - 'null'
+          format: int32
+          description: 'Optional final file mode bits (e.g. 493 for `0o755`). Defaults to the
+
+            target''s existing mode, or `0o600` for a new file.'
+          minimum: 0
+        path:
+          type: string
+          description: Absolute path inside the guest the finished file is committed to.
+        sha256:
+          type:
+          - string
+          - 'null'
+          description: 'Optional sha256 of the full file as 64 hex characters; the upload is
+
+            rejected at commit if the received bytes do not match.'
+        size:
+          type: integer
+          format: int64
+          description: Total file size in bytes, up to 16 GiB.
+          minimum: 0
+    PathExistsResponse:
+      type: object
+      required:
+      - exists
+      properties:
+        exists:
+          type: boolean
+    DirEntry:
+      type: object
+      required:
+      - name
+      - kind
+      properties:
+        kind:
+          type: string
+          description: '`file`, `directory`, or `symlink`.'
+        name:
+          type: string
+    MakeDirRequest:
+      type: object
+      description: 'The public mkdir body. The internal API takes a bare `{path}` here while its
+
+        sibling `remove` takes a query parameter; the public surface keeps the same
+
+        wire shapes but documents both explicitly.'
+      required:
+      - path
+      properties:
+        path:
+          type: string
+          description: Absolute path inside the guest.
+    WriteFileRequest:
+      type: object
+      description: 'The JSON form of a write: convenient from a docs page or a shell, capped at
+
+        32 MiB. Larger files go as raw bytes on the same endpoint.'
+      required:
+      - path
+      - content
+      properties:
+        content:
+          type: string
+          description: The file's content, interpreted per `encoding`.
+        encoding:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/ContentEncoding'
+            description: Defaults to `utf8`.
+        mode:
+          type:
+          - integer
+          - 'null'
+          format: int32
+          description: Final file mode bits (e.g. 493 for `0o755`).
+          minimum: 0
+        path:
+          type: string
+          description: Absolute path inside the guest.
+        sha256:
+          type:
+          - string
+          - 'null'
+          description: Optional sha256 of the file as 64 hex characters.
+    FileStat:
+      type: object
+      required:
+      - size
+      - isFile
+      - isDirectory
+      - isSymlink
+      - permissions
+      - owner
+      - group
+      - modified
+      properties:
+        group:
+          type: string
+        isDirectory:
+          type: boolean
+        isFile:
+          type: boolean
+        isSymlink:
+          type: boolean
+        modified:
+          type: string
+        owner:
+          type: string
+        permissions:
+          type: string
+          description: Octal mode, e.g. `0644`.
+        size:
+          type: integer
+          format: int64
+          description: Size in bytes.
+          minimum: 0
+    ReadDirResponse:
+      type: object
+      required:
+      - entries
+      properties:
+        entries:
+          type: array
+          items:
+            $ref: '#/components/schemas/DirEntry'
+    UploadSessionStatus:
+      type: object
+      required:
+      - uploadId
+      - path
+      - size
+      - receivedBytes
+      properties:
+        path:
+          type: string
+          description: Absolute guest path the file will be committed to.
+        receivedBytes:
+          type: integer
+          format: int64
+          description: Bytes stored so far — the offset the next chunk must start at.
+          minimum: 0
+        size:
+          type: integer
+          format: int64
+          description: Total declared file size in bytes.
+          minimum: 0
+        uploadId:
+          type: string
+    ContentEncoding:
+      type: string
+      description: How `content` is encoded in the JSON form of a write.
+      enum:
+      - utf8
+      - base64
+  securitySchemes:
+    apiKey:
+      type: http
+      scheme: bearer
+      description: 'Your Freestyle API key, sent as `Authorization: Bearer <api key>`. Every request needs one unless it is authenticated with an identity access token instead.'
+    identityAccessToken:
+      type: apiKey
+      in: header
+      name: x-freestyle-identity-access-token
+      description: An access token belonging to an identity you created. It reaches only the VMs that identity has been granted, and only their exec and terminal routes. Hand one to an end user instead of your API key.

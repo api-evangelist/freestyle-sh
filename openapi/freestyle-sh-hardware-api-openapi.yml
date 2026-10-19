@@ -1,0 +1,450 @@
+openapi: 3.2.0
+info:
+  title: Freestyle Hardware API
+  description: '# Powerful Virtual Machines
+
+
+    Documentation: freestyle.sh/docs
+
+
+    Freestyle VMs are full Linux virtual machines designed for long running, complex tasks. ## Key Features
+
+
+    - **Instant Startup**: Freestyle VMs provision in milliseconds, with p99s under 400ms. - **Persistence**: Freestyle VMs can run forever, they can be hibernated with their exact memory in place and come back to life weeks later instantly, in that exact state. - **Powerful**: Freestyle VMs go up to 64GB of RAM for public tiers and much further for enterprise. Freestyle does high quality hardware virtualization supporting nested virtualization, FUSE, eBPF, full Linux networking and more. If it can run in an EC2, it can run in a Freestyle VM. - **Cheaply Snapshottable and Branchable**: Freestyle VMs are instantly and cheaply snapshottable (sub 1ms interruption, sub 50ms to snapshot ready). These snapshots can be used to create new VMs in the exact state of the original VM (memory and disk). This enables powerful workflows like branching, cloning, and rapid recovery from failures. ## When to use Freestyle
+
+
+    - **Long Running Agent Tasks**: When you have tasks that take hours, days, weeks or months to run, Freestyle VMs provide a persistent and powerful environment that your agent can work in to completion. - **Failure Prone/Experimental Exploration**: When your tasks involve branching, cloning or need time travel Freestyle VMs are ideal because of their cheap snapshottability and power that makes them great for experiments. - **Complex Coding Problems**: When you are tackling advanced coding problems in research or production codebases, poor virtualization and small sandboxes will not cut it. Freestyle VMs provide the necessary resources and environment to handle these challenges effectively. - **Multi Tenant Usage Patterns**: Freestyle VMs are intentionally built to be used by agent builders with multiple customers. The slug system allows for keying VMs by their user, the identity system allows for granular acccess control and permissioning, and the VPC system allows for multi-tenant network isolation. ## When not to use it
+
+
+    - **"Run AI Code"**: If your exclusively executing short lived Python scripts or other ephemeral tasks the benefits above aren''t relevant. Freestyle VMs should still be benchmarked but there may be alternatives better suited. - **CPU Intensive CI/CD**: Freestyle VMs run on bare metal on data center CPUs. We also oversubscribe host resources. For workloads that require sustained high CPU usage like building the Linux Kernel or mining crypto prefer cloud providers that offer consumer CPU performance. - **Short Lived Tasks**: If your tasks are extremely short lived and do not benefit from persistence or powerful hardware. If your average task takes less than 15 minutes to complete then they are likely cheaply retryable and don''t require the reliability and persistence that Freestyle VMs provide. - **Sole Application Hosting**: Freestyle VMs are designed as workbenches for development, experimentation and task execution. Not for hosting production applications. Hosting a minecraft server for some friends will work great on Freestyle, but we do not offer autoscaling, load balancers or CDNs and we don''t plan to. ## Emerging Use Cases
+
+
+    - **RL Environments**: Freestyle VMs are well-suited for running reinforcement learning environments that require persistent state and complex setups. The ability to snapshot and branch VMs allows researchers to experiment with different strategies and record environment states efficiently. - **Auto Research Climbing**: Freestyle VMs are great for auto research as the snapshotting and fan out allows research agents to explore multiple strategies, review past results and iterate efficiently without ever losing progress.'
+  license:
+    name: ''
+  version: 0.1.0
+security:
+- apiKey: []
+tags:
+- name: Hardware
+paths:
+  /hardware:
+    get:
+      tags:
+      - Hardware
+      description: List the physical machines attached to your private networks.
+      operationId: list_hardware
+      responses:
+        '200':
+          description: Your physical machines
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListHardwareResponse'
+      deprecated: true
+      summary: List hardware
+      x-summary-source: derived
+  /hardware/{hardwareId}/power:
+    get:
+      tags:
+      - Hardware
+      description: 'Read a machine''s power: whether every cord is live, what it is drawing, and how much of its rate limit is left. Reading is free and never limited.'
+      operationId: get_hardware_power
+      parameters:
+      - name: hardwareId
+        in: path
+        description: Hardware machine id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The machine's power
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HardwarePowerState'
+        '404':
+          description: 'NOT_FOUND: no such machine in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: Get hardware power
+      x-summary-source: derived
+    post:
+      tags:
+      - Hardware
+      description: 'Switch a physical machine''s power.
+
+
+        This is a real power outlet, so it is deliberately narrow. The unit is the whole machine: machines with redundant supplies draw from several cords and all of them are switched together, because cutting one browns the machine out instead of powering it off. `cycle` cuts power, holds a few seconds, and restores it — anything running stops immediately, with no chance to shut down cleanly.
+
+
+        Heavily rate limited: one power-cutting action every few minutes and a small daily budget per machine, both reported by `GET /hardware/{hardwareId}/power`. Turning power back **on** is never rationed, only briefly debounced. Exceeding a limit is a 429 whose message says when to come back.'
+      operationId: set_hardware_power
+      parameters:
+      - name: hardwareId
+        in: path
+        description: Hardware machine id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HardwarePowerRequest'
+        required: true
+      responses:
+        '200':
+          description: The action was applied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HardwarePowerOutcome'
+        '400':
+          description: 'BAD_REQUEST: power control is not enabled for this machine'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '404':
+          description: 'NOT_FOUND: no such machine in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '429':
+          description: 'RATE_LIMITED: too soon, or the daily budget is spent'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '503':
+          description: 'UNAVAILABLE: the machine''s power could not be reached'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: Set hardware power
+      x-summary-source: derived
+  /v5/hardware:
+    get:
+      tags:
+      - Hardware
+      description: List the physical machines attached to your private networks.
+      operationId: getV5Hardware
+      responses:
+        '200':
+          description: Your physical machines
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListHardwareResponse'
+      summary: List hardware
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: list_hardware
+  /v5/hardware/{hardwareId}/power:
+    get:
+      tags:
+      - Hardware
+      description: 'Read a machine''s power: whether every cord is live, what it is drawing, and how much of its rate limit is left. Reading is free and never limited.'
+      operationId: getV5HardwareByHardwareIdPower
+      parameters:
+      - name: hardwareId
+        in: path
+        description: Hardware machine id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The machine's power
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HardwarePowerState'
+        '404':
+          description: 'NOT_FOUND: no such machine in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: Get hardware power
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: get_hardware_power
+    post:
+      tags:
+      - Hardware
+      description: 'Switch a physical machine''s power.
+
+
+        This is a real power outlet, so it is deliberately narrow. The unit is the whole machine: machines with redundant supplies draw from several cords and all of them are switched together, because cutting one browns the machine out instead of powering it off. `cycle` cuts power, holds a few seconds, and restores it — anything running stops immediately, with no chance to shut down cleanly.
+
+
+        Heavily rate limited: one power-cutting action every few minutes and a small daily budget per machine, both reported by `GET /hardware/{hardwareId}/power`. Turning power back **on** is never rationed, only briefly debounced. Exceeding a limit is a 429 whose message says when to come back.'
+      operationId: postV5HardwareByHardwareIdPower
+      parameters:
+      - name: hardwareId
+        in: path
+        description: Hardware machine id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HardwarePowerRequest'
+        required: true
+      responses:
+        '200':
+          description: The action was applied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HardwarePowerOutcome'
+        '400':
+          description: 'BAD_REQUEST: power control is not enabled for this machine'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '404':
+          description: 'NOT_FOUND: no such machine in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '429':
+          description: 'RATE_LIMITED: too soon, or the daily budget is spent'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '503':
+          description: 'UNAVAILABLE: the machine''s power could not be reached'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: Set hardware power
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: set_hardware_power
+components:
+  schemas:
+    PublicErrorBody:
+      type: object
+      description: 'The shape of every error response: a stable machine-readable `code` and a
+
+        human-readable `message`. The HTTP status carries the class of failure.
+
+
+        Some errors add fields alongside these two; `code` and `message` are always
+
+        present.'
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: string
+          description: 'A stable identifier for the failure, in `SCREAMING_SNAKE_CASE`. Branch
+
+            on this; `message` is prose and may be reworded at any time.'
+          example: NOT_FOUND
+        message:
+          type: string
+          description: 'A human-readable explanation of what went wrong. A fault inside the
+
+            platform is always reported as `INTERNAL_ERROR` with no further detail.'
+          example: vm vm-1234 not found
+    HardwarePowerRequest:
+      type: object
+      required:
+      - action
+      properties:
+        action:
+          $ref: '#/components/schemas/HardwarePowerAction'
+    HardwarePowerAction:
+      type: string
+      description: 'What to do to a machine''s power.
+
+
+        The unit is always the whole machine. A machine with redundant supplies
+
+        draws from several cords, and Freestyle switches all of them together —
+
+        there is no way to ask for one, because cutting one cord browns a machine
+
+        out rather than powering it off.'
+      enum:
+      - cycle
+      - 'on'
+      - 'off'
+    HardwarePowerOutcome:
+      type: object
+      required:
+      - action
+      - applied
+      - remainingToday
+      properties:
+        action:
+          $ref: '#/components/schemas/HardwarePowerAction'
+        applied:
+          type: boolean
+        nextAllowedAt:
+          type:
+          - string
+          - 'null'
+        remainingToday:
+          type: integer
+          format: int32
+          minimum: 0
+    HardwareServer:
+      type: object
+      description: 'A physical machine attached to one of your private networks.
+
+
+        Freestyle racks and cables these, so there is no create or delete here —
+
+        what the API offers is seeing them and, where it is enabled, controlling
+
+        their power.'
+      required:
+      - id
+      - vpcId
+      - ipv6
+      - attached
+      - dhcpBound
+      - createdAt
+      properties:
+        attached:
+          type: boolean
+          description: The network attachment is converged and the machine is being served.
+        createdAt:
+          type: string
+        dhcpBound:
+          type: boolean
+          description: 'The machine has taken a DHCP lease — the closest thing to "it is on"
+
+            that the network can see by itself.'
+        displayName:
+          type:
+          - string
+          - 'null'
+        id:
+          type: string
+        ipv4:
+          type:
+          - string
+          - 'null'
+          description: Its address on the private network, when that network carries IPv4.
+        ipv6:
+          type: string
+          description: Its address on the private network. Every network has IPv6.
+        lastSeen:
+          type:
+          - string
+          - 'null'
+          description: When the network last saw traffic from it.
+        mac:
+          type:
+          - string
+          - 'null'
+          description: The machine's MAC, once it is known.
+        powerControl:
+          type: boolean
+          description: 'Whether this machine''s power can be switched through the API. Off
+
+            unless Freestyle has enabled it for the machine.'
+        publicIpv6:
+          type:
+          - string
+          - 'null'
+          description: Its stable public address, when it was given one.
+        vpcId:
+          type: string
+          description: The private network the machine is attached to.
+    HardwarePowerState:
+      type: object
+      description: A machine's power, and what is left of its rate limit.
+      required:
+      - supported
+      - remainingToday
+      properties:
+        cords:
+          type:
+          - integer
+          - 'null'
+          format: int32
+          description: How many power cords feed it — why control is all-or-nothing.
+          minimum: 0
+        lastActionAt:
+          type:
+          - string
+          - 'null'
+        message:
+          type:
+          - string
+          - 'null'
+          description: Why the power state is unknown, when it is.
+        nextAllowedAt:
+          type:
+          - string
+          - 'null'
+          description: When the next power-cutting action will be accepted. Absent means now.
+        'on':
+          type:
+          - boolean
+          - 'null'
+          description: 'Every cord is live. Absent when the power state could not be read —
+
+            which is not the same as the machine being off.'
+        remainingToday:
+          type: integer
+          format: int32
+          description: 'Power-cutting actions left in the rolling 24-hour budget. Turning power
+
+            **on** does not spend it.'
+          minimum: 0
+        supported:
+          type: boolean
+          description: 'False when power control is not enabled for this machine; every other
+
+            field is then absent and every action is refused.'
+        watts:
+          type:
+          - number
+          - 'null'
+          format: double
+          description: Present draw across the machine's cords, in watts.
+    ListHardwareResponse:
+      type: object
+      required:
+      - hardwareServers
+      - totalCount
+      properties:
+        hardwareServers:
+          type: array
+          items:
+            $ref: '#/components/schemas/HardwareServer'
+        totalCount:
+          type: integer
+          minimum: 0
+  securitySchemes:
+    apiKey:
+      type: http
+      scheme: bearer
+      description: 'Your Freestyle API key, sent as `Authorization: Bearer <api key>`. Every request needs one unless it is authenticated with an identity access token instead.'
+    identityAccessToken:
+      type: apiKey
+      in: header
+      name: x-freestyle-identity-access-token
+      description: An access token belonging to an identity you created. It reaches only the VMs that identity has been granted, and only their exec and terminal routes. Hand one to an end user instead of your API key.

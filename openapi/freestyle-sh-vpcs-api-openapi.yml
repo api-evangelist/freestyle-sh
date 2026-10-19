@@ -1,0 +1,955 @@
+openapi: 3.2.0
+info:
+  title: Freestyle VPCs API
+  description: '# Powerful Virtual Machines
+
+
+    Documentation: freestyle.sh/docs
+
+
+    Freestyle VMs are full Linux virtual machines designed for long running, complex tasks. ## Key Features
+
+
+    - **Instant Startup**: Freestyle VMs provision in milliseconds, with p99s under 400ms. - **Persistence**: Freestyle VMs can run forever, they can be hibernated with their exact memory in place and come back to life weeks later instantly, in that exact state. - **Powerful**: Freestyle VMs go up to 64GB of RAM for public tiers and much further for enterprise. Freestyle does high quality hardware virtualization supporting nested virtualization, FUSE, eBPF, full Linux networking and more. If it can run in an EC2, it can run in a Freestyle VM. - **Cheaply Snapshottable and Branchable**: Freestyle VMs are instantly and cheaply snapshottable (sub 1ms interruption, sub 50ms to snapshot ready). These snapshots can be used to create new VMs in the exact state of the original VM (memory and disk). This enables powerful workflows like branching, cloning, and rapid recovery from failures. ## When to use Freestyle
+
+
+    - **Long Running Agent Tasks**: When you have tasks that take hours, days, weeks or months to run, Freestyle VMs provide a persistent and powerful environment that your agent can work in to completion. - **Failure Prone/Experimental Exploration**: When your tasks involve branching, cloning or need time travel Freestyle VMs are ideal because of their cheap snapshottability and power that makes them great for experiments. - **Complex Coding Problems**: When you are tackling advanced coding problems in research or production codebases, poor virtualization and small sandboxes will not cut it. Freestyle VMs provide the necessary resources and environment to handle these challenges effectively. - **Multi Tenant Usage Patterns**: Freestyle VMs are intentionally built to be used by agent builders with multiple customers. The slug system allows for keying VMs by their user, the identity system allows for granular acccess control and permissioning, and the VPC system allows for multi-tenant network isolation. ## When not to use it
+
+
+    - **"Run AI Code"**: If your exclusively executing short lived Python scripts or other ephemeral tasks the benefits above aren''t relevant. Freestyle VMs should still be benchmarked but there may be alternatives better suited. - **CPU Intensive CI/CD**: Freestyle VMs run on bare metal on data center CPUs. We also oversubscribe host resources. For workloads that require sustained high CPU usage like building the Linux Kernel or mining crypto prefer cloud providers that offer consumer CPU performance. - **Short Lived Tasks**: If your tasks are extremely short lived and do not benefit from persistence or powerful hardware. If your average task takes less than 15 minutes to complete then they are likely cheaply retryable and don''t require the reliability and persistence that Freestyle VMs provide. - **Sole Application Hosting**: Freestyle VMs are designed as workbenches for development, experimentation and task execution. Not for hosting production applications. Hosting a minecraft server for some friends will work great on Freestyle, but we do not offer autoscaling, load balancers or CDNs and we don''t plan to. ## Emerging Use Cases
+
+
+    - **RL Environments**: Freestyle VMs are well-suited for running reinforcement learning environments that require persistent state and complex setups. The ability to snapshot and branch VMs allows researchers to experiment with different strategies and record environment states efficiently. - **Auto Research Climbing**: Freestyle VMs are great for auto research as the snapshotting and fan out allows research agents to explore multiple strategies, review past results and iterate efficiently without ever losing progress.'
+  license:
+    name: ''
+  version: 0.1.0
+security:
+- apiKey: []
+tags:
+- name: VPCs
+  description: Private networks your VMs can share
+paths:
+  /v5/vpcs:
+    get:
+      tags:
+      - VPCs
+      description: List your private networks, newest first.
+      operationId: list_vpcs
+      parameters:
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+      responses:
+        '200':
+          description: The account's private networks
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListVpcsResponse'
+      summary: List vpcs
+      x-summary-source: derived
+    post:
+      tags:
+      - VPCs
+      description: Create a private network.
+      operationId: create_vpc
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateVpcRequest'
+        required: true
+      responses:
+        '200':
+          description: Network created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vpc'
+        '400':
+          description: 'BAD_REQUEST: invalid CIDR or slug'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '409':
+          description: 'CONFLICT: that slug is already used by another network in your account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: Create vpc
+      x-summary-source: derived
+  /v5/vpcs/{vpcIdOrSlug}:
+    get:
+      tags:
+      - VPCs
+      description: Fetch a private network by its id or its slug.
+      operationId: get_vpc
+      parameters:
+      - name: vpcIdOrSlug
+        in: path
+        description: VPC id, or your slug for it
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The network
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vpc'
+        '404':
+          description: 'NOT_FOUND: no such network in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: Get vpc
+      x-summary-source: derived
+    delete:
+      tags:
+      - VPCs
+      description: Delete a private network.
+      operationId: delete_vpc
+      parameters:
+      - name: vpcIdOrSlug
+        in: path
+        description: VPC id, or your slug for it
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Network deleted
+        '404':
+          description: 'NOT_FOUND: no such network in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '409':
+          description: 'CONFLICT: the network still has VMs attached'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: Delete vpc
+      x-summary-source: derived
+    patch:
+      tags:
+      - VPCs
+      description: Rename a private network or change its slug.
+      operationId: update_vpc
+      parameters:
+      - name: vpcIdOrSlug
+        in: path
+        description: VPC id, or your slug for it
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateVpcRequest'
+        required: true
+      responses:
+        '200':
+          description: The updated network
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vpc'
+        '400':
+          description: 'BAD_REQUEST: invalid slug'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '404':
+          description: 'NOT_FOUND: no such network in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '409':
+          description: 'CONFLICT: that slug is already used by another network in your account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: Update vpc
+      x-summary-source: derived
+  /v5/vpcs/{vpcIdOrSlug}/ips:
+    get:
+      tags:
+      - VPCs
+      description: 'List the addresses currently reserved in a private network: each attached VM''s address, plus one per VPN.'
+      operationId: list_vpc_ips
+      parameters:
+      - name: vpcIdOrSlug
+        in: path
+        description: VPC id, or your slug for it
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The network's reserved addresses
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListVpcIpsResponse'
+        '404':
+          description: 'NOT_FOUND: no such network in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: List vpc ips
+      x-summary-source: derived
+  /v5/vpcs/{vpcIdOrSlug}/tunnels:
+    get:
+      tags:
+      - VPCs
+      description: 'List the tunnels attached to a private network, newest first. Listings never include a private key: one is returned only by create and rotate-key.'
+      operationId: list_vpc_tunnels
+      parameters:
+      - name: vpcIdOrSlug
+        in: path
+        description: VPC id, or your slug for it
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The network's tunnels
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListTunnelsResponse'
+        '404':
+          description: 'NOT_FOUND: no such network in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: List vpc tunnels
+      x-summary-source: derived
+  /vpcs:
+    get:
+      tags:
+      - VPCs
+      description: List your private networks, newest first.
+      operationId: getVpcs
+      parameters:
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+      responses:
+        '200':
+          description: The account's private networks
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListVpcsResponse'
+      deprecated: true
+      summary: List vpcs
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: list_vpcs
+    post:
+      tags:
+      - VPCs
+      description: Create a private network.
+      operationId: postVpcs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateVpcRequest'
+        required: true
+      responses:
+        '200':
+          description: Network created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vpc'
+        '400':
+          description: 'BAD_REQUEST: invalid CIDR or slug'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '409':
+          description: 'CONFLICT: that slug is already used by another network in your account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: Create vpc
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: create_vpc
+  /vpcs/{vpcIdOrSlug}:
+    get:
+      tags:
+      - VPCs
+      description: Fetch a private network by its id or its slug.
+      operationId: getVpcsByVpcIdOrSlug
+      parameters:
+      - name: vpcIdOrSlug
+        in: path
+        description: VPC id, or your slug for it
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The network
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vpc'
+        '404':
+          description: 'NOT_FOUND: no such network in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: Get vpc
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: get_vpc
+    delete:
+      tags:
+      - VPCs
+      description: Delete a private network.
+      operationId: deleteVpcsByVpcIdOrSlug
+      parameters:
+      - name: vpcIdOrSlug
+        in: path
+        description: VPC id, or your slug for it
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Network deleted
+        '404':
+          description: 'NOT_FOUND: no such network in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '409':
+          description: 'CONFLICT: the network still has VMs attached'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: Delete vpc
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: delete_vpc
+    patch:
+      tags:
+      - VPCs
+      description: Rename a private network or change its slug.
+      operationId: patchVpcsByVpcIdOrSlug
+      parameters:
+      - name: vpcIdOrSlug
+        in: path
+        description: VPC id, or your slug for it
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateVpcRequest'
+        required: true
+      responses:
+        '200':
+          description: The updated network
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vpc'
+        '400':
+          description: 'BAD_REQUEST: invalid slug'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '404':
+          description: 'NOT_FOUND: no such network in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '409':
+          description: 'CONFLICT: that slug is already used by another network in your account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: Update vpc
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: update_vpc
+  /vpcs/{vpcIdOrSlug}/ips:
+    get:
+      tags:
+      - VPCs
+      description: 'List the addresses currently reserved in a private network: each attached VM''s address, plus one per VPN.'
+      operationId: getVpcsByVpcIdOrSlugIps
+      parameters:
+      - name: vpcIdOrSlug
+        in: path
+        description: VPC id, or your slug for it
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The network's reserved addresses
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListVpcIpsResponse'
+        '404':
+          description: 'NOT_FOUND: no such network in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: List vpc ips
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: list_vpc_ips
+  /vpcs/{vpcIdOrSlug}/tunnels:
+    get:
+      tags:
+      - VPCs
+      description: 'List the tunnels attached to a private network, newest first. Listings never include a private key: one is returned only by create and rotate-key.'
+      operationId: getVpcsByVpcIdOrSlugTunnels
+      parameters:
+      - name: vpcIdOrSlug
+        in: path
+        description: VPC id, or your slug for it
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The network's tunnels
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListTunnelsResponse'
+        '404':
+          description: 'NOT_FOUND: no such network in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: List vpc tunnels
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: list_vpc_tunnels
+components:
+  schemas:
+    Vpc:
+      type: object
+      description: A private network. Its VXLAN id is a cluster internal and is not published.
+      required:
+      - id
+      - cidrV6
+      - createdAt
+      properties:
+        cidr:
+          type:
+          - string
+          - 'null'
+          description: 'The network''s IPv4 CIDR block, when it has one. Networks are
+
+            IPv6-first; IPv4 is opt-in at create.'
+        cidrV6:
+          type: string
+          description: The network's IPv6 CIDR block — always present.
+        createdAt:
+          type: string
+          format: date-time
+        displayName:
+          type:
+          - string
+          - 'null'
+        id:
+          $ref: '#/components/schemas/VpcId'
+        slug:
+          type:
+          - string
+          - 'null'
+    ListTunnelsResponse:
+      type: object
+      required:
+      - tunnels
+      - totalCount
+      properties:
+        totalCount:
+          type: integer
+          minimum: 0
+        tunnels:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tunnel'
+          description: 'Newest first. Listings never carry a private key; the config returned
+
+            here has `PrivateKey` blanked.'
+    PublicErrorBody:
+      type: object
+      description: 'The shape of every error response: a stable machine-readable `code` and a
+
+        human-readable `message`. The HTTP status carries the class of failure.
+
+
+        Some errors add fields alongside these two; `code` and `message` are always
+
+        present.'
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: string
+          description: 'A stable identifier for the failure, in `SCREAMING_SNAKE_CASE`. Branch
+
+            on this; `message` is prose and may be reworded at any time.'
+          example: NOT_FOUND
+        message:
+          type: string
+          description: 'A human-readable explanation of what went wrong. A fault inside the
+
+            platform is always reported as `INTERNAL_ERROR` with no further detail.'
+          example: vm vm-1234 not found
+    CreateVpcRequest:
+      type: object
+      properties:
+        cidr:
+          type:
+          - string
+          - 'null'
+          description: 'The network''s IPv4 CIDR. Networks are dual-stack; a `/24` out of
+
+            `10.0.0.0/8` is derived for you when omitted. Name one to choose the
+
+            range yourself — worth doing when the network has to reach an existing
+
+            estate over a tunnel and must not overlap it, or when it needs more
+
+            than 254 IPv4 members.'
+        cidrV6:
+          type:
+          - string
+          - 'null'
+          description: 'The network''s IPv6 CIDR; a unique-local /64 is derived for you when
+
+            omitted.'
+        displayName:
+          type:
+          - string
+          - 'null'
+        firewall:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/FirewallSpec'
+            description: 'Firewall rules created with the network and deleted with it. A bare
+
+              endpoint means the network being created, so
+
+              `{"source":{},"destination":{}}` is "members reach each other".'
+        slug:
+          type:
+          - string
+          - 'null'
+    ListVpcIpsResponse:
+      type: object
+      required:
+      - ips
+      - totalCount
+      properties:
+        ips:
+          type: array
+          items:
+            $ref: '#/components/schemas/VpcIpReservation'
+        totalCount:
+          type: integer
+          minimum: 0
+    ListVpcsResponse:
+      type: object
+      required:
+      - vpcs
+      - totalCount
+      properties:
+        totalCount:
+          type: integer
+          minimum: 0
+        vpcs:
+          type: array
+          items:
+            $ref: '#/components/schemas/Vpc'
+    Tunnel:
+      type: object
+      description: 'A tunnel: your WireGuard identity on the platform. It exists until you
+
+        delete it: connect, disconnect and reconnect as often as you like — a
+
+        session is set up on the handshake that needs it, so an idle tunnel costs
+
+        nothing and never expires. A tunnel routes nowhere until you attach a
+
+        private network to it; attach several and one WireGuard interface reaches
+
+        them all.'
+      required:
+      - id
+      - clientConfig
+      - endpointPort
+      - clientPublicKey
+      - serverPublicKey
+      - clientAddressV4
+      - clientAddressV6
+      - routes
+      - attachments
+      - createdAt
+      - updatedAt
+      properties:
+        attachments:
+          type: array
+          items:
+            $ref: '#/components/schemas/TunnelAttachment'
+          description: The private networks on the far side, oldest attachment first.
+        clientAddressV4:
+          type: string
+          description: 'Your fixed addresses inside the tunnel. Only the gateway ever sees
+
+            them: each attached network sees an address inside its own subnet
+
+            instead (`attachments[].address`).'
+        clientAddressV6:
+          type: string
+        clientConfig:
+          type: string
+          description: 'A complete WireGuard config file, fixed for the life of the tunnel:
+
+            attaching and detaching networks never changes it, so bring it up once
+
+            and manage what it reaches through the API. `PrivateKey` is blank
+
+            except on create and rotate-key, the only two responses that mint a
+
+            keypair.'
+        clientPublicKey:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        displayName:
+          type:
+          - string
+          - 'null'
+          description: Your label for this tunnel, if you gave it one.
+        endpointHost:
+          type:
+          - string
+          - 'null'
+          description: Host to dial.
+        endpointPort:
+          type: integer
+          format: int32
+          minimum: 0
+        id:
+          type: string
+          description: 'Deprecated: the tunnel''s id under its old name. Read `tunnelId`.'
+        routes:
+          type: array
+          items:
+            type: string
+          description: 'The ranges your client routes through the tunnel — its `AllowedIPs`,
+
+            fixed at create. A network can only be attached if its CIDRs fall
+
+            inside these.'
+        serverPublicKey:
+          type: string
+          description: The one `[Peer]` public key in your config.
+        slug:
+          type:
+          - string
+          - 'null'
+          description: 'Your handle for this tunnel, if you gave it one. Usable anywhere the id
+
+            is, in place of it.'
+        tunnelId:
+          type:
+          - string
+          - 'null'
+          description: 'The tunnel''s id, under the name the rest of the API uses for it — a
+
+            firewall rule says `tunnelId`, so the tunnel does too.'
+        updatedAt:
+          type: string
+          format: date-time
+    UpdateVpcRequest:
+      type: object
+      properties:
+        displayName:
+          type:
+          - string
+          - 'null'
+          description: An empty string clears it.
+        slug:
+          type:
+          - string
+          - 'null'
+          description: An empty string clears it.
+    FirewallSpec:
+      type: object
+      description: 'The `firewall` block of a create: rules created with the resource and
+
+        deleted with it. Inside it, an endpoint with no identity means the resource
+
+        being created — which is how a rule names something whose id does not exist
+
+        yet.'
+      properties:
+        rules:
+          type: array
+          items:
+            $ref: '#/components/schemas/CreateFirewallRuleRequest'
+      additionalProperties: false
+    TunnelAttachment:
+      type: object
+      description: 'One private network on the far side of a tunnel: the network, your address
+
+        inside it, and the `[Peer]` key that carries it.'
+      required:
+      - vpcId
+      - address
+      - vpcCidr
+      - allowedIps
+      - createdAt
+      properties:
+        address:
+          type: string
+          description: 'Deprecated: the primary address, whichever family. Read `ipv4`/`ipv6`.'
+        allowedIps:
+          type: array
+          items:
+            type: string
+          description: The CIDRs the gateway routes to this network.
+        createdAt:
+          type: string
+          format: date-time
+        exit:
+          type: boolean
+          description: 'Whether this attachment is a network exit: your client forwards for
+
+            destinations that are not its own address, and members route through
+
+            it with an ordinary route via the attachment''s address. Omitted when
+
+            false.'
+        ipv4:
+          type:
+          - string
+          - 'null'
+          description: 'Your IPv4 address inside the private network, absent on a v6-only
+
+            attachment. It belongs to this tunnel for as long as the network stays
+
+            attached, so you can write it into configs and rules.'
+        ipv6:
+          type:
+          - string
+          - 'null'
+          description: Your IPv6 address inside the private network, under the same rules.
+        remoteCidrs:
+          type: array
+          items:
+            type: string
+          description: 'Ranges behind your client that this network routes through the tunnel
+
+            (a site-to-site grant). VMs reach them with an ordinary route via
+
+            `address`. Omitted when the attachment has none.'
+        secondaryAddress:
+          type:
+          - string
+          - 'null'
+          description: 'Deprecated: the second-family address. Read `ipv4`/`ipv6`.'
+        vpcCidr:
+          type: string
+        vpcId:
+          $ref: '#/components/schemas/VpcId'
+    FirewallEndpoint:
+      type: object
+      description: 'One end of a rule: which traffic this side matches.
+
+
+        Fields intersect — `{ vpcId, port, protocol }` is "traffic in that network,
+
+        on that port, over that protocol". `vmId`/`vpcId`/`tunnelId` select by
+
+        identity (the VM however it is addressed); `cidr`/`public` select by
+
+        address. Unknown fields
+
+        are rejected rather than ignored: a matcher is a security statement, and a
+
+        typo''d `porrt: 22` that quietly became "every port" is the wrong failure.'
+      properties:
+        cidr:
+          type:
+          - string
+          - 'null'
+          description: An address range, IPv4 or IPv6, in canonical `network/prefix` form.
+        port:
+          type:
+          - integer
+          - 'null'
+          format: int32
+          description: A single port, 1–65535. Requires `protocol`.
+          minimum: 0
+        protocol:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/FirewallProtocol'
+        public:
+          type:
+          - boolean
+          - 'null'
+          description: 'Every publicly routable address, whoever owns it — including another
+
+            Freestyle VM reached at its public address. Only `true` is meaningful;
+
+            omit the field otherwise. Not combined with `vmId` or `vpcId`.'
+        tunnelId:
+          type:
+          - string
+          - 'null'
+          description: 'Whatever is on the far side of one tunnel — the client that dials it,
+
+            and any remote range routed over it. Tunnels have no slug, so this is a
+
+            tunnel id: `tun-…`, or `wg-…` for one carried over from the per-VPC VPN
+
+            records tunnels replaced.'
+        vmId:
+          type:
+          - string
+          - 'null'
+          description: A single VM, by id or by your slug for it. Answers hold its id.
+        vpcId:
+          type:
+          - string
+          - 'null'
+          description: 'Everything on one private network, by id or by your slug for it.
+
+            Answers hold its id.'
+      additionalProperties: false
+    FirewallAction:
+      type: string
+      description: 'What a rule does with the traffic it matches.
+
+
+        Only `allow` exists today, and it is required on every rule rather than
+
+        defaulted: a default would mean that the day `deny` arrives, every rule
+
+        written before it silently acquires an action it never stated.'
+      enum:
+      - allow
+    CreateFirewallRuleRequest:
+      type: object
+      required:
+      - action
+      - source
+      - destination
+      properties:
+        action:
+          $ref: '#/components/schemas/FirewallAction'
+          description: Required, and `allow` is the only accepted value.
+        description:
+          type:
+          - string
+          - 'null'
+          description: A free-form note, up to 1024 characters.
+        destination:
+          $ref: '#/components/schemas/FirewallEndpoint'
+        source:
+          $ref: '#/components/schemas/FirewallEndpoint'
+      additionalProperties: false
+    VpcIpReservation:
+      type: object
+      description: One reserved address inside a private network.
+      required:
+      - ipv4
+      - owner
+      properties:
+        ipv4:
+          type: string
+        owner:
+          type: string
+          description: 'Who holds the address: a VM id, or `wireguard:{attachmentId}` for a
+
+            tunnel attachment''s address.'
+    VpcId:
+      type: string
+      description: Identifies a VPC. Minted as `"vpc-<uuid>"`.
+    FirewallProtocol:
+      type: string
+      description: The transport a matcher is restricted to.
+      enum:
+      - tcp
+      - udp
+      - icmp
+  securitySchemes:
+    apiKey:
+      type: http
+      scheme: bearer
+      description: 'Your Freestyle API key, sent as `Authorization: Bearer <api key>`. Every request needs one unless it is authenticated with an identity access token instead.'
+    identityAccessToken:
+      type: apiKey
+      in: header
+      name: x-freestyle-identity-access-token
+      description: An access token belonging to an identity you created. It reaches only the VMs that identity has been granted, and only their exec and terminal routes. Hand one to an end user instead of your API key.

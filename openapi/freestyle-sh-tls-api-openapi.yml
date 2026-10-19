@@ -1,0 +1,1511 @@
+openapi: 3.2.0
+info:
+  title: Freestyle TLS API
+  description: '# Powerful Virtual Machines
+
+
+    Documentation: freestyle.sh/docs
+
+
+    Freestyle VMs are full Linux virtual machines designed for long running, complex tasks. ## Key Features
+
+
+    - **Instant Startup**: Freestyle VMs provision in milliseconds, with p99s under 400ms. - **Persistence**: Freestyle VMs can run forever, they can be hibernated with their exact memory in place and come back to life weeks later instantly, in that exact state. - **Powerful**: Freestyle VMs go up to 64GB of RAM for public tiers and much further for enterprise. Freestyle does high quality hardware virtualization supporting nested virtualization, FUSE, eBPF, full Linux networking and more. If it can run in an EC2, it can run in a Freestyle VM. - **Cheaply Snapshottable and Branchable**: Freestyle VMs are instantly and cheaply snapshottable (sub 1ms interruption, sub 50ms to snapshot ready). These snapshots can be used to create new VMs in the exact state of the original VM (memory and disk). This enables powerful workflows like branching, cloning, and rapid recovery from failures. ## When to use Freestyle
+
+
+    - **Long Running Agent Tasks**: When you have tasks that take hours, days, weeks or months to run, Freestyle VMs provide a persistent and powerful environment that your agent can work in to completion. - **Failure Prone/Experimental Exploration**: When your tasks involve branching, cloning or need time travel Freestyle VMs are ideal because of their cheap snapshottability and power that makes them great for experiments. - **Complex Coding Problems**: When you are tackling advanced coding problems in research or production codebases, poor virtualization and small sandboxes will not cut it. Freestyle VMs provide the necessary resources and environment to handle these challenges effectively. - **Multi Tenant Usage Patterns**: Freestyle VMs are intentionally built to be used by agent builders with multiple customers. The slug system allows for keying VMs by their user, the identity system allows for granular acccess control and permissioning, and the VPC system allows for multi-tenant network isolation. ## When not to use it
+
+
+    - **"Run AI Code"**: If your exclusively executing short lived Python scripts or other ephemeral tasks the benefits above aren''t relevant. Freestyle VMs should still be benchmarked but there may be alternatives better suited. - **CPU Intensive CI/CD**: Freestyle VMs run on bare metal on data center CPUs. We also oversubscribe host resources. For workloads that require sustained high CPU usage like building the Linux Kernel or mining crypto prefer cloud providers that offer consumer CPU performance. - **Short Lived Tasks**: If your tasks are extremely short lived and do not benefit from persistence or powerful hardware. If your average task takes less than 15 minutes to complete then they are likely cheaply retryable and don''t require the reliability and persistence that Freestyle VMs provide. - **Sole Application Hosting**: Freestyle VMs are designed as workbenches for development, experimentation and task execution. Not for hosting production applications. Hosting a minecraft server for some friends will work great on Freestyle, but we do not offer autoscaling, load balancers or CDNs and we don''t plan to. ## Emerging Use Cases
+
+
+    - **RL Environments**: Freestyle VMs are well-suited for running reinforcement learning environments that require persistent state and complex setups. The ability to snapshot and branch VMs allows researchers to experiment with different strategies and record environment states efficiently. - **Auto Research Climbing**: Freestyle VMs are great for auto research as the snapshotting and fan out allows research agents to explore multiple strategies, review past results and iterate efficiently without ever losing progress.'
+  license:
+    name: ''
+  version: 0.1.0
+security:
+- apiKey: []
+tags:
+- name: TLS
+paths:
+  /tls:
+    get:
+      tags:
+      - TLS
+      description: List your TLS rules, newest first. Filter by `vmId` to get the rules that apply to one VM — those naming it, plus those naming a private network it is attached to — by `vpcId` for the rules naming a private network, or by `domain` for the rules written on exactly that name.
+      operationId: list_tls_rules
+      parameters:
+      - name: vmId
+        in: query
+        description: 'Rules that apply to this VM: those naming it, plus those naming a private
+
+          network it is attached to. Its id, or your slug for it.'
+        required: false
+        schema:
+          type: string
+      - name: vpcId
+        in: query
+        description: Rules naming this private network. Its id, or your slug for it.
+        required: false
+        schema:
+          type: string
+      - name: domain
+        in: query
+        description: 'Rules for exactly this domain, as written on the rule (e.g.
+
+          `app.acme.com` or `*.acme.com`).'
+        required: false
+        schema:
+          type: string
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+      responses:
+        '200':
+          description: The account's TLS rules
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListTlsRulesResponse'
+        '404':
+          description: 'NOT_FOUND: a `vmId` or `vpcId` filter names something that does not exist in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: List tls rules
+      x-summary-source: derived
+    post:
+      tags:
+      - TLS
+      description: 'Allow a named session over a domain: a session addressed to `domain`, from `source`, to `destination`. A `source` says who may open it (`vmId`/`vpcId`/`public: true`); a `destination` says where it lands (`vmId`+`port`, `host`+`port`, or `public: true` for the domain''s own origin). A `transform` rewrites the session in flight — setting a header, or completing a Postgres handshake with credentials the guest never holds; its secrets are write-only and read back as `"***"`. A rule naming a VM or private network is deleted automatically when that resource is.'
+      operationId: create_tls_rule
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTlsRuleRequest'
+        required: true
+      responses:
+        '200':
+          description: Rule created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TlsRule'
+        '400':
+          description: 'BAD_REQUEST: an unknown field, an endpoint that identifies nothing, a landing without a port, or a transform that disagrees with the protocol'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '404':
+          description: 'NOT_FOUND: the rule names a VM or network that does not exist in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '409':
+          description: 'CONFLICT: your account is at its TLS rule limit'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: Create tls rule
+      x-summary-source: derived
+  /tls/forward-auth:
+    get:
+      tags:
+      - TLS
+      description: List your reusable HTTP authorization checks, newest first.
+      operationId: list_tls_forward_auth
+      responses:
+        '200':
+          description: The account's forward-auth configurations
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListTlsForwardAuthResponse'
+      deprecated: true
+      summary: List tls forward auth
+      x-summary-source: derived
+    post:
+      tags:
+      - TLS
+      description: Create a reusable authorization check for public HTTP ingress. Freestyle sends a bodyless GET to the HTTPS endpoint before waking or forwarding to the VM. Static header values are write-only and sealed at rest.
+      operationId: create_tls_forward_auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTlsForwardAuthRequest'
+        required: true
+      responses:
+        '200':
+          description: Configuration created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TlsForwardAuth'
+        '400':
+          description: 'BAD_REQUEST: the URL, timeout, header, or cookie configuration is invalid'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '409':
+          description: 'CONFLICT: your account is at its forward-auth configuration limit'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '503':
+          description: 'UNAVAILABLE: secret sealing is not configured'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: Create tls forward auth
+      x-summary-source: derived
+  /tls/forward-auth/{forwardAuthId}:
+    get:
+      tags:
+      - TLS
+      description: Fetch one reusable authorization check. Static header values read back as `"***"`.
+      operationId: get_tls_forward_auth
+      parameters:
+      - name: forwardAuthId
+        in: path
+        description: forwardAuth configuration id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The configuration
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TlsForwardAuth'
+        '404':
+          description: 'NOT_FOUND: no such configuration in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: Get tls forward auth
+      x-summary-source: derived
+    put:
+      tags:
+      - TLS
+      description: Replace a reusable authorization check in place, including rotating its static headers. Rules keep referencing the same id.
+      operationId: update_tls_forward_auth
+      parameters:
+      - name: forwardAuthId
+        in: path
+        description: forwardAuth configuration id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTlsForwardAuthRequest'
+        required: true
+      responses:
+        '200':
+          description: Configuration replaced
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TlsForwardAuth'
+        '400':
+          description: 'BAD_REQUEST: the replacement is invalid'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '404':
+          description: 'NOT_FOUND: no such configuration in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '503':
+          description: 'UNAVAILABLE: secret sealing is not configured'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: Update tls forward auth
+      x-summary-source: derived
+    delete:
+      tags:
+      - TLS
+      description: Delete an unused authorization check. A configuration referenced by a TLS rule cannot be deleted.
+      operationId: delete_tls_forward_auth
+      parameters:
+      - name: forwardAuthId
+        in: path
+        description: forwardAuth configuration id
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Configuration deleted
+        '404':
+          description: 'NOT_FOUND: no such configuration in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '409':
+          description: 'CONFLICT: one or more TLS rules still reference the configuration'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: Delete tls forward auth
+      x-summary-source: derived
+  /tls/{ruleId}:
+    get:
+      tags:
+      - TLS
+      description: Fetch one TLS rule. Transform secrets read back as `"***"`.
+      operationId: get_tls_rule
+      parameters:
+      - name: ruleId
+        in: path
+        description: TLS rule id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The rule
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TlsRule'
+        '404':
+          description: 'NOT_FOUND: no such rule in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: Get tls rule
+      x-summary-source: derived
+    put:
+      tags:
+      - TLS
+      description: Replace a TLS rule in place — the one mutation this API allows, so a rotating secret can change without dropping traffic. The body is a whole rule, exactly as create takes it.
+      operationId: update_tls_rule
+      parameters:
+      - name: ruleId
+        in: path
+        description: TLS rule id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTlsRuleRequest'
+        required: true
+      responses:
+        '200':
+          description: Rule replaced
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TlsRule'
+        '400':
+          description: 'BAD_REQUEST: the replacement rule is not well formed'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '404':
+          description: 'NOT_FOUND: no such rule in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: Update tls rule
+      x-summary-source: derived
+    delete:
+      tags:
+      - TLS
+      description: Delete a TLS rule. The resources it named are untouched — the dependency runs one way.
+      operationId: delete_tls_rule
+      parameters:
+      - name: ruleId
+        in: path
+        description: TLS rule id
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Rule deleted
+        '404':
+          description: 'NOT_FOUND: no such rule in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      deprecated: true
+      summary: Delete tls rule
+      x-summary-source: derived
+  /v5/tls:
+    get:
+      tags:
+      - TLS
+      description: List your TLS rules, newest first. Filter by `vmId` to get the rules that apply to one VM — those naming it, plus those naming a private network it is attached to — by `vpcId` for the rules naming a private network, or by `domain` for the rules written on exactly that name.
+      operationId: getV5Tls
+      parameters:
+      - name: vmId
+        in: query
+        description: 'Rules that apply to this VM: those naming it, plus those naming a private
+
+          network it is attached to. Its id, or your slug for it.'
+        required: false
+        schema:
+          type: string
+      - name: vpcId
+        in: query
+        description: Rules naming this private network. Its id, or your slug for it.
+        required: false
+        schema:
+          type: string
+      - name: domain
+        in: query
+        description: 'Rules for exactly this domain, as written on the rule (e.g.
+
+          `app.acme.com` or `*.acme.com`).'
+        required: false
+        schema:
+          type: string
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+      responses:
+        '200':
+          description: The account's TLS rules
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListTlsRulesResponse'
+        '404':
+          description: 'NOT_FOUND: a `vmId` or `vpcId` filter names something that does not exist in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: List tls rules
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: list_tls_rules
+    post:
+      tags:
+      - TLS
+      description: 'Allow a named session over a domain: a session addressed to `domain`, from `source`, to `destination`. A `source` says who may open it (`vmId`/`vpcId`/`public: true`); a `destination` says where it lands (`vmId`+`port`, `host`+`port`, or `public: true` for the domain''s own origin). A `transform` rewrites the session in flight — setting a header, or completing a Postgres handshake with credentials the guest never holds; its secrets are write-only and read back as `"***"`. A rule naming a VM or private network is deleted automatically when that resource is.'
+      operationId: postV5Tls
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTlsRuleRequest'
+        required: true
+      responses:
+        '200':
+          description: Rule created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TlsRule'
+        '400':
+          description: 'BAD_REQUEST: an unknown field, an endpoint that identifies nothing, a landing without a port, or a transform that disagrees with the protocol'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '404':
+          description: 'NOT_FOUND: the rule names a VM or network that does not exist in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '409':
+          description: 'CONFLICT: your account is at its TLS rule limit'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: Create tls rule
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: create_tls_rule
+  /v5/tls/forward-auth:
+    get:
+      tags:
+      - TLS
+      description: List your reusable HTTP authorization checks, newest first.
+      operationId: getV5TlsForwardAuth
+      responses:
+        '200':
+          description: The account's forward-auth configurations
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListTlsForwardAuthResponse'
+      summary: List tls forward auth
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: list_tls_forward_auth
+    post:
+      tags:
+      - TLS
+      description: Create a reusable authorization check for public HTTP ingress. Freestyle sends a bodyless GET to the HTTPS endpoint before waking or forwarding to the VM. Static header values are write-only and sealed at rest.
+      operationId: postV5TlsForwardAuth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTlsForwardAuthRequest'
+        required: true
+      responses:
+        '200':
+          description: Configuration created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TlsForwardAuth'
+        '400':
+          description: 'BAD_REQUEST: the URL, timeout, header, or cookie configuration is invalid'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '409':
+          description: 'CONFLICT: your account is at its forward-auth configuration limit'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '503':
+          description: 'UNAVAILABLE: secret sealing is not configured'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: Create tls forward auth
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: create_tls_forward_auth
+  /v5/tls/forward-auth/{forwardAuthId}:
+    get:
+      tags:
+      - TLS
+      description: Fetch one reusable authorization check. Static header values read back as `"***"`.
+      operationId: getV5TlsForwardAuthByForwardAuthId
+      parameters:
+      - name: forwardAuthId
+        in: path
+        description: forwardAuth configuration id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The configuration
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TlsForwardAuth'
+        '404':
+          description: 'NOT_FOUND: no such configuration in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: Get tls forward auth
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: get_tls_forward_auth
+    put:
+      tags:
+      - TLS
+      description: Replace a reusable authorization check in place, including rotating its static headers. Rules keep referencing the same id.
+      operationId: putV5TlsForwardAuthByForwardAuthId
+      parameters:
+      - name: forwardAuthId
+        in: path
+        description: forwardAuth configuration id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTlsForwardAuthRequest'
+        required: true
+      responses:
+        '200':
+          description: Configuration replaced
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TlsForwardAuth'
+        '400':
+          description: 'BAD_REQUEST: the replacement is invalid'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '404':
+          description: 'NOT_FOUND: no such configuration in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '503':
+          description: 'UNAVAILABLE: secret sealing is not configured'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: Update tls forward auth
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: update_tls_forward_auth
+    delete:
+      tags:
+      - TLS
+      description: Delete an unused authorization check. A configuration referenced by a TLS rule cannot be deleted.
+      operationId: deleteV5TlsForwardAuthByForwardAuthId
+      parameters:
+      - name: forwardAuthId
+        in: path
+        description: forwardAuth configuration id
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Configuration deleted
+        '404':
+          description: 'NOT_FOUND: no such configuration in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '409':
+          description: 'CONFLICT: one or more TLS rules still reference the configuration'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: Delete tls forward auth
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: delete_tls_forward_auth
+  /v5/tls/{ruleId}:
+    get:
+      tags:
+      - TLS
+      description: Fetch one TLS rule. Transform secrets read back as `"***"`.
+      operationId: getV5TlsByRuleId
+      parameters:
+      - name: ruleId
+        in: path
+        description: TLS rule id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The rule
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TlsRule'
+        '404':
+          description: 'NOT_FOUND: no such rule in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: Get tls rule
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: get_tls_rule
+    put:
+      tags:
+      - TLS
+      description: Replace a TLS rule in place — the one mutation this API allows, so a rotating secret can change without dropping traffic. The body is a whole rule, exactly as create takes it.
+      operationId: putV5TlsByRuleId
+      parameters:
+      - name: ruleId
+        in: path
+        description: TLS rule id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTlsRuleRequest'
+        required: true
+      responses:
+        '200':
+          description: Rule replaced
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TlsRule'
+        '400':
+          description: 'BAD_REQUEST: the replacement rule is not well formed'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+        '404':
+          description: 'NOT_FOUND: no such rule in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: Update tls rule
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: update_tls_rule
+    delete:
+      tags:
+      - TLS
+      description: Delete a TLS rule. The resources it named are untouched — the dependency runs one way.
+      operationId: deleteV5TlsByRuleId
+      parameters:
+      - name: ruleId
+        in: path
+        description: TLS rule id
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Rule deleted
+        '404':
+          description: 'NOT_FOUND: no such rule in this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicErrorBody'
+      summary: Delete tls rule
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: delete_tls_rule
+components:
+  schemas:
+    RemoveOperation:
+      type: object
+      description: JSON Patch 'remove' operation representation
+      required:
+      - path
+      properties:
+        path:
+          type: string
+          description: 'JSON-Pointer value [RFC6901](https://tools.ietf.org/html/rfc6901) that references a location
+
+            within the target document where the operation is performed.'
+    TlsEndpoint:
+      type: object
+      description: 'One end of a rule: which session this side matches.
+
+
+        A `source` says *who* may open the session (`vmId`/`vpcId`/`public: true`); a
+
+        `destination` says *where it lands* (`vmId`+`port`, `host`+`port`, or
+
+        `public: true` for the domain''s own origin). Unknown fields are rejected
+
+        rather than ignored: a rule is a security statement, and a typo that quietly
+
+        widened it is the wrong failure.'
+      properties:
+        host:
+          type:
+          - string
+          - 'null'
+          description: '**Destination only.** Pin the session to this host instead of resolving
+
+            the domain, while still presenting `domain` as the SNI.'
+        port:
+          type:
+          - integer
+          - 'null'
+          format: int32
+          description: '**Destination only.** The port the session lands on. Required with a
+
+            `vmId` or `host` destination; defaults to 443 for a `public` origin.'
+          minimum: 0
+        public:
+          type:
+          - boolean
+          - 'null'
+          description: 'On a source, every publicly routable client — the open Internet dials the
+
+            name. On a destination, the domain''s own public origin. Only `true` is
+
+            meaningful; omit the field otherwise.'
+        vmId:
+          type:
+          - string
+          - 'null'
+          description: 'A single VM, by id or by your slug for it. On a source, the VM that may
+
+            open the session; on a destination, the VM it lands on. Answers hold its id.'
+        vpcId:
+          type:
+          - string
+          - 'null'
+          description: 'Everything on one private network, by id or by your slug for it. **Source
+
+            only** — a landing is one place, so a network cannot be a destination.
+
+            Answers hold its id.'
+      additionalProperties: false
+    HttpRequestMatch:
+      type: object
+      description: 'Select which HTTP egress requests receive a rule''s transforms.
+
+        Included dimensions are ANDed; methods are ORed. An empty object matches all.
+
+        A non-match skips every transform, without denying access to the origin.
+
+        See <https://vercel.com/docs/sandbox/concepts/firewall#matchers>.'
+      properties:
+        method:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+          description: Case-sensitive HTTP method tokens. Omitted matches any; an empty list matches none.
+        path:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/HttpPathMatch'
+            description: Case-sensitive path comparison, excluding the query string.
+      additionalProperties: false
+    TlsRule:
+      type: object
+      description: 'An allowed named session over a domain, as intent: a session addressed to
+
+        `domain`, from `source`, to `destination`, with any in-flight `transform`.'
+      required:
+      - id
+      - action
+      - domain
+      - protocol
+      - source
+      - destination
+      - createdAt
+      - updatedAt
+      properties:
+        action:
+          $ref: '#/components/schemas/TlsAction'
+        createdAt:
+          type: string
+          format: date-time
+        dependencies:
+          type: array
+          items:
+            $ref: '#/components/schemas/TlsDependency'
+          description: 'What this rule depends on. Deleting any of them deletes this rule, so no
+
+            rule is ever left pointing at something that no longer exists.'
+        description:
+          type:
+          - string
+          - 'null'
+        destination:
+          $ref: '#/components/schemas/TlsEndpoint'
+        domain:
+          type: string
+          description: 'The name the session is addressed to: exact, `*.suffix`, or `*`.'
+        forwardAuth:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/TlsForwardAuthReference'
+            description: Optional reusable authorization check for public HTTP ingress.
+        id:
+          type: string
+        match:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/HttpRequestMatch'
+            description: 'Vercel-style method/exact-path selector for HTTP egress transforms.
+
+              Non-matching requests pass through without any transform.'
+        protocol:
+          $ref: '#/components/schemas/TlsProtocolDocumented'
+        redacted:
+          type: boolean
+          description: 'Whether any transform secret was redacted out of `transform`, so you know
+
+            the shape you see is not the whole story.'
+        source:
+          $ref: '#/components/schemas/TlsEndpoint'
+        transform:
+          type: array
+          items:
+            $ref: '#/components/schemas/TlsTransformDocumented'
+          description: The rewrites this rule applies, with every secret replaced by `"***"`.
+        updatedAt:
+          type: string
+          format: date-time
+    TlsForwardAuth:
+      type: object
+      description: A stored forward-auth configuration. Static header values are redacted.
+      required:
+      - id
+      - accountId
+      - url
+      - timeoutMs
+      - redacted
+      - createdAt
+      - updatedAt
+      properties:
+        accountId:
+          type: string
+        authResponseHeaders:
+          type: array
+          items:
+            type: string
+        createdAt:
+          type: string
+          format: date-time
+        headers:
+          type: object
+          additionalProperties:
+            type: string
+          propertyNames:
+            type: string
+        id:
+          type: string
+        protectedCookies:
+          type: array
+          items:
+            type: string
+        redacted:
+          type: boolean
+        timeoutMs:
+          type: integer
+          format: int32
+          minimum: 0
+        updatedAt:
+          type: string
+          format: date-time
+        url:
+          type: string
+    TlsTransformDocumented:
+      oneOf:
+      - type: object
+        description: 'Set request headers on an `http` session. Header names are preserved
+
+          (they are not secret); values are write-only.'
+        required:
+        - headers
+        properties:
+          headers:
+            type: object
+            description: 'Set request headers on an `http` session. Header names are preserved
+
+              (they are not secret); values are write-only.'
+            additionalProperties:
+              type: string
+            propertyNames:
+              type: string
+      - type: object
+        description: 'Apply RFC 6902 operations to JSON HTTP egress request bodies.
+
+          Values are write-only; operation names and JSON Pointer paths remain visible.'
+        required:
+        - jsonPatch
+        properties:
+          jsonPatch:
+            $ref: '#/components/schemas/JsonPatch'
+            description: 'Apply RFC 6902 operations to JSON HTTP egress request bodies.
+
+              Values are write-only; operation names and JSON Pointer paths remain visible.'
+      - type: object
+        description: Inject credentials into a `postgres` handshake.
+        required:
+        - postgres
+        properties:
+          postgres:
+            $ref: '#/components/schemas/PostgresTransform'
+            description: Inject credentials into a `postgres` handshake.
+      - type: object
+        description: Authenticate a `socks5` session to your upstream proxy provider.
+        required:
+        - socks5
+        properties:
+          socks5:
+            $ref: '#/components/schemas/Socks5Transform'
+            description: Authenticate a `socks5` session to your upstream proxy provider.
+      - type: object
+        description: Authorize and sign scoped S3 HTTP requests at the edge.
+        required:
+        - s3
+        properties:
+          s3:
+            $ref: '#/components/schemas/S3Transform'
+            description: Authorize and sign scoped S3 HTTP requests at the edge.
+      description: The rewrites a rule applies, in order.
+    ReplaceOperation:
+      type: object
+      description: JSON Patch 'replace' operation representation
+      required:
+      - path
+      - value
+      properties:
+        path:
+          type: string
+          description: 'JSON-Pointer value [RFC6901](https://tools.ietf.org/html/rfc6901) that references a location
+
+            within the target document where the operation is performed.'
+        value:
+          description: Value to replace with.
+    TlsForwardAuthReference:
+      type: object
+      description: A reusable authorization check attached to public HTTP ingress.
+      required:
+      - id
+      properties:
+        id:
+          type: string
+          description: The configuration id returned by `POST /v5/tls/forward-auth`.
+      additionalProperties: false
+    PublicErrorBody:
+      type: object
+      description: 'The shape of every error response: a stable machine-readable `code` and a
+
+        human-readable `message`. The HTTP status carries the class of failure.
+
+
+        Some errors add fields alongside these two; `code` and `message` are always
+
+        present.'
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: string
+          description: 'A stable identifier for the failure, in `SCREAMING_SNAKE_CASE`. Branch
+
+            on this; `message` is prose and may be reworded at any time.'
+          example: NOT_FOUND
+        message:
+          type: string
+          description: 'A human-readable explanation of what went wrong. A fault inside the
+
+            platform is always reported as `INTERNAL_ERROR` with no further detail.'
+          example: vm vm-1234 not found
+    PostgresTransform:
+      type: object
+      description: 'Credentials injected into a Postgres startup handshake. The guest connects
+
+        with no password; the edge completes the real handshake upstream.'
+      required:
+      - username
+      - password
+      properties:
+        database:
+          type:
+          - string
+          - 'null'
+          description: 'The database to select. Optional: omitted leaves the guest''s choice.'
+        password:
+          type: string
+          description: 'The upstream password. Write-only: sealed at rest, read back as `"***"`.'
+        username:
+          type: string
+          description: The upstream role to authenticate as.
+      additionalProperties: false
+    S3Transform:
+      type: object
+      required:
+      - region
+      - credentials
+      - scope
+      properties:
+        credentials:
+          $ref: '#/components/schemas/S3Credentials'
+        region:
+          type: string
+        scope:
+          $ref: '#/components/schemas/S3Scope'
+      additionalProperties: false
+    Socks5Transform:
+      type: object
+      description: 'Credentials presented to an upstream SOCKS5 proxy. Your VM connects to the
+
+        platform''s SOCKS5 front with no authentication at all; the edge authenticates
+
+        to your provider on its behalf, so the subscription is never inside the VM.'
+      required:
+      - username
+      - password
+      properties:
+        password:
+          type: string
+          description: 'The password to present to the upstream proxy. Write-only: sealed at
+
+            rest, read back as `"***"`.'
+        username:
+          type: string
+          description: The username to present to the upstream proxy.
+      additionalProperties: false
+    PatchOperation:
+      oneOf:
+      - allOf:
+        - $ref: '#/components/schemas/AddOperation'
+          description: '''add'' operation'
+        - type: object
+          required:
+          - op
+          properties:
+            op:
+              type: string
+              enum:
+              - add
+        description: '''add'' operation'
+      - allOf:
+        - $ref: '#/components/schemas/RemoveOperation'
+          description: '''remove'' operation'
+        - type: object
+          required:
+          - op
+          properties:
+            op:
+              type: string
+              enum:
+              - remove
+        description: '''remove'' operation'
+      - allOf:
+        - $ref: '#/components/schemas/ReplaceOperation'
+          description: '''replace'' operation'
+        - type: object
+          required:
+          - op
+          properties:
+            op:
+              type: string
+              enum:
+              - replace
+        description: '''replace'' operation'
+      - allOf:
+        - $ref: '#/components/schemas/MoveOperation'
+          description: '''move'' operation'
+        - type: object
+          required:
+          - op
+          properties:
+            op:
+              type: string
+              enum:
+              - move
+        description: '''move'' operation'
+      - allOf:
+        - $ref: '#/components/schemas/CopyOperation'
+          description: '''copy'' operation'
+        - type: object
+          required:
+          - op
+          properties:
+            op:
+              type: string
+              enum:
+              - copy
+        description: '''copy'' operation'
+      - allOf:
+        - $ref: '#/components/schemas/TestOperation'
+          description: '''test'' operation'
+        - type: object
+          required:
+          - op
+          properties:
+            op:
+              type: string
+              enum:
+              - test
+        description: '''test'' operation'
+      description: JSON Patch single patch operation
+    ListTlsRulesResponse:
+      type: object
+      required:
+      - rules
+      - totalCount
+      properties:
+        rules:
+          type: array
+          items:
+            $ref: '#/components/schemas/TlsRule'
+          description: Newest first.
+        totalCount:
+          type: integer
+          minimum: 0
+    HttpPathMatch:
+      type: object
+      description: Exact request path. Prefix and regex matching are not supported yet.
+      required:
+      - exact
+      properties:
+        exact:
+          type: string
+      additionalProperties: false
+    TlsAction:
+      type: string
+      description: 'What a rule does with the named session it matches.
+
+
+        Only `allow` exists today, and it is required on every rule rather than
+
+        defaulted: a default would mean that the day `deny` arrives, every rule
+
+        written before it silently acquires an action it never stated.'
+      enum:
+      - allow
+    CreateTlsRuleRequest:
+      type: object
+      required:
+      - action
+      - domain
+      properties:
+        action:
+          $ref: '#/components/schemas/TlsAction'
+          description: Required, and `allow` is the only accepted value.
+        description:
+          type:
+          - string
+          - 'null'
+          description: A free-form note, up to 1024 characters.
+        destination:
+          $ref: '#/components/schemas/TlsEndpoint'
+        domain:
+          type: string
+          description: 'The name the session is addressed to: exact, `*.suffix`, or `*`.'
+        forwardAuth:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/TlsForwardAuthReference'
+            description: Run this reusable authorization check before forwarding to the VM.
+        match:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/HttpRequestMatch'
+            description: 'Vercel-style method/exact-path selector for HTTP egress transforms.
+
+              Non-matching requests pass through without any transform.'
+        protocol:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/TlsProtocolDocumented'
+            description: 'How the edge treats the bytes. Optional: inferred from `transform` when
+
+              one is present, and `tcp` (opaque) otherwise.'
+        source:
+          $ref: '#/components/schemas/TlsEndpoint'
+        transform:
+          type: array
+          items:
+            $ref: '#/components/schemas/TlsTransformDocumented'
+          description: Rewrites applied in flight, in order. Secrets here are write-only.
+      additionalProperties: false
+    MoveOperation:
+      type: object
+      description: JSON Patch 'move' operation representation
+      required:
+      - from
+      - path
+      properties:
+        from:
+          type: string
+          description: 'JSON-Pointer value [RFC6901](https://tools.ietf.org/html/rfc6901) that references a location
+
+            to move value from.'
+        path:
+          type: string
+          description: 'JSON-Pointer value [RFC6901](https://tools.ietf.org/html/rfc6901) that references a location
+
+            within the target document where the operation is performed.'
+    CopyOperation:
+      type: object
+      description: JSON Patch 'copy' operation representation
+      required:
+      - from
+      - path
+      properties:
+        from:
+          type: string
+          description: 'JSON-Pointer value [RFC6901](https://tools.ietf.org/html/rfc6901) that references a location
+
+            to copy value from.'
+        path:
+          type: string
+          description: 'JSON-Pointer value [RFC6901](https://tools.ietf.org/html/rfc6901) that references a location
+
+            within the target document where the operation is performed.'
+    S3Scope:
+      type: object
+      required:
+      - bucket
+      - prefix
+      - operations
+      properties:
+        bucket:
+          type: string
+        operations:
+          type: array
+          items:
+            $ref: '#/components/schemas/S3Operation'
+        prefix:
+          type: string
+          description: Literal UTF-8 key prefix, including a trailing slash for a directory boundary.
+      additionalProperties: false
+    JsonPatch:
+      type: array
+      items:
+        $ref: '#/components/schemas/PatchOperation'
+      description: 'Ordered RFC 6902 operations. Values are write-only and read back as `"***"`.
+
+        A rule accepts one patch, with at most 128 operations and 64 KiB of configuration.'
+    S3Credentials:
+      type: object
+      required:
+      - accessKeyId
+      - secretAccessKey
+      properties:
+        accessKeyId:
+          type: string
+        secretAccessKey:
+          type: string
+        sessionToken:
+          type:
+          - string
+          - 'null'
+      additionalProperties: false
+    S3Operation:
+      type: string
+      enum:
+      - GetObject
+      - HeadObject
+      - PutObject
+      - DeleteObject
+      - ListObjects
+      - ListObjectsV2
+      - CreateMultipartUpload
+      - UploadPart
+      - ListParts
+      - CompleteMultipartUpload
+      - AbortMultipartUpload
+      - ListMultipartUploads
+    TlsDependency:
+      type: object
+      description: 'A resource a rule cannot outlive: deleting it deletes the rule.'
+      required:
+      - kind
+      - id
+      properties:
+        displayName:
+          type:
+          - string
+          - 'null'
+          description: Your label for the named resource, under the same rules as `slug`.
+        id:
+          type: string
+          description: The resource's id.
+        kind:
+          type: string
+          description: '`vm` or `vpc` today. New selectors add new kinds.'
+        slug:
+          type:
+          - string
+          - 'null'
+          description: 'Your handle for the named resource, when it has one — so a rule says
+
+            what it points at without a lookup per id.'
+    CreateTlsForwardAuthRequest:
+      type: object
+      description: Create or replace a reusable HTTP authorization pre-check.
+      required:
+      - url
+      properties:
+        authResponseHeaders:
+          type: array
+          items:
+            type: string
+          description: Headers copied from a successful check onto the VM request.
+        headers:
+          type: object
+          description: Static headers added to the check. Values are write-only.
+          additionalProperties:
+            type: string
+          propertyNames:
+            type: string
+        protectedCookies:
+          type: array
+          items:
+            type: string
+          description: Cookie names visible to the check but withheld from the VM.
+        timeoutMs:
+          type:
+          - integer
+          - 'null'
+          format: int32
+          description: Per-check deadline in milliseconds. Defaults to 1500; range 100-5000.
+          minimum: 0
+        url:
+          type: string
+          description: Absolute HTTPS endpoint receiving a bodyless GET before the VM request.
+      additionalProperties: false
+    ListTlsForwardAuthResponse:
+      type: object
+      required:
+      - configs
+      - totalCount
+      properties:
+        configs:
+          type: array
+          items:
+            $ref: '#/components/schemas/TlsForwardAuth'
+          description: Newest first.
+        totalCount:
+          type: integer
+          minimum: 0
+    TlsProtocolDocumented:
+      type: string
+      description: 'How the edge treats the session''s bytes, and therefore which of its front
+
+        doors serves the rule.
+
+
+        `http` (443) and `postgres` (5432) terminate the session, so each pairs with
+
+        the transform kind that speaks it and each needs a certificate for the name.
+
+        `minecraft` (25565) routes on the server address in the client''s handshake
+
+        and then splices — no TLS, so no certificate and no transform.
+
+
+        The other two doors carry a terminating protocol and a splicing one at once,
+
+        and a rule picks which it is. `tcp` shares 443 with `http`: match on SNI,
+
+        splice the bytes, terminate nothing, so your VM''s own certificate answers the
+
+        handshake. `imap` and `imaps` share 993 for mail clients — `imap` terminates
+
+        on a certificate issued for the name and forwards plain IMAP to the port your
+
+        server listens on (143 by default), `imaps` splices to a server holding its
+
+        own certificate on 993. All three splicing shapes are public ingress only.
+
+
+        `socks5` (1080) goes the other way and is the only egress-only protocol. Your
+
+        VM opens SOCKS5 to the platform edge with no authentication, names its own
+
+        destination inside the request, and the edge opens the session onward through
+
+        your proxy provider using the credentials a `socks5` transform carries — so
+
+        the workload can use the subscription without ever holding it. Nothing is
+
+        terminated: your TLS runs end to end to the real origin. The rule''s `domain`
+
+        is an allow-list of destinations rather than a name anything resolves, which
+
+        is why `*` is allowed here and refused everywhere else.'
+      enum:
+      - tcp
+      - http
+      - postgres
+      - minecraft
+      - imap
+      - imaps
+      - socks5
+    TestOperation:
+      type: object
+      description: JSON Patch 'test' operation representation
+      required:
+      - path
+      - value
+      properties:
+        path:
+          type: string
+          description: 'JSON-Pointer value [RFC6901](https://tools.ietf.org/html/rfc6901) that references a location
+
+            within the target document where the operation is performed.'
+        value:
+          description: Value to test against.
+    AddOperation:
+      type: object
+      description: JSON Patch 'add' operation representation
+      required:
+      - path
+      - value
+      properties:
+        path:
+          type: string
+          description: 'JSON-Pointer value [RFC6901](https://tools.ietf.org/html/rfc6901) that references a location
+
+            within the target document where the operation is performed.'
+        value:
+          description: Value to add to the target location.
+  securitySchemes:
+    apiKey:
+      type: http
+      scheme: bearer
+      description: 'Your Freestyle API key, sent as `Authorization: Bearer <api key>`. Every request needs one unless it is authenticated with an identity access token instead.'
+    identityAccessToken:
+      type: apiKey
+      in: header
+      name: x-freestyle-identity-access-token
+      description: An access token belonging to an identity you created. It reaches only the VMs that identity has been granted, and only their exec and terminal routes. Hand one to an end user instead of your API key.
