@@ -448,3 +448,9 @@ components:
       in: header
       name: x-freestyle-identity-access-token
       description: An access token belonging to an identity you created. It reaches only the VMs that identity has been granted, and only their exec and terminal routes. Hand one to an end user instead of your API key.
+x-provenance:
+  method: harvested
+  publisher: Freestyle
+  source: https://www.freestyle.sh/openapi.json
+  note: split by refine-openapis from the provider's own published document, verified by fetch (openapi/_original/*.fetch.json);
+    stamped by stamp-openapi-provenance.py (roadmap#793)
