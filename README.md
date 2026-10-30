@@ -1,4 +1,4 @@
-# Freestyle (freestyle-sh)
+# Freestyle
 
 <!-- API-EVANGELIST-PROVENANCE:BEGIN -->
 > ### About this repository
@@ -66,278 +66,175 @@
 
 Freestyle is the infrastructure for code you didn't write — VMs and Git for AI agents. The platform provides Linux microVMs that boot in under 600ms with live-fork, pause-resume, and persistent snapshots; a multi-tenant Git service with branchable filesystems, GitHub Sync, full-text search, and webhook triggers; an Execute (Serverless Runs) API for ephemeral JavaScript/TypeScript code; a Web Deployments API for hosted Node.js apps and static sites; Cron schedules; custom Domains with wildcard SSL; an Identity service for scoped per-user and per-agent access tokens; and Observability logs. Freestyle is a direct sandbox option for AI app builders, background agents, code review bots, and long-running assistants — a usage-priced alternative to running Anthropic's hosted Code Execution tool or building bespoke microVM infrastructure on Firecracker, Modal, or E2B.
 
-**APIs.json:** [https://raw.githubusercontent.com/api-evangelist/freestyle-sh/refs/heads/main/apis.yml](https://raw.githubusercontent.com/api-evangelist/freestyle-sh/refs/heads/main/apis.yml)
+**Areas:** Artificial Intelligence · Agents · Sandbox · VMs · MicroVM · Version Control · Code Execution · JavaScript · TypeScript · Serverless · Hosting · Developer Tools
 
-## Scope
+## Freestyle on APIs.io
 
-- **Position:** Producing
-- **Access:** 3rd-Party
+Everything profiled for Freestyle is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/freestyle-sh/](https://apis.io/providers/freestyle-sh/)** — or go straight to one of the APIs or properties below.
 
-## Tags
+### APIs (11)
 
-- AI
-- Agents
-- Sandboxes
-- VMs
-- MicroVMs
-- Git
-- Code Execution
-- JavaScript
-- TypeScript
-- Serverless
-- Hosting
-- Developer Tools
-- Infrastructure
+- [Freestyle Auth API](https://apis.io/apis/freestyle-sh/freestyle-sh-auth-api/) — The Auth API from Freestyle — 2 operation(s) for auth.
+- [Freestyle Certs API](https://apis.io/apis/freestyle-sh/freestyle-sh-certs-api/) — APIs for managing SSL certificates.
+- [Freestyle Cron API](https://apis.io/apis/freestyle-sh/freestyle-sh-cron-api/) — The Cron API from Freestyle — 5 operation(s) for cron.
+- [Freestyle DNS API](https://apis.io/apis/freestyle-sh/freestyle-sh-dns-api/) — APIs for managing DNS records.
+- [Freestyle Domains API](https://apis.io/apis/freestyle-sh/freestyle-sh-domains-api/) — APIs for managing domains. This is only relevant when you want to start to deploy to custom domains. Please read [this…
+- [Freestyle Execute API](https://apis.io/apis/freestyle-sh/freestyle-sh-execute-api/) — APIs for running code. Send the code using the [execute](#tag/execute/POST/execute/v1/execute) endpoint, and you'll get the output back. Works with any…
+- [Freestyle Git API](https://apis.io/apis/freestyle-sh/freestyle-sh-git-api/) — APIs for managing git repositories and accessing git objects like commits, trees, blobs, tags, and refs.
+- [Freestyle Identity API](https://apis.io/apis/freestyle-sh/freestyle-sh-identity-api/) — APIs for managing identities and access tokens.
+- [Freestyle Observability API](https://apis.io/apis/freestyle-sh/freestyle-sh-observability-api/) — APIs for observability.
+- [Freestyle VM API](https://apis.io/apis/freestyle-sh/freestyle-sh-vm-api/) — APIs for managing lightweight virtual machines (VMs) to run your code in isolated environments.
+- [Freestyle Web API](https://apis.io/apis/freestyle-sh/freestyle-sh-web-api/) — APIs for deploying websites. We handle node modules caching, scaling, certificates and the whole end to end process. Send the code using the…
 
-## Timestamps
+### Published properties
 
-- **Created:** 2026-05-25T00:00:00.000Z
-- **Modified:** 2026-05-25
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
 
-## APIs
+#### Agentic access (1)
 
-### Freestyle VMs API
+Which operations an agent can call, which act, and which need a human in the loop.
 
-Create, snapshot, fork, suspend, resume, exec, and manage Linux microVMs designed for AI agents. VMs boot in under 600ms with restored memory snapshots, support live-forking a running VM into multiple copies in milliseconds, and can be paused after idle to $0 cost and resumed on next exec. Includes systemd service management, terminal logs/xterm-256color streams, file get/put/watch, and stats streaming.
+- [Freestyle Sh Agentic Access](https://apis.io/agentic-access/freestyle-sh/freestyle-sh-agentic-access/)
 
-- **Human URL:** [https://docs.freestyle.sh/v2/vms/about](https://docs.freestyle.sh/v2/vms/about)
+#### JSON Schema (2)
 
-#### Tags
+The data models the API reads and writes.
 
-- Agents
-- AI
-- Sandboxes
-- VMs
-- MicroVMs
-- Code Execution
+- [Freestyle Repository](https://apis.io/schemas/freestyle-sh/freestyle-repository/)
+- [Freestyle VM](https://apis.io/schemas/freestyle-sh/freestyle-vm/)
 
-#### Properties
+#### JSON-LD (1)
 
-- [Documentation](https://docs.freestyle.sh/v2/vms/about)
-- [Documentation](https://docs.freestyle.sh/v2/vms/lifecycle)
-- [Documentation](https://docs.freestyle.sh/v2/vms/configuration)
-- [Documentation](https://docs.freestyle.sh/v2/vms/templates-snapshots)
-- [Documentation](https://docs.freestyle.sh/v2/vms/ssh-access)
-- [OpenAPI](openapi/freestyle-vm-api-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/freestyle-vm-api.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/freestyle-vm-api.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
-- [JSON Schema](json-schema/freestyle-vm-schema.json) — [JSON Schema](https://json-schema.org/specification)
-- [JSON-LD](json-ld/freestyle-sh-context.jsonld) — [JSON-LD](https://www.w3.org/TR/json-ld11/)
+Linked-data contexts for the provider's vocabulary.
 
-### Freestyle Git API
+- [Freestyle Sh Context](https://apis.io/jsonld/freestyle-sh/freestyle-sh-context/)
 
-Multi-tenant hosted Git for AI agents — every agent gets a branchable filesystem with commits, diffs, rollback, and review. Includes create/list/delete repositories, commits from files or from raw Git objects, branches and tags, tree/blob inspection, full-text file/commit/diff search, repository compare, tarball/zip downloads, GitHub bidirectional sync, repair jobs, and webhook triggers.
+#### Collections (30)
 
-- **Human URL:** [https://docs.freestyle.sh/v2/git/about](https://docs.freestyle.sh/v2/git/about)
+Postman and Open Collection request collections.
 
-#### Tags
+- [Freestyle Cron API](https://apis.io/collections/freestyle-sh/open-freestyle-cron-api/)
+- [Freestyle Domains API](https://apis.io/collections/freestyle-sh/open-freestyle-domains-api/)
+- [Freestyle Execute API](https://apis.io/collections/freestyle-sh/open-freestyle-execute-api/)
+- [Freestyle Git API](https://apis.io/collections/freestyle-sh/open-freestyle-git-api/)
+- [Freestyle Identity API](https://apis.io/collections/freestyle-sh/open-freestyle-identity-api/)
+- [Freestyle Observability API](https://apis.io/collections/freestyle-sh/open-freestyle-observability-api/)
+- [Freestyle Cron Auth API](https://apis.io/collections/freestyle-sh/open-freestyle-sh-auth-api/)
+- [Freestyle Cron Auth Certs API](https://apis.io/collections/freestyle-sh/open-freestyle-sh-certs-api/)
+- [Freestyle Auth Cron API](https://apis.io/collections/freestyle-sh/open-freestyle-sh-cron-api/)
+- [Freestyle Cron Auth DNS API](https://apis.io/collections/freestyle-sh/open-freestyle-sh-dns-api/)
+- [Freestyle Cron Auth Domains API](https://apis.io/collections/freestyle-sh/open-freestyle-sh-domains-api/)
+- [Freestyle Cron Auth Execute API](https://apis.io/collections/freestyle-sh/open-freestyle-sh-execute-api/)
+- [Freestyle Cron Auth Git API](https://apis.io/collections/freestyle-sh/open-freestyle-sh-git-api/)
+- [Freestyle Cron Auth Identity API](https://apis.io/collections/freestyle-sh/open-freestyle-sh-identity-api/)
+- [Freestyle Cron Auth Observability API](https://apis.io/collections/freestyle-sh/open-freestyle-sh-observability-api/)
+- [Freestyle Cron Auth VM API](https://apis.io/collections/freestyle-sh/open-freestyle-sh-vm-api/)
+- [Freestyle Cron Auth Web API](https://apis.io/collections/freestyle-sh/open-freestyle-sh-web-api/)
+- [Freestyle VMs API](https://apis.io/collections/freestyle-sh/open-freestyle-vm-api/)
+- [Freestyle Web Deployments API](https://apis.io/collections/freestyle-sh/open-freestyle-web-api/)
+- [Freestyle Cron Auth API](https://apis.io/collections/freestyle-sh/postman-freestyle-sh-auth-api/)
+- [Freestyle Cron Auth Certs API](https://apis.io/collections/freestyle-sh/postman-freestyle-sh-certs-api/)
+- [Freestyle Auth Cron API](https://apis.io/collections/freestyle-sh/postman-freestyle-sh-cron-api/)
+- [Freestyle Cron Auth DNS API](https://apis.io/collections/freestyle-sh/postman-freestyle-sh-dns-api/)
+- [Freestyle Cron Auth Domains API](https://apis.io/collections/freestyle-sh/postman-freestyle-sh-domains-api/)
+- [Freestyle Cron Auth Execute API](https://apis.io/collections/freestyle-sh/postman-freestyle-sh-execute-api/)
+- …and 5 more published on APIs.io
 
-- Git
-- Agents
-- AI
-- Version Control
-- Multi-tenant
+#### Governance rules (1)
 
-#### Properties
+Spectral rulesets for the provider's contracts.
 
-- [Documentation](https://docs.freestyle.sh/v2/git/about)
-- [Documentation](https://docs.freestyle.sh/v2/git/repos)
-- [Documentation](https://docs.freestyle.sh/v2/git/search)
-- [Documentation](https://docs.freestyle.sh/v2/git/hooks)
-- [Documentation](https://docs.freestyle.sh/v2/git/github-sync)
-- [Documentation](https://docs.freestyle.sh/v2/git/advanced/database-api)
-- [OpenAPI](openapi/freestyle-git-api-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/freestyle-git-api.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/freestyle-git-api.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
-- [JSON Schema](json-schema/freestyle-repository-schema.json) — [JSON Schema](https://json-schema.org/specification)
+- [Freestyle — jsonschema rules](https://apis.io/rules/freestyle-sh/freestyle-sh-jsonschema-spectral-rules/)
 
-### Freestyle Identity API
+#### Security (2)
 
-Identity and access management for end users and AI agents. Create identities, mint and revoke access tokens, grant per-repo Git permissions (read/write/admin), grant per-VM permissions with an allowed-users list, and inspect the current bearer-token whoami plus long-running background-request status.
+Authentication, trust centre, and vulnerability disclosure.
 
-- **Human URL:** [https://docs.freestyle.sh/v2/about](https://docs.freestyle.sh/v2/about)
+- [Freestyle Sh Authentication](https://apis.io/security/freestyle-sh/freestyle-sh-authentication/)
+- [Freestyle Sh Domain Security](https://apis.io/security/freestyle-sh/freestyle-sh-domain-security/)
 
-#### Tags
+#### Plans and pricing (1)
 
-- Identity
-- Access Management
-- Permissions
-- Tokens
-- Agents
+Published plans, tiers and prices.
 
-#### Properties
+- [Freestyle Sh Plans Pricing](https://apis.io/plans/freestyle-sh/freestyle-sh-plans-pricing/)
 
-- [Documentation](https://docs.freestyle.sh/v2/about)
-- [OpenAPI](openapi/freestyle-identity-api-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/freestyle-identity-api.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/freestyle-identity-api.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
-- [JSON-LD](json-ld/freestyle-sh-context.jsonld) — [JSON-LD](https://www.w3.org/TR/json-ld11/)
+#### Rate limits (1)
 
-### Freestyle Domains API
+Published request limits.
 
-Manage custom domains for Freestyle Web Deployments and VMs — list domains, create/verify ownership, insert and remove domain → deployment mappings, provision wildcard SSL certificates, and manage DNS records for Freestyle-hosted domains.
+- [Freestyle Sh Rate Limits](https://apis.io/rate-limits/freestyle-sh/freestyle-sh-rate-limits/)
 
-- **Human URL:** [https://docs.freestyle.sh/v2/domains](https://docs.freestyle.sh/v2/domains)
+#### FinOps (1)
 
-#### Tags
+What the API costs to run, by operation.
 
-- Domains
-- DNS
-- Certificates
-- SSL
+- [Freestyle Sh Finops](https://apis.io/finops/freestyle-sh/freestyle-sh-finops/)
 
-#### Properties
+## Where to find this API
 
-- [Documentation](https://docs.freestyle.sh/v2/domains)
-- [Documentation](https://docs.freestyle.sh/v2/domains/deploy-to-custom-domain)
-- [OpenAPI](openapi/freestyle-domains-api-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/freestyle-domains-api.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/freestyle-domains-api.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
 
-### Freestyle Execute API
-
-Serverless Runs — execute JavaScript or TypeScript code on demand and get the result. No deployment, no HTTP server — POST code and receive the output. Supports node modules, environment variables, egress control, and stored run output retrieval. The v3 endpoint is the current execute surface; v1 is deprecated.
-
-- **Human URL:** [https://docs.freestyle.sh/v2/serverless/runs/about](https://docs.freestyle.sh/v2/serverless/runs/about)
-
-#### Tags
-
-- Code Execution
-- JavaScript
-- TypeScript
-- Sandboxes
-- Agents
-- AI
-
-#### Properties
-
-- [Documentation](https://docs.freestyle.sh/v2/serverless/runs/about)
-- [Documentation](https://docs.freestyle.sh/v2/serverless/runs/code-playground)
-- [Documentation](https://docs.freestyle.sh/v2/serverless/runs/egress)
-- [Documentation](https://docs.freestyle.sh/v2/serverless/runs/errors)
-- [OpenAPI](openapi/freestyle-execute-api-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/freestyle-execute-api.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/freestyle-execute-api.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
-
-### Freestyle Web Deployments API
-
-Deploy and manage Node.js web applications and static sites. Push code via /web/v1/deployment, list deployments, inspect deployment metadata, and fetch/update files on a deployment using HTTP-style verb-based operations. Handles node-module caching, scaling, wildcard subdomains, and SSL certificates end-to-end.
-
-- **Human URL:** [https://docs.freestyle.sh/v2/serverless/deployments/about](https://docs.freestyle.sh/v2/serverless/deployments/about)
-
-#### Tags
-
-- Hosting
-- Deployments
-- Node.js
-- JavaScript
-- TypeScript
-
-#### Properties
-
-- [Documentation](https://docs.freestyle.sh/v2/serverless/deployments/about)
-- [Documentation](https://docs.freestyle.sh/v2/serverless/deployments/configuration)
-- [Documentation](https://docs.freestyle.sh/v2/serverless/deployments/cron-jobs)
-- [Documentation](https://docs.freestyle.sh/v2/serverless/deployments/guides/nextjs)
-- [Documentation](https://docs.freestyle.sh/v2/serverless/deployments/guides/vite)
-- [Documentation](https://docs.freestyle.sh/v2/serverless/deployments/guides/static)
-- [OpenAPI](openapi/freestyle-web-api-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/freestyle-web-api.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/freestyle-web-api.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
-
-### Freestyle Cron API
-
-Schedule recurring serverless runs. Create, update, and delete cron schedules; list past executions; inspect per-schedule success rate and a metrics timeline for observability.
-
-- **Human URL:** [https://docs.freestyle.sh/v2/serverless/deployments/cron-jobs](https://docs.freestyle.sh/v2/serverless/deployments/cron-jobs)
-
-#### Tags
-
-- Cron
-- Scheduling
-- Serverless
-
-#### Properties
-
-- [Documentation](https://docs.freestyle.sh/v2/serverless/deployments/cron-jobs)
-- [OpenAPI](openapi/freestyle-cron-api-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/freestyle-cron-api.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/freestyle-cron-api.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
-
-### Freestyle Observability API
-
-Query structured logs across Freestyle services. Filter by VM, deployment, run, identity, or time range to debug agent runs end-to-end.
-
-- **Human URL:** [https://docs.freestyle.sh/v2/about](https://docs.freestyle.sh/v2/about)
-
-#### Tags
-
-- Observability
-- Logs
-- Monitoring
-
-#### Properties
-
-- [Documentation](https://docs.freestyle.sh/v2/about)
-- [OpenAPI](openapi/freestyle-observability-api-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/freestyle-observability-api.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/freestyle-observability-api.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
-
-## Common Properties
-
-- [Portal](https://www.freestyle.sh)
+- [Website](https://www.freestyle.sh/)
 - [Documentation](https://docs.freestyle.sh)
-- [Documentation](https://docs.freestyle.sh/v2)
-- [Getting Started](https://docs.freestyle.sh/v2/about)
-- [OpenAPI](https://api.freestyle.sh/openapi.json) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Sign Up](https://admin.freestyle.sh)
-- [Dashboard](https://admin.freestyle.sh)
+- [Getting started](https://docs.freestyle.sh/v2/about)
 - [Pricing](https://www.freestyle.sh/pricing)
 - [Blog](https://www.freestyle.sh/blog)
-- [Status Page](https://status.freestyle.sh)
-- [Forum](https://discord.com/invite/YTRprVkdnz)
-- [Privacy Policy](https://www.freestyle.sh/privacy)
-- [GitHub Organization](https://github.com/freestyle-sh)
-- [SDK](https://github.com/freestyle-sh/sandbox_sdks)
-- [SDK](https://github.com/freestyle-sh/sandbox-sdks-py)
-- [SDK](https://github.com/freestyle-sh/rigkit)
-- [Tool](https://github.com/freestyle-sh/freestyle-auth)
-- [Tool](https://github.com/freestyle-sh/Adorable)
-- [Tool](https://github.com/freestyle-sh/cloudstate)
-- [Code Examples](https://github.com/freestyle-sh/freestyle-execute-chat)
-- [Code Examples](https://github.com/freestyle-sh/freestyle-astro-template)
-- [Code Examples](https://github.com/freestyle-sh/freestyle-sveltekit-template)
-- [Code Examples](https://github.com/freestyle-sh/freestyle-solid-template)
-- [Code Examples](https://github.com/freestyle-sh/freestyle-next-template)
-- [Code Examples](https://github.com/freestyle-sh/freestyle-vite-react)
-- [Code Examples](https://github.com/freestyle-sh/freestyle-react-native-template)
-- [Code Examples](https://github.com/freestyle-sh/freestyle-deno-template)
-- [Code Examples](https://github.com/freestyle-sh/freestyle-expo)
-- [Documentation](https://docs.freestyle.sh/v2/vms/integrations/node)
-- [Documentation](https://docs.freestyle.sh/v2/vms/integrations/python)
-- [Documentation](https://docs.freestyle.sh/v2/vms/integrations/bun)
-- [Documentation](https://docs.freestyle.sh/v2/vms/integrations/deno)
-- [Documentation](https://docs.freestyle.sh/v2/vms/integrations/ruby)
-- [Documentation](https://docs.freestyle.sh/v2/vms/integrations/java)
-- [Documentation](https://docs.freestyle.sh/v2/vms/integrations/postgres)
-- [Documentation](https://docs.freestyle.sh/v2/vms/integrations/opencode)
-- [Documentation](https://docs.freestyle.sh/v2/vms/integrations/web-terminal)
-- [Documentation](https://docs.freestyle.sh/v2/vms/custom-integrations)
-- [Documentation](https://docs.freestyle.sh/v2/vms/cli)
-- [Documentation](https://docs.freestyle.sh/v2/git/cli)
-- [Documentation](https://docs.freestyle.sh/v2/serverless/deployments/cli)
-- [Documentation](https://docs.freestyle.sh/v2/serverless/runs/cli)
-- [Documentation](https://docs.freestyle.sh/v2/domains/cli)
-- [Plans](plans/freestyle-sh-plans-pricing.yml)
-- [Rate Limits](rate-limits/freestyle-sh-rate-limits.yml)
-- [Fin Ops](finops/freestyle-sh-finops.yml)
-- [Features](undefined)
-- [Use Cases](undefined)
-- [Integrations](undefined)
-- [Solutions](undefined)
+- [Privacy policy](https://www.freestyle.sh/privacy)
+- [GitHub](https://github.com/freestyle-sh)
+- [Status](https://status.freestyle.sh)
 
-## Maintainers
+## API Evangelist rating
 
-**FN:** Kin Lane
-**Email:** info@apievangelist.com
-**URL:** https://apievangelist.com
+**Kin Score 51.3** — developing · rubric 0.25.0 · scored 2026-10-23
+
+| Facet | Score |
+|---|---|
+| Discoverability | 62.5 |
+| Contract quality | 66.7 |
+| Contract governance | 9.8 |
+| Operational transparency | 28.9 |
+| Developer ergonomics | 67.9 |
+| Access clarity | 50.0 |
+
+**Agent readiness 26.4** — agent-aware
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | derived (partial credit) |
+| Reversibility Documented | documented (partial credit) |
+| MCP Server | — |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | — |
+| Error Semantics | verified |
+| OpenAPI Examples | partial |
+| Rate Limit Signal | derived (partial credit) |
+| Event Surface Described | — |
+| Agent Skills | — |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+| Pagination Ratio | — |
+| Operation Distinctiveness | — |
+
+**Regulatory alignment 19.1** — Horizontal (data, software, accessibility, platform)
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/freestyle-sh/](https://apis.io/providers/freestyle-sh/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Freestyle: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/freestyle-sh/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
